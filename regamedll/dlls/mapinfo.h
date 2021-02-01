@@ -28,21 +28,23 @@
 
 #pragma once
 
-const float MAX_BOMB_RADIUS = 2048.0f;
+constexpr float MAX_BOMB_RADIUS = 2048.0f;
 
 class CMapInfo: public CPointEntity
 {
 public:
-	virtual void Spawn();
-	virtual void OnCreate();
-	virtual void OnDestroy();
-	virtual void KeyValue(KeyValueData *pkvd);
-
-	void CheckMapInfo();
+	CMapInfo() noexcept;
+	~CMapInfo() final;
 
 public:
-	InfoMapBuyParam m_iBuyingStatus;
-	float m_flBombRadius;
+	virtual void Spawn		(void) final;
+	virtual void KeyValue	(KeyValueData *pkvd) final;
+
+	void CheckMapInfo		(void);
+
+public:
+	InfoMapBuyParam	m_iBuyingStatus	{ BUYING_EVERYONE };
+	float			m_flBombRadius	{ 500.0f };
 };
 
 // The info_map_parameters entity in this map (only one is allowed for).

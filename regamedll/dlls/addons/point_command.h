@@ -26,16 +26,18 @@ const int MAX_POINT_CMDS = 16; // maximum number of commands a single point_[ser
 
 class CPointBaseCommand: public CPointEntity {
 public:
-	virtual void OnDestroy();
-	virtual void KeyValue(KeyValueData *pkvd);
+	virtual ~CPointBaseCommand() override;
+
+public:
+	virtual void KeyValue(KeyValueData *pkvd) override;
 	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value) = 0;
 	virtual void Execute(edict_t *pEdict, const char *pszFmt, ...) = 0;
 
 protected:
 
-	template <size_t SIZE>
-	struct command_t
+	class command_t
 	{
+	public:
 		command_t(const char *_name, const char *_value = nullptr)
 		{
 			value[0] = '\0';
@@ -49,10 +51,10 @@ protected:
 			}
 		}
 
-		char name[SIZE], value[SIZE], valueInitial[SIZE];
+		char name[64U], value[64U], valueInitial[64U];
 	};
 
-	CUtlVector<command_t<64u>> m_vecCommands;
+	std::vector<command_t> m_vecCommands;
 };
 
 // It issues commands to the client console

@@ -92,7 +92,7 @@ public:
 		return CBasePlayer::TakeDamage(pevInflictor, pevAttacker, flDamage, bitsDamageType);
 	}
 	// invoked when killed
-	virtual void Killed(entvars_t *pevAttacker, int iGib)
+	virtual void Killed(entvars_t *pevAttacker, EEntityGib iGib)
 	{
 		CBasePlayer::Killed(pevAttacker, iGib);
 	}

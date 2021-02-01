@@ -522,7 +522,7 @@ void CGrenade::SG_Smoke()
 	}
 }
 
-void CGrenade::Killed(entvars_t *pevAttacker, int iGib)
+void CGrenade::Killed(entvars_t *pevAttacker, EEntityGib iGib)
 {
 	Detonate();
 }

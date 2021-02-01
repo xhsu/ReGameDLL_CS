@@ -331,7 +331,7 @@ void CTriggerSetOrigin::UpdateKnownEntities()
 	}
 }
 
-void CTriggerSetOrigin::OnCreate()
+CTriggerSetOrigin::CTriggerSetOrigin() noexcept
 {
 	m_bUpdateEntities = false;
 	m_bSetupEntities = false;
@@ -339,7 +339,7 @@ void CTriggerSetOrigin::OnCreate()
 	CTriggerSetOriginManager::getInstance()->Add(this);
 }
 
-void CTriggerSetOrigin::OnDestroy()
+CTriggerSetOrigin::~CTriggerSetOrigin()
 {
 	CTriggerSetOriginManager::getInstance()->Remove(this);
 }
@@ -349,7 +349,7 @@ void CTriggerSetOriginManager::Add(CTriggerSetOrigin *pInstance)
 	if (!pInstance)
 		return;
 
-	m_Entities.AddToTail(pInstance);
+	m_Entities.emplace_back(pInstance);
 }
 
 void CTriggerSetOriginManager::Remove(CTriggerSetOrigin *pInstance)
@@ -357,23 +357,29 @@ void CTriggerSetOriginManager::Remove(CTriggerSetOrigin *pInstance)
 	if (!pInstance)
 		return;
 
-	m_Entities.FindAndRemove(pInstance);
+	m_Entities.erase(std::remove(m_Entities.begin(), m_Entities.end(), pInstance), m_Entities.end());
 }
 
 void CTriggerSetOriginManager::Update()
 {
-	for (int i = 0; i < m_Entities.Count(); i++)
+	auto iter = m_Entities.begin();
+
+	while (iter != m_Entities.end())
 	{
-		if (!m_Entities[i].IsValid())
+		// Access class EntityHandle.
+		if (!(*iter).IsValid())
 		{
-			m_Entities.Remove(i);
-
-			// Move iterator to back, because Remove method makes shift elements
-			i--;
-			continue;
+			// std::vector::erase() returns the new iterator
+			iter = m_Entities.erase(iter);
 		}
+		else
+		{
+			// !! Access the CTriggerSetOrigin class stored in the EntityHandle<>, instead of itself.
+			// Update trigger
+			(*iter)->UpdateTick();
 
-		// Update trigger
-		m_Entities[i]->UpdateTick();
+			// Moving to the next EntityHandle.
+			iter++;
+		}
 	}
 }

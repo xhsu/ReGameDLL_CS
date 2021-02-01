@@ -385,7 +385,7 @@ void ClientKill(edict_t *pEntity)
 
 	// have the player kill themself
 	pEntity->v.health = 0;
-	pPlayer->Killed(pev, GIB_NEVER);
+	pPlayer->Killed(pev, EEntityGib::NEVER);
 
 	if (CSGameRules()->m_pVIP == pPlayer)
 	{

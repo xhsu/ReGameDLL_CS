@@ -172,7 +172,7 @@ BOOL CCSBot::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float f
 }
 
 // Invoked when killed
-void CCSBot::Killed(entvars_t *pevAttacker, int iGib)
+void CCSBot::Killed(entvars_t *pevAttacker, EEntityGib iGib)
 {
 	PrintIfWatched("Killed( attacker = %s )\n", STRING(pevAttacker->netname));
 

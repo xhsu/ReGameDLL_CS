@@ -18,15 +18,18 @@
 
 #pragma once
 
-class CItemAirBox: public CArmoury {
+class CItemAirBox: public CArmoury
+{
 public:
-	void Spawn();
-	void Precache();
-	void Restart();
-	void OnDestroy();
-	void Touch(CBaseEntity *pOther);
-	void KeyValue(KeyValueData *pkvd);
-	int ObjectCaps() { return (CArmoury::ObjectCaps() | FCAP_MUST_RESET); }
+	~CItemAirBox() final;
+
+public:
+	void	Spawn		(void) final;
+	void	Precache	(void) final;
+	void	Restart		(void) final;
+	void	Touch		(CBaseEntity *pOther) final;
+	void	KeyValue	(KeyValueData *pkvd) final;
+	int		ObjectCaps	(void) final { return (CArmoury::ObjectCaps() | FCAP_MUST_RESET); }
 
 protected:
 	void EXPORT MoveUp();
@@ -34,15 +37,15 @@ protected:
 private:
 	EntityHandle<CSprite> m_hSprite;
 
-	float m_flyup;
-	float m_delay;
+	float	m_flyup{ 0.0f };
+	float	m_delay{ 0.0f };
 
-	Vector m_rendercolor;
-	int m_renderfx;
-	int m_rendermode;
-	float m_renderamt;
-	float m_scale;
-	float m_frameRate;
+	Vector	m_rendercolor	{ g_vecZero };
+	int		m_renderfx		{ 0 };
+	int		m_rendermode	{ 0 };
+	float	m_renderamt		{ 0.0f };
+	float	m_scale			{ 0.0f };
+	float	m_frameRate		{ 0.0f };
 
-	string_t m_iszSpriteName;
+	string_t	m_iszSpriteName{ 0 };
 };

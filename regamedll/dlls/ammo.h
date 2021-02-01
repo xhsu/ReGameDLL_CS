@@ -27,6 +27,52 @@
 */
 
 #pragma once
+/*
+enum class EAmmoType : unsigned short
+{
+	NONE = 0,
+
+	// Sniper & Hunter
+	_338Magnum,
+
+	// Assault
+	_762Nato,
+	_556Nato,
+	_556NatoBox,
+
+	// Buckshot
+	Buckshot,
+
+	// PDWs
+	_57mm,
+
+	// High retarding force
+	_45acp,
+	_50AE,
+	_9mm,
+
+	// Equipments
+	HEGrenade,
+	Flashbang,
+	SmokeGrenade,
+	C4,
+
+	// util valus.
+	MAXTYPE,
+};
+
+struct AmmoInfo
+{
+	EAmmoType m_iId;
+	const char* m_pszName;
+	unsigned m_iMax;
+	unsigned m_iCountPerBox;
+	unsigned m_iCostPerBox;
+	unsigned m_iPenetrationPower;
+	float m_flPenetrationDistance;
+};
+
+extern const AmmoInfo g_rgAmmoInfo[static_cast<unsigned>(EAmmoType::MAXTYPE)];*/
 
 class CBasePlayerAmmo: public CBaseEntity
 {

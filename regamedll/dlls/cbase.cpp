@@ -697,14 +697,14 @@ BOOL CBaseEntity::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 	pev->health -= flDamage;
 	if (pev->health <= 0)
 	{
-		Killed(pevAttacker, GIB_NORMAL);
+		Killed(pevAttacker, EEntityGib::NORMAL);
 		return FALSE;
 	}
 
 	return TRUE;
 }
 
-void CBaseEntity::Killed(entvars_t *pevAttacker, int iGib)
+void CBaseEntity::Killed(entvars_t *pevAttacker, EEntityGib iGib)
 {
 	pev->takedamage = DAMAGE_NO;
 	pev->deadflag = DEAD_DEAD;
@@ -1551,7 +1551,6 @@ void OnFreeEntPrivateData(edict_t *pEnt)
 	pEntity->UpdateOnRemove();
 	RemoveEntityHashValue(pEntity->pev, STRING(pEntity->pev->classname), CLASSNAME);
 
-	if (TheCSBots()) {
+	if (TheCSBots())
 		TheCSBots()->OnFreeEntPrivateData(pEntity);
-	}
 }

@@ -170,7 +170,7 @@ public:
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return m_bIsC4 ? FCAP_CONTINUOUS_USE : 0; }
-	virtual void Killed(entvars_t *pevAttacker, int iGib);
+	virtual void Killed(entvars_t *pevAttacker, EEntityGib iGib);
 	virtual int BloodColor() { return DONT_BLEED; }
 	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
 	virtual void BounceSound();

@@ -299,7 +299,7 @@ class CCSBot: public CBot
 public:
 	CCSBot();																											// constructor initializes all values to zero
 	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);		// invoked when injured by something (EXTEND) - returns the amount of damage inflicted
-	virtual void Killed(entvars_t *pevAttacker, int iGib);																// invoked when killed (EXTEND)
+	virtual void Killed(entvars_t *pevAttacker, EEntityGib iGib);																// invoked when killed (EXTEND)
 	virtual void RoundRespawn();
 	virtual void Blind(float duration, float holdTime, float fadeTime, int alpha = 255);								// player blinded by a flashbang
 	virtual void OnTouchingWeapon(CWeaponBox *box);																		// invoked when in contact with a CWeaponBox

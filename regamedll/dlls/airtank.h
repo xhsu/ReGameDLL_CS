@@ -31,12 +31,12 @@
 class CAirtank: public CGrenade
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual void Killed(entvars_t *pevAttacker, int iGib);
-	virtual int BloodColor() { return DONT_BLEED; }
+	void	Spawn		(void) final;
+	void	Precache	(void) final;
+	int		Save		(CSave& save) final;
+	int		Restore		(CRestore& restore) final;
+	void	Killed		(entvars_t *pevAttacker, EEntityGib iGib) final;
+	int		BloodColor	(void) final { return DONT_BLEED; }
 
 public:
 	void EXPORT TankThink();
@@ -46,5 +46,5 @@ public:
 	static TYPEDESCRIPTION m_SaveData[];
 
 private:
-	int m_state;
+	int	m_state	{ 1 };
 };

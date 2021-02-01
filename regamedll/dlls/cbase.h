@@ -77,7 +77,7 @@ public:
 	virtual void TraceAttack(entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
 	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
 	virtual BOOL TakeHealth(float flHealth, int bitsDamageType);
-	virtual void Killed(entvars_t *pevAttacker, int iGib);
+	virtual void Killed(entvars_t *pevAttacker, EEntityGib iGib);
 	virtual int BloodColor() { return DONT_BLEED; }
 	virtual void TraceBleed(float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
 	virtual BOOL IsTriggered(CBaseEntity *pActivator) { return TRUE; }
@@ -127,6 +127,9 @@ public:
 
 	virtual BOOL FVisible(CBaseEntity *pEntity);
 	virtual BOOL FVisible(const Vector &vecOrigin);
+
+	virtual void StartSneaking() {}
+	virtual void StopSneaking() {}
 
 	virtual bool FPenatrable(Vector& vecSrc, entvars_t* pevAttacker, TraceResult& tr) { return true; }
 

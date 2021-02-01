@@ -174,7 +174,7 @@ void CBaseTutor::DisplayMessageToPlayer(CBasePlayer *pPlayer, int id, const char
 
 		for (int arg = 0; arg < numArgs; arg++)
 		{
-			char *str = event->GetNextParameter(param, sizeof(param));
+			char *str = event->GetNextParameter(&param[0], sizeof(param) - 1U); // LUNAFIXES: Run-Time Check Failure #2
 			if (str)
 				WRITE_STRING(str);
 			else

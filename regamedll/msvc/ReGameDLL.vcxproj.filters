@@ -1002,9 +1002,6 @@
     <ClInclude Include="..\dlls\addons\point_command.h">
       <Filter>dlls\addons</Filter>
     </ClInclude>
-    <ClInclude Include="..\dlls\const.h">
-      <Filter>dlls</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\linux\appversion.sh">

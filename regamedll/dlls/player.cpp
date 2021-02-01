@@ -86,22 +86,16 @@ entvars_t *g_pevLastInflictor;
 
 LINK_ENTITY_TO_CLASS(player, CBasePlayer)
 
-#ifdef REGAMEDLL_API
-void CBasePlayer::OnCreate()
-{
-	;
-}
-
-void CBasePlayer::OnDestroy()
+CBasePlayer::~CBasePlayer()
 {
 	if (m_rebuyString)
 	{
 		delete[] m_rebuyString;
 		m_rebuyString = nullptr;
 	}
+
 	m_hintMessageQueue.Reset();
 }
-#endif
 
 void CBasePlayer::SendItemStatus()
 {
@@ -1968,7 +1962,7 @@ void CBasePlayer::SendFOV(int fov)
 	MESSAGE_END();
 }
 
-void CBasePlayer::Killed(entvars_t *pevAttacker, int iGib)
+void CBasePlayer::Killed(entvars_t *pevAttacker, EEntityGib iGib)
 {
 	m_canSwitchObserverModes = false;
 
@@ -2341,7 +2335,7 @@ void CBasePlayer::Killed(entvars_t *pevAttacker, int iGib)
 		HintMessage("#Hint_cannot_play_because_tk", TRUE, TRUE);
 	}
 
-	if ((pev->health < -9000 && iGib != GIB_NEVER) || iGib == GIB_ALWAYS)
+	if ((pev->health < -9000 && iGib != EEntityGib::NEVER) || iGib == EEntityGib::ALWAYS)
 	{
 
 #ifndef REGAMEDLL_FIXES

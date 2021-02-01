@@ -47,7 +47,7 @@ void CItemAirBox::Spawn()
 	}
 }
 
-void CItemAirBox::OnDestroy()
+CItemAirBox::~CItemAirBox()
 {
 	m_hSprite.Remove();
 }

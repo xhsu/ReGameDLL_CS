@@ -267,9 +267,9 @@ void CBaseMonster::BecomeDead()
 	pev->movetype = MOVETYPE_TOSS;
 }
 
-BOOL CBaseMonster::ShouldGibMonster(int iGib)
+BOOL CBaseMonster::ShouldGibMonster(EEntityGib iGib)
 {
-	if ((iGib == GIB_NORMAL && pev->health < GIB_HEALTH_VALUE) || (iGib == GIB_ALWAYS))
+	if ((iGib == EEntityGib::NORMAL && pev->health < GIB_HEALTH_VALUE) || (iGib == EEntityGib::ALWAYS))
 	{
 		return TRUE;
 	}
@@ -320,7 +320,7 @@ void CBaseMonster::CallGibMonster()
 		UTIL_Remove(this);
 }
 
-void CBaseMonster::Killed(entvars_t *pevAttacker, int iGib)
+void CBaseMonster::Killed(entvars_t *pevAttacker, EEntityGib iGib)
 {
 	if (HasMemory(bits_MEMORY_KILLED))
 	{
@@ -454,12 +454,12 @@ BOOL CBaseMonster::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, f
 		g_pevLastInflictor = pevInflictor;
 
 		if (bitsDamageType & DMG_ALWAYSGIB)
-			Killed(pevAttacker, GIB_ALWAYS);
+			Killed(pevAttacker, EEntityGib::ALWAYS);
 
 		else if (bitsDamageType & DMG_NEVERGIB)
-			Killed(pevAttacker, GIB_NEVER);
+			Killed(pevAttacker, EEntityGib::NEVER);
 		else
-			Killed(pevAttacker, GIB_NORMAL);
+			Killed(pevAttacker, EEntityGib::NORMAL);
 
 		g_pevLastInflictor = nullptr;
 		return FALSE;
@@ -531,7 +531,7 @@ BOOL CBaseMonster::DeadTakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacke
 		if (pev->health <= flDamage)
 		{
 			pev->health = -50;
-			Killed(pevAttacker, GIB_ALWAYS);
+			Killed(pevAttacker, EEntityGib::ALWAYS);
 			return FALSE;
 		}
 

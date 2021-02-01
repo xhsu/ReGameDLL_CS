@@ -335,7 +335,11 @@ public:
 	void Spray();
 };
 
-class CBasePlayer: public CBaseMonster {
+class CBasePlayer: public CBaseMonster
+{
+public:
+	virtual ~CBasePlayer() override;
+
 public:
 	virtual void Spawn();
 	virtual void Precache();
@@ -346,20 +350,14 @@ public:
 	virtual void TraceAttack(entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
 	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
 	virtual BOOL TakeHealth(float flHealth, int bitsDamageType);
-	virtual void Killed(entvars_t *pevAttacker, int iGib);
+	virtual void Killed(entvars_t *pevAttacker, EEntityGib iGib);
 	virtual void AddPoints(int score, BOOL bAllowNegativeScore);
 	virtual void AddPointsToTeam(int score, BOOL bAllowNegativeScore);
 	virtual BOOL AddPlayerItem(CBasePlayerItem *pItem);
 	virtual BOOL RemovePlayerItem(CBasePlayerItem *pItem);
 	virtual int GiveAmmo(int iAmount, const char *szName, int iMax = -1);
-#ifndef REGAMEDLL_API
 	virtual void StartSneaking() { m_tSneaking = gpGlobals->time - 1; }
 	virtual void StopSneaking() { m_tSneaking = gpGlobals->time + 30; }
-#else
-	virtual void OnCreate();
-	virtual void OnDestroy();
-	void StartSneaking() { m_tSneaking = gpGlobals->time - 1; };
-#endif
 
 	virtual BOOL IsSneaking() { return m_tSneaking <= gpGlobals->time; }
 	virtual BOOL IsAlive() { return (pev->deadflag == DEAD_NO && pev->health > 0.0f); }

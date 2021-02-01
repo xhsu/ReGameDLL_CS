@@ -65,7 +65,7 @@ public:
 	virtual void TraceAttack(entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
 	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
 	virtual BOOL TakeHealth(float flHealth, int bitsDamageType);
-	virtual void Killed(entvars_t *pevAttacker, int iGib);
+	virtual void Killed(entvars_t *pevAttacker, EEntityGib iGib);
 	virtual int BloodColor() { return m_bloodColor; }
 	virtual BOOL IsAlive() { return (pev->deadflag != DEAD_DEAD); }
 	virtual float ChangeYaw(int speed);
@@ -89,7 +89,7 @@ public:
 public:
 	void MakeIdealYaw(Vector vecTarget);
 	Activity GetSmallFlinchActivity();
-	BOOL ShouldGibMonster(int iGib);
+	BOOL ShouldGibMonster(EEntityGib iGib);
 	void CallGibMonster();
 	BOOL FCheckAITrigger();
 	BOOL DeadTakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
