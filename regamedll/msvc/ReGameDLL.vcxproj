@@ -31,10 +31,6 @@
     <ClCompile Include="..\dlls\ammo.cpp" />
     <ClCompile Include="..\dlls\animating.cpp" />
     <ClCompile Include="..\dlls\animation.cpp" />
-    <ClCompile Include="..\dlls\API\CAPI_Impl.cpp" />
-    <ClCompile Include="..\dlls\API\CSEntity.cpp" />
-    <ClCompile Include="..\dlls\API\CSPlayer.cpp" />
-    <ClCompile Include="..\dlls\API\CSPlayerItem.cpp" />
     <ClCompile Include="..\dlls\basemonster.cpp" />
     <ClCompile Include="..\dlls\bmodels.cpp" />
     <ClCompile Include="..\dlls\bot\cs_bot.cpp">
@@ -539,8 +535,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Play|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Tests|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\regamedll\classes_dummy.cpp" />
-    <ClCompile Include="..\regamedll\hookchains_impl.cpp" />
     <ClCompile Include="..\regamedll\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -610,7 +604,6 @@
     <ClInclude Include="..\dlls\airtank.h" />
     <ClInclude Include="..\dlls\ammo.h" />
     <ClInclude Include="..\dlls\animation.h" />
-    <ClInclude Include="..\dlls\API\CAPI_Impl.h" />
     <ClInclude Include="..\dlls\basemonster.h" />
     <ClInclude Include="..\dlls\bmodels.h" />
     <ClInclude Include="..\dlls\bot\cs_bot.h">
@@ -656,6 +649,7 @@
     <ClInclude Include="..\dlls\cdll_dll.h" />
     <ClInclude Include="..\dlls\client.h" />
     <ClInclude Include="..\dlls\cmdhandler.h" />
+    <ClInclude Include="..\dlls\const.h" />
     <ClInclude Include="..\dlls\debug.h" />
     <ClInclude Include="..\dlls\decals.h" />
     <ClInclude Include="..\dlls\doors.h" />
@@ -686,7 +680,6 @@
     <ClInclude Include="..\dlls\monsterevent.h" />
     <ClInclude Include="..\dlls\monsters.h" />
     <ClInclude Include="..\dlls\mortar.h" />
-    <ClInclude Include="..\dlls\nodes.h" />
     <ClInclude Include="..\dlls\observer.h" />
     <ClInclude Include="..\dlls\pathcorner.h" />
     <ClInclude Include="..\dlls\plats.h" />
@@ -761,12 +754,6 @@
     <ClInclude Include="..\public\FileSystem.h" />
     <ClInclude Include="..\public\interface.h" />
     <ClInclude Include="..\public\MemPool.h" />
-    <ClInclude Include="..\public\regamedll\API\CSEntity.h" />
-    <ClInclude Include="..\public\regamedll\API\CSInterfaces.h" />
-    <ClInclude Include="..\public\regamedll\API\CSPlayer.h" />
-    <ClInclude Include="..\public\regamedll\API\CSPlayerItem.h" />
-    <ClInclude Include="..\public\regamedll\hookchains.h" />
-    <ClInclude Include="..\public\regamedll\regamedll_api.h" />
     <ClInclude Include="..\public\tier0\dbg.h" />
     <ClInclude Include="..\public\tier0\platform.h" />
     <ClInclude Include="..\public\utlmemory.h" />
@@ -775,7 +762,6 @@
     <ClInclude Include="..\public\utlvector.h" />
     <ClInclude Include="..\regamedll\dlls.h" />
     <ClInclude Include="..\regamedll\engine.h" />
-    <ClInclude Include="..\regamedll\hookchains_impl.h" />
     <ClInclude Include="..\regamedll\precompiled.h" />
     <ClInclude Include="..\regamedll\regamedll.h" />
     <ClInclude Include="..\regamedll\sse_mathfun.h" />
@@ -811,6 +797,7 @@
     <ProjectGuid>{70A2B904-B7DB-4C48-8DE0-AF567360D572}</ProjectGuid>
     <RootNamespace>ReGameDLL</RootNamespace>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -820,7 +807,7 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0'">v141</PlatformToolset>
-    <PlatformToolset Condition="'$(VisualStudioVersion)' >= '16.0'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' &gt;= '16.0'">v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -829,7 +816,7 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0'">v141</PlatformToolset>
-    <PlatformToolset Condition="'$(VisualStudioVersion)' >= '16.0'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' &gt;= '16.0'">v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Play|Win32'" Label="Configuration">
@@ -839,7 +826,7 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0'">v141</PlatformToolset>
-    <PlatformToolset Condition="'$(VisualStudioVersion)' >= '16.0'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' &gt;= '16.0'">v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Play|Win32'" Label="Configuration">
@@ -849,7 +836,7 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0'">v141</PlatformToolset>
-    <PlatformToolset Condition="'$(VisualStudioVersion)' >= '16.0'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' &gt;= '16.0'">v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Tests|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -857,7 +844,7 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120_xp</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140_xp</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0'">v141_xp</PlatformToolset>
-    <PlatformToolset Condition="'$(VisualStudioVersion)' >= '16.0'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' &gt;= '16.0'">v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -927,6 +914,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -969,6 +957,7 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1014,6 +1003,7 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1053,6 +1043,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1088,6 +1079,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

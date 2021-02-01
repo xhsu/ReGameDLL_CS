@@ -27,9 +27,9 @@ TYPEDESCRIPTION CTriggerRandom::m_SaveData[] =
 	DEFINE_FIELD(CTriggerRandom, m_flMaxDelay, FIELD_FLOAT)
 };
 
-LINK_ENTITY_TO_CLASS(trigger_random, CTriggerRandom, CCSTriggerRandom)
-LINK_ENTITY_TO_CLASS(trigger_random_time, CTriggerRandom, CCSTriggerRandom)		// Obsolete: use trigger_random with Timed flag
-LINK_ENTITY_TO_CLASS(trigger_random_unique, CTriggerRandom, CCSTriggerRandom)	// Obsolete: use trigger_ranom with Random flag. Unique Trigger Random. Randomly selects an unused trigger.
+LINK_ENTITY_TO_CLASS(trigger_random, CTriggerRandom)
+LINK_ENTITY_TO_CLASS(trigger_random_time, CTriggerRandom)		// Obsolete: use trigger_random with Timed flag
+LINK_ENTITY_TO_CLASS(trigger_random_unique, CTriggerRandom)	// Obsolete: use trigger_ranom with Random flag. Unique Trigger Random. Randomly selects an unused trigger.
 
 IMPLEMENT_SAVERESTORE(CTriggerRandom, CBaseDelay)
 

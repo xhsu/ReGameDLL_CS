@@ -18,7 +18,7 @@
 
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(trigger_setorigin, CTriggerSetOrigin, CCSTriggerSetOrigin)
+LINK_ENTITY_TO_CLASS(trigger_setorigin, CTriggerSetOrigin)
 
 void CTriggerSetOrigin::KeyValue(KeyValueData *pkvd)
 {

@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "regamedll_const.h"
+#include "const.h"
 
 #undef DLLEXPORT
 #ifdef _WIN32

@@ -18,7 +18,7 @@
 
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(item_airbox, CItemAirBox, CCSItemAirBox);
+LINK_ENTITY_TO_CLASS(item_airbox, CItemAirBox);
 
 void CItemAirBox::Spawn()
 {

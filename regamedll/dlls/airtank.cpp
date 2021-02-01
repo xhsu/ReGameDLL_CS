@@ -5,7 +5,7 @@ TYPEDESCRIPTION CAirtank::m_SaveData[] =
 	DEFINE_FIELD(CAirtank, m_state, FIELD_INTEGER)
 };
 
-LINK_ENTITY_TO_CLASS(item_airtank, CAirtank, CCSAirtank)
+LINK_ENTITY_TO_CLASS(item_airtank, CAirtank)
 IMPLEMENT_SAVERESTORE(CAirtank, CGrenade)
 
 void CAirtank::Spawn()

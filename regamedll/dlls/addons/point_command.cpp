@@ -40,7 +40,7 @@ void CPointBaseCommand::KeyValue(KeyValueData *pkvd)
 	CPointEntity::KeyValue(pkvd);
 }
 
-LINK_ENTITY_TO_CLASS(point_clientcommand, CPointClientCommand, CCSPointClientCommand)
+LINK_ENTITY_TO_CLASS(point_clientcommand, CPointClientCommand)
 
 void CPointClientCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
@@ -78,7 +78,7 @@ void CPointClientCommand::Execute(edict_t *pEdict, const char *pszFmt, ...)
 	CLIENT_COMMAND(pEdict, command);
 }
 
-LINK_ENTITY_TO_CLASS(point_servercommand, CPointServerCommand, CCSPointServerCommand)
+LINK_ENTITY_TO_CLASS(point_servercommand, CPointServerCommand)
 
 void CPointServerCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {

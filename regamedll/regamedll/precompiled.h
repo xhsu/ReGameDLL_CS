@@ -49,10 +49,5 @@
 
 #include "dlls.h"
 #include "interface.h"
-#include "hookchains_impl.h"
 #include "regamedll.h"
 #include "FileSystem.h"
-
-// API
-#include "API/CSInterfaces.h"
-#include "API/CAPI_Impl.h"

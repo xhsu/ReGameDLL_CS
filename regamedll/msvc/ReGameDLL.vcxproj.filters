@@ -59,20 +59,11 @@
     <Filter Include="dlls\hostage\states">
       <UniqueIdentifier>{d1cb44c6-0982-4410-a099-0b3666ace636}</UniqueIdentifier>
     </Filter>
-    <Filter Include="public\regamedll">
-      <UniqueIdentifier>{8f5a4004-ab6b-4802-a23b-091948576ad0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="public\tier0">
       <UniqueIdentifier>{00d15c50-66d7-4210-9239-e8cd8fb9f052}</UniqueIdentifier>
     </Filter>
     <Filter Include="dlls\addons">
       <UniqueIdentifier>{cc40695f-5d17-4ee9-b410-1be65c49c099}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dlls\API">
-      <UniqueIdentifier>{23a8e38b-6719-4a8e-9861-12425a661001}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="public\regamedll\API">
-      <UniqueIdentifier>{46ec2f1d-1feb-46e2-a801-0c87d1212c5c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -499,14 +490,8 @@
     <ClCompile Include="..\dlls\lights.cpp">
       <Filter>dlls</Filter>
     </ClCompile>
-    <ClCompile Include="..\regamedll\hookchains_impl.cpp">
-      <Filter>regamedll</Filter>
-    </ClCompile>
     <ClCompile Include="..\public\tier0\dbg.cpp">
       <Filter>public\tier0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\regamedll\classes_dummy.cpp">
-      <Filter>regamedll</Filter>
     </ClCompile>
     <ClCompile Include="..\regamedll\regamedll.cpp">
       <Filter>regamedll</Filter>
@@ -534,18 +519,6 @@
     </ClCompile>
     <ClCompile Include="..\dlls\revert_saved.cpp">
       <Filter>dlls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dlls\API\CAPI_Impl.cpp">
-      <Filter>dlls\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dlls\API\CSEntity.cpp">
-      <Filter>dlls\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dlls\API\CSPlayer.cpp">
-      <Filter>dlls\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dlls\API\CSPlayerItem.cpp">
-      <Filter>dlls\API</Filter>
     </ClCompile>
     <ClCompile Include="..\regamedll\public_amalgamation.cpp">
       <Filter>regamedll</Filter>
@@ -746,9 +719,6 @@
     </ClInclude>
     <ClInclude Include="..\engine\studio.h">
       <Filter>engine\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dlls\nodes.h">
-      <Filter>dlls\common</Filter>
     </ClInclude>
     <ClInclude Include="..\dlls\enginecallback.h">
       <Filter>dlls</Filter>
@@ -975,15 +945,6 @@
     <ClInclude Include="..\dlls\scriptevent.h">
       <Filter>dlls</Filter>
     </ClInclude>
-    <ClInclude Include="..\regamedll\hookchains_impl.h">
-      <Filter>regamedll</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\regamedll\hookchains.h">
-      <Filter>public\regamedll</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\regamedll\regamedll_api.h">
-      <Filter>public\regamedll</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\tier0\dbg.h">
       <Filter>public\tier0</Filter>
     </ClInclude>
@@ -1035,26 +996,14 @@
     <ClInclude Include="..\dlls\bot\cs_bot_init.h">
       <Filter>dlls\bot</Filter>
     </ClInclude>
-    <ClInclude Include="..\dlls\API\CAPI_Impl.h">
-      <Filter>dlls\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\regamedll\API\CSEntity.h">
-      <Filter>public\regamedll\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\regamedll\API\CSInterfaces.h">
-      <Filter>public\regamedll\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\regamedll\API\CSPlayer.h">
-      <Filter>public\regamedll\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\regamedll\API\CSPlayerItem.h">
-      <Filter>public\regamedll\API</Filter>
-    </ClInclude>
     <ClInclude Include="..\dlls\addons\trigger_random.h">
       <Filter>dlls\addons</Filter>
     </ClInclude>
     <ClInclude Include="..\dlls\addons\point_command.h">
       <Filter>dlls\addons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dlls\const.h">
+      <Filter>dlls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
