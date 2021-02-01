@@ -1,8 +1,6 @@
 #include "precompiled.h"
 
-LINK_HOOK_CHAIN(int, GetForceCamera, (CBasePlayer *pObserver), pObserver)
-
-int __API_HOOK(GetForceCamera)(CBasePlayer *pObserver)
+int GetForceCamera(CBasePlayer *pObserver)
 {
 	int retVal;
 
@@ -19,9 +17,7 @@ int __API_HOOK(GetForceCamera)(CBasePlayer *pObserver)
 	return retVal;
 }
 
-LINK_HOOK_CLASS_CHAIN(CBasePlayer *, CBasePlayer, Observer_IsValidTarget, (int iPlayerIndex, bool bSameTeam), iPlayerIndex, bSameTeam)
-
-CBasePlayer *CBasePlayer::__API_HOOK(Observer_IsValidTarget)(int iPlayerIndex, bool bSameTeam)
+CBasePlayer *CBasePlayer::Observer_IsValidTarget(int iPlayerIndex, bool bSameTeam)
 {
 	if (iPlayerIndex > gpGlobals->maxClients || iPlayerIndex < 1)
 		return nullptr;

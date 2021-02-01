@@ -86,7 +86,7 @@ TYPEDESCRIPTION CBreakable::m_SaveData[] =
 	DEFINE_FIELD(CBreakable, m_iszSpawnObject, FIELD_STRING),
 };
 
-LINK_ENTITY_TO_CLASS(func_breakable, CBreakable, CCSBreakable)
+LINK_ENTITY_TO_CLASS(func_breakable, CBreakable)
 IMPLEMENT_SAVERESTORE(CBreakable, CBaseEntity)
 
 void CBreakable::Spawn()
@@ -880,7 +880,7 @@ const char *CPushable::m_soundNames[] =
 	"debris/pushbox3.wav"
 };
 
-LINK_ENTITY_TO_CLASS(func_pushable, CPushable, CCSPushable)
+LINK_ENTITY_TO_CLASS(func_pushable, CPushable)
 IMPLEMENT_SAVERESTORE(CPushable, CBreakable)
 
 void CPushable::Spawn()

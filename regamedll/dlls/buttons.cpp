@@ -8,7 +8,7 @@ TYPEDESCRIPTION CEnvGlobal::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CEnvGlobal, CBaseEntity)
-LINK_ENTITY_TO_CLASS(env_global, CEnvGlobal, CCSEnvGlobal)
+LINK_ENTITY_TO_CLASS(env_global, CEnvGlobal)
 
 void CEnvGlobal::KeyValue(KeyValueData *pkvd)
 {
@@ -101,7 +101,7 @@ TYPEDESCRIPTION CMultiSource::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CMultiSource, CBaseEntity)
-LINK_ENTITY_TO_CLASS(multisource, CMultiSource, CCSMultiSource)
+LINK_ENTITY_TO_CLASS(multisource, CMultiSource)
 
 // Cache user-entity-field values until spawn is called.
 void CMultiSource::KeyValue(KeyValueData *pkvd)
@@ -428,7 +428,7 @@ BOOL CBaseButton::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 // 1) wooden clunk
 // 2) metallic click
 // 3) in-out
-LINK_ENTITY_TO_CLASS(func_button, CBaseButton, CCSButton)
+LINK_ENTITY_TO_CLASS(func_button, CBaseButton)
 
 void CBaseButton::Spawn()
 {
@@ -829,7 +829,7 @@ IMPLEMENT_SAVERESTORE(CRotButton, CBaseButton)
 
 #endif
 
-LINK_ENTITY_TO_CLASS(func_rot_button, CRotButton, CCSRotButton)
+LINK_ENTITY_TO_CLASS(func_rot_button, CRotButton)
 
 void CRotButton::Spawn()
 {
@@ -917,7 +917,7 @@ TYPEDESCRIPTION CMomentaryRotButton::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CMomentaryRotButton, CBaseToggle)
-LINK_ENTITY_TO_CLASS(momentary_rot_button, CMomentaryRotButton, CCSMomentaryRotButton)
+LINK_ENTITY_TO_CLASS(momentary_rot_button, CMomentaryRotButton)
 
 void CMomentaryRotButton::Spawn()
 {
@@ -1139,8 +1139,8 @@ TYPEDESCRIPTION CEnvSpark::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CEnvSpark, CBaseEntity)
-LINK_ENTITY_TO_CLASS(env_spark, CEnvSpark, CCSEnvSpark)
-LINK_ENTITY_TO_CLASS(env_debris, CEnvSpark, CCSEnvSpark)
+LINK_ENTITY_TO_CLASS(env_spark, CEnvSpark)
+LINK_ENTITY_TO_CLASS(env_debris, CEnvSpark)
 
 void CEnvSpark::Spawn()
 {
@@ -1265,7 +1265,7 @@ void CEnvSpark::SparkStop(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 	SetThink(nullptr);
 }
 
-LINK_ENTITY_TO_CLASS(button_target, CButtonTarget, CCSButtonTarget)
+LINK_ENTITY_TO_CLASS(button_target, CButtonTarget)
 
 void CButtonTarget::Spawn()
 {

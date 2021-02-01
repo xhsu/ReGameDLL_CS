@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_flashbang, CFlashbang, CCSFlashbang)
+LINK_ENTITY_TO_CLASS(weapon_flashbang, CFlashbang)
 
 void CFlashbang::Spawn()
 {
@@ -264,9 +264,7 @@ void CFlashbang::WeaponIdle()
 	}
 }
 
-LINK_HOOK_CLASS_CHAIN3(BOOL, CBasePlayerWeapon, CFlashbang, CanDeploy)
-
-BOOL EXT_FUNC CFlashbang::__API_HOOK(CanDeploy)()
+BOOL CFlashbang::CanDeploy()
 {
 	return m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] != 0;
 }

@@ -6,7 +6,7 @@ TYPEDESCRIPTION CFrictionModifier::m_SaveData[] =
 	DEFINE_FIELD(CFrictionModifier, m_frictionFraction, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(func_friction, CFrictionModifier, CCSFrictionModifier)
+LINK_ENTITY_TO_CLASS(func_friction, CFrictionModifier)
 IMPLEMENT_SAVERESTORE(CFrictionModifier, CBaseEntity)
 
 void CFrictionModifier::Spawn()
@@ -49,7 +49,7 @@ TYPEDESCRIPTION CAutoTrigger::m_SaveData[] =
 	DEFINE_FIELD(CAutoTrigger, m_triggerType, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(trigger_auto, CAutoTrigger, CCSAutoTrigger)
+LINK_ENTITY_TO_CLASS(trigger_auto, CAutoTrigger)
 IMPLEMENT_SAVERESTORE(CAutoTrigger, CBaseDelay)
 
 void CAutoTrigger::KeyValue(KeyValueData *pkvd)
@@ -124,7 +124,7 @@ TYPEDESCRIPTION CTriggerRelay::m_SaveData[] =
 	DEFINE_FIELD(CTriggerRelay, m_triggerType, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(trigger_relay, CTriggerRelay, CCSTriggerRelay)
+LINK_ENTITY_TO_CLASS(trigger_relay, CTriggerRelay)
 IMPLEMENT_SAVERESTORE(CTriggerRelay, CBaseDelay)
 
 void CTriggerRelay::KeyValue(KeyValueData *pkvd)
@@ -176,7 +176,7 @@ TYPEDESCRIPTION CMultiManager::m_SaveData[] =
 	DEFINE_ARRAY(CMultiManager, m_flTargetDelay, FIELD_FLOAT, MAX_MM_TARGETS),
 };
 
-LINK_ENTITY_TO_CLASS(multi_manager, CMultiManager, CCSMultiManager)
+LINK_ENTITY_TO_CLASS(multi_manager, CMultiManager)
 IMPLEMENT_SAVERESTORE(CMultiManager, CBaseToggle)
 
 void CMultiManager::KeyValue(KeyValueData *pkvd)
@@ -318,7 +318,7 @@ void CMultiManager::ManagerThink()
 
 CMultiManager *CMultiManager::Clone()
 {
-	CMultiManager *pMulti = GetClassPtr<CCSMultiManager>((CMultiManager *)nullptr);
+	CMultiManager *pMulti = GetClassPtr((CMultiManager *)nullptr);
 
 	edict_t *pEdict = pMulti->pev->pContainingEntity;
 	Q_memcpy(pMulti->pev, pev, sizeof(*pev));
@@ -362,7 +362,7 @@ void CMultiManager::ManagerUse(CBaseEntity *pActivator, CBaseEntity *pCaller, US
 	pev->nextthink = gpGlobals->time;
 }
 
-LINK_ENTITY_TO_CLASS(env_render, CRenderFxManager, CCSRenderFxManager)
+LINK_ENTITY_TO_CLASS(env_render, CRenderFxManager)
 
 void CRenderFxManager::Spawn()
 {
@@ -453,7 +453,7 @@ void CRenderFxManager::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	}
 }
 
-LINK_ENTITY_TO_CLASS(trigger, CBaseTrigger, CCSTrigger)
+LINK_ENTITY_TO_CLASS(trigger, CBaseTrigger)
 
 void CBaseTrigger::InitTrigger()
 {
@@ -500,7 +500,7 @@ void CBaseTrigger::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(trigger_monsterjump, CTriggerMonsterJump, CCSTriggerMonsterJump)
+LINK_ENTITY_TO_CLASS(trigger_monsterjump, CTriggerMonsterJump)
 
 void CTriggerMonsterJump::Spawn()
 {
@@ -557,7 +557,7 @@ void CTriggerMonsterJump::Touch(CBaseEntity *pOther)
 	pev->nextthink = gpGlobals->time;
 }
 
-LINK_ENTITY_TO_CLASS(trigger_cdaudio, CTriggerCDAudio, CCSTriggerCDAudio)
+LINK_ENTITY_TO_CLASS(trigger_cdaudio, CTriggerCDAudio)
 
 // Changes tracks or stops CD when player touches
 // HACK: overloaded HEALTH to avoid adding new field
@@ -657,7 +657,7 @@ void CTriggerCDAudio::PlayTrack(edict_t *pEdict)
 	UTIL_Remove(this);
 }
 
-LINK_ENTITY_TO_CLASS(target_cdaudio, CTargetCDAudio, CCSTargetCDAudio)
+LINK_ENTITY_TO_CLASS(target_cdaudio, CTargetCDAudio)
 
 void CTargetCDAudio::KeyValue(KeyValueData *pkvd)
 {
@@ -712,7 +712,7 @@ void CTargetCDAudio::Play(edict_t *pEdict)
 	UTIL_Remove(this);
 }
 
-LINK_ENTITY_TO_CLASS(trigger_hurt, CTriggerHurt, CCSTriggerHurt)
+LINK_ENTITY_TO_CLASS(trigger_hurt, CTriggerHurt)
 
 void CTriggerHurt::Spawn()
 {
@@ -792,7 +792,7 @@ void CTriggerHurt::RadiationThink()
 	// reset origin
 	if (!FNullEnt(pentPlayer))
 	{
-		pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)VARS(pentPlayer));
+		pPlayer = GetClassPtr((CBasePlayer *)VARS(pentPlayer));
 
 		pevTarget = VARS(pentPlayer);
 
@@ -959,7 +959,7 @@ void CBaseTrigger::HurtTouch(CBaseEntity *pOther)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(trigger_multiple, CTriggerMultiple, CCSTriggerMultiple)
+LINK_ENTITY_TO_CLASS(trigger_multiple, CTriggerMultiple)
 
 void CTriggerMultiple::Spawn()
 {
@@ -993,26 +993,20 @@ void CTriggerMultiple::Spawn()
 	}
 }
 
-LINK_ENTITY_TO_CLASS(trigger_once, CTriggerOnce, CCSTriggerOnce)
+LINK_ENTITY_TO_CLASS(trigger_once, CTriggerOnce)
 
 void CTriggerOnce::Spawn()
 {
-#ifdef REGAMEDLL_FIXES
 	m_flWait = -2;
-#else
-	m_flWait = -1;
-#endif
 
 	CTriggerMultiple::Spawn();
 }
 
-#ifdef REGAMEDLL_FIXES
 void CTriggerOnce::Restart()
 {
 	m_flWait = -2;
 	CTriggerMultiple::Spawn();
 }
-#endif
 
 void CBaseTrigger::MultiTouch(CBaseEntity *pOther)
 {
@@ -1131,7 +1125,7 @@ void CBaseTrigger::CounterUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE
 	ActivateMultiTrigger(m_hActivator);
 }
 
-LINK_ENTITY_TO_CLASS(trigger_counter, CTriggerCounter, CCSTriggerCounter)
+LINK_ENTITY_TO_CLASS(trigger_counter, CTriggerCounter)
 
 void CTriggerCounter::Spawn()
 {
@@ -1147,7 +1141,7 @@ void CTriggerCounter::Spawn()
 	SetUse(&CTriggerCounter::CounterUse);
 }
 
-LINK_ENTITY_TO_CLASS(trigger_transition, CTriggerVolume, CCSTriggerVolume)
+LINK_ENTITY_TO_CLASS(trigger_transition, CTriggerVolume)
 
 // Define space that travels across a level transition
 void CTriggerVolume::Spawn()
@@ -1162,7 +1156,7 @@ void CTriggerVolume::Spawn()
 	pev->modelindex = 0;
 }
 
-LINK_ENTITY_TO_CLASS(fireanddie, CFireAndDie, CCSFireAndDie)
+LINK_ENTITY_TO_CLASS(fireanddie, CFireAndDie)
 
 void CFireAndDie::Spawn()
 {
@@ -1190,7 +1184,7 @@ TYPEDESCRIPTION CChangeLevel::m_SaveData[] =
 	DEFINE_FIELD(CChangeLevel, m_changeTargetDelay, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(trigger_changelevel, CChangeLevel, CCSChangeLevel)
+LINK_ENTITY_TO_CLASS(trigger_changelevel, CChangeLevel)
 IMPLEMENT_SAVERESTORE(CChangeLevel, CBaseTrigger)
 
 // Cache user-entity-field values until spawn is called.
@@ -1330,7 +1324,7 @@ void CChangeLevel::ChangeLevelNow(CBaseEntity *pActivator)
 	// Create an entity to fire the changetarget
 	if (m_changeTarget)
 	{
-		CFireAndDie *pFireAndDie = GetClassPtr<CCSFireAndDie>((CFireAndDie *)nullptr);
+		CFireAndDie *pFireAndDie = GetClassPtr((CFireAndDie *)nullptr);
 
 		if (pFireAndDie)
 		{
@@ -1475,7 +1469,7 @@ int CChangeLevel::ChangeList(LEVELLIST *pLevelList, int maxList)
 
 	while (!FNullEnt(pentChangelevel))
 	{
-		CChangeLevel *pTrigger = GetClassPtr<CCSChangeLevel>((CChangeLevel *)VARS(pentChangelevel));
+		CChangeLevel *pTrigger = GetClassPtr((CChangeLevel *)VARS(pentChangelevel));
 		if (pTrigger)
 		{
 			// Find the corresponding landmark
@@ -1579,11 +1573,11 @@ NOXREF void NextLevel()
 	if (FNullEnt(pent))
 	{
 		gpGlobals->mapname = ALLOC_STRING("start");
-		pChange = GetClassPtr<CCSChangeLevel>((CChangeLevel *)nullptr);
+		pChange = GetClassPtr((CChangeLevel *)nullptr);
 		Q_strcpy(pChange->m_szMapName, "start");
 	}
 	else
-		pChange = GetClassPtr<CCSChangeLevel>((CChangeLevel *)VARS(pent));
+		pChange = GetClassPtr((CChangeLevel *)VARS(pent));
 
 	Q_strcpy(st_szNextMap, pChange->m_szMapName);
 	g_pGameRules->SetGameOver();
@@ -1595,7 +1589,7 @@ NOXREF void NextLevel()
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_ladder, CLadder, CCSLadder)
+LINK_ENTITY_TO_CLASS(func_ladder, CLadder)
 
 void CLadder::KeyValue(KeyValueData *pkvd)
 {
@@ -1627,7 +1621,7 @@ void CLadder::Spawn()
 	pev->movetype = MOVETYPE_PUSH;
 }
 
-LINK_ENTITY_TO_CLASS(trigger_push, CTriggerPush, CCSTriggerPush)
+LINK_ENTITY_TO_CLASS(trigger_push, CTriggerPush)
 
 void CTriggerPush::KeyValue(KeyValueData *pkvd)
 {
@@ -1777,7 +1771,7 @@ void CBaseTrigger::TeleportTouch(CBaseEntity *pOther)
 	pevToucher->velocity = pevToucher->basevelocity = g_vecZero;
 }
 
-LINK_ENTITY_TO_CLASS(trigger_teleport, CTriggerTeleport, CCSTriggerTeleport)
+LINK_ENTITY_TO_CLASS(trigger_teleport, CTriggerTeleport)
 
 void CTriggerTeleport::Spawn()
 {
@@ -1785,8 +1779,8 @@ void CTriggerTeleport::Spawn()
 	SetTouch(&CTriggerTeleport::TeleportTouch);
 }
 
-LINK_ENTITY_TO_CLASS(info_teleport_destination, CPointEntity, CCSPointEntity)
-LINK_ENTITY_TO_CLASS(func_buyzone, CBuyZone, CCSBuyZone)
+LINK_ENTITY_TO_CLASS(info_teleport_destination, CPointEntity)
+LINK_ENTITY_TO_CLASS(func_buyzone, CBuyZone)
 
 void CBuyZone::Spawn()
 {
@@ -1823,7 +1817,7 @@ void CBuyZone::BuyTouch(CBaseEntity *pOther)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_bomb_target, CBombTarget, CCSBombTarget)
+LINK_ENTITY_TO_CLASS(func_bomb_target, CBombTarget)
 
 void CBombTarget::Spawn()
 {
@@ -1881,7 +1875,7 @@ void CBombTarget::BombTargetUse(CBaseEntity *pActivator, CBaseEntity *pCaller, U
 	SUB_UseTargets(nullptr, USE_TOGGLE, 0);
 }
 
-LINK_ENTITY_TO_CLASS(func_hostage_rescue, CHostageRescue, CCSHostageRescue)
+LINK_ENTITY_TO_CLASS(func_hostage_rescue, CHostageRescue)
 
 void CHostageRescue::Spawn()
 {
@@ -1902,7 +1896,7 @@ void CHostageRescue::HostageRescueTouch(CBaseEntity *pOther)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_escapezone, CEscapeZone, CCSEscapeZone)
+LINK_ENTITY_TO_CLASS(func_escapezone, CEscapeZone)
 
 void CEscapeZone::Spawn()
 {
@@ -1948,7 +1942,7 @@ void CEscapeZone::EscapeTouch(CBaseEntity *pOther)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_vip_safetyzone, CVIP_SafetyZone, CCSVIP_SafetyZone)
+LINK_ENTITY_TO_CLASS(func_vip_safetyzone, CVIP_SafetyZone)
 
 void CVIP_SafetyZone::Spawn()
 {
@@ -1976,7 +1970,7 @@ void CVIP_SafetyZone::VIP_SafetyTouch(CBaseEntity *pOther)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(trigger_autosave, CTriggerSave, CCSTriggerSave)
+LINK_ENTITY_TO_CLASS(trigger_autosave, CTriggerSave)
 
 void CTriggerSave::Spawn()
 {
@@ -2004,7 +1998,7 @@ void CTriggerSave::SaveTouch(CBaseEntity *pOther)
 	SERVER_COMMAND("autosave\n");
 }
 
-LINK_ENTITY_TO_CLASS(trigger_endsection, CTriggerEndSection, CCSTriggerEndSection)
+LINK_ENTITY_TO_CLASS(trigger_endsection, CTriggerEndSection)
 
 void CTriggerEndSection::EndSectionUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
@@ -2068,7 +2062,7 @@ void CTriggerEndSection::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(trigger_gravity, CTriggerGravity, CCSTriggerGravity)
+LINK_ENTITY_TO_CLASS(trigger_gravity, CTriggerGravity)
 
 void CTriggerGravity::Spawn()
 {
@@ -2090,7 +2084,7 @@ TYPEDESCRIPTION CTriggerChangeTarget::m_SaveData[] =
 	DEFINE_FIELD(CTriggerChangeTarget, m_iszNewTarget, FIELD_STRING),
 };
 
-LINK_ENTITY_TO_CLASS(trigger_changetarget, CTriggerChangeTarget, CCSTriggerChangeTarget)
+LINK_ENTITY_TO_CLASS(trigger_changetarget, CTriggerChangeTarget)
 IMPLEMENT_SAVERESTORE(CTriggerChangeTarget, CBaseDelay)
 
 void CTriggerChangeTarget::KeyValue(KeyValueData *pkvd)
@@ -2144,7 +2138,7 @@ TYPEDESCRIPTION CTriggerCamera::m_SaveData[] =
 	DEFINE_FIELD(CTriggerCamera, m_state, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(trigger_camera, CTriggerCamera, CCSTriggerCamera)
+LINK_ENTITY_TO_CLASS(trigger_camera, CTriggerCamera)
 IMPLEMENT_SAVERESTORE(CTriggerCamera, CBaseDelay)
 
 void CTriggerCamera::Spawn()
@@ -2415,10 +2409,10 @@ void CTriggerCamera::Move()
 	pev->velocity = ((pev->movedir * pev->speed) * fraction) + (pev->velocity * (1 - fraction));
 }
 
-LINK_ENTITY_TO_CLASS(env_snow, CWeather, CCSWeather)
-LINK_ENTITY_TO_CLASS(func_snow, CWeather, CCSWeather)
-LINK_ENTITY_TO_CLASS(env_rain, CWeather, CCSWeather)
-LINK_ENTITY_TO_CLASS(func_rain, CWeather, CCSWeather)
+LINK_ENTITY_TO_CLASS(env_snow, CWeather)
+LINK_ENTITY_TO_CLASS(func_snow, CWeather)
+LINK_ENTITY_TO_CLASS(env_rain, CWeather)
+LINK_ENTITY_TO_CLASS(func_rain, CWeather)
 
 void CWeather::Spawn()
 {
@@ -2463,4 +2457,4 @@ void CClientFog::Spawn()
 	pev->rendermode = kRenderTransTexture;
 }
 
-LINK_ENTITY_TO_CLASS(env_fog, CClientFog, CCSClientFog)
+LINK_ENTITY_TO_CLASS(env_fog, CClientFog)

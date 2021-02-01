@@ -47,8 +47,16 @@ class CCSEntity;
 #undef REMOVE_ENTITY
 
 // Base Entity.  All entity types derive from this
-class CBaseEntity {
+class CBaseEntity
+{
 public:
+	CBaseEntity() noexcept {}
+	CBaseEntity(const CBaseEntity& s) = default;
+	CBaseEntity(CBaseEntity && s) = default;
+	CBaseEntity& operator=(const CBaseEntity & s) = default;
+	CBaseEntity& operator=(CBaseEntity && s) = default;
+	virtual ~CBaseEntity() {}
+
 	virtual void Spawn() {}
 	virtual void Precache() {}
 	virtual void Restart() {}
@@ -89,14 +97,6 @@ public:
 	// This is ONLY used by the node graph to test movement through a door
 	virtual void SetToggleState(int state) {}
 
-#ifndef REGAMEDLL_API
-	virtual void StartSneaking() {}
-	virtual void StopSneaking() {}
-#else
-	virtual void OnCreate();
-	virtual void OnDestroy();
-#endif
-
 	virtual BOOL OnControls(entvars_t *onpev) { return FALSE; }
 	virtual BOOL IsSneaking() { return FALSE; }
 	virtual BOOL IsAlive() { return (pev->deadflag == DEAD_NO && pev->health > 0.0f); }
@@ -128,14 +128,9 @@ public:
 	virtual BOOL FVisible(CBaseEntity *pEntity);
 	virtual BOOL FVisible(const Vector &vecOrigin);
 
+	virtual bool FPenatrable(Vector& vecSrc, entvars_t* pevAttacker, TraceResult& tr) { return true; }
+
 public:
-
-#ifdef REGAMEDLL_API
-	EXT_FUNC void FireBullets_OrigFunc(ULONG cShots, VectorRef vecSrc, VectorRef vecDirShooting, VectorRef vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
-	EXT_FUNC void FireBuckshots_OrigFunc(ULONG cShots, VectorRef vecSrc, VectorRef vecDirShooting, VectorRef vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
-	EXT_FUNC VectorRef FireBullets3_OrigFunc(VectorRef vecSrc, VectorRef vecDirShooting, float vecSpread, float flDistance, int iPenetration, int iBulletType, int iDamage, float flRangeModifier, entvars_t *pevAttacker, bool bPistol, int shared_rand);
-#endif
-
 	// allow engine to allocate instance data
 	void *operator new(size_t stAllocateBlock, entvars_t *pevnew) { return ALLOC_PRIVATE(ENT(pevnew), stAllocateBlock); }
 
@@ -153,9 +148,9 @@ public:
 	void EXPORT SUB_CallUseToggle() { Use(this, this, USE_TOGGLE, 0); }
 	int ShouldToggle(USE_TYPE useType, BOOL currentState);
 
-	EXT_FUNC void FireBullets(ULONG cShots, VectorRef vecSrc, VectorRef vecDirShooting, VectorRef vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
-	EXT_FUNC void FireBuckshots(ULONG cShots, VectorRef vecSrc, VectorRef vecDirShooting, VectorRef vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
-	EXT_FUNC VectorRef FireBullets3(VectorRef vecSrc, VectorRef vecDirShooting, float vecSpread, float flDistance, int iPenetration, int iBulletType, int iDamage, float flRangeModifier, entvars_t *pevAttacker, bool bPistol, int shared_rand = 0);
+	void FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
+	void FireBuckshots(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
+	Vector& FireBullets3(Vector& vecSrc, Vector& vecDirShooting, float vecSpread, float flDistance, int iPenetration, int iBulletType, int iDamage, float flRangeModifier, entvars_t *pevAttacker, bool bPistol, int shared_rand = 0);
 
 	void SUB_UseTargets(CBaseEntity *pActivator, USE_TYPE useType, float value);
 	bool Intersects(CBaseEntity *pOther);
@@ -566,7 +561,7 @@ public:
 
 // Converts a entvars_t * to a class pointer
 // It will allocate the class and entity if necessary
-template <class W, class T>
+template <class T>
 T *GetClassPtr(T *a)
 {
 	entvars_t *pev = (entvars_t *)a;
@@ -583,13 +578,6 @@ T *GetClassPtr(T *a)
 		// allocate private data
 		a = new(pev) T;
 		a->pev = pev;
-
-#ifdef REGAMEDLL_API
-		a->OnCreate();
-		a->m_pEntity = new W();
-		a->m_pEntity->m_pContainingEntity = a;
-#endif
-
 	}
 
 	return a;
@@ -605,23 +593,23 @@ void REMOVE_ENTITY(edict_t *pEntity);
 int CaseInsensitiveHash(const char *string, int iBounds);
 void EmptyEntityHashTable();
 
-EXT_FUNC edict_t *CREATE_NAMED_ENTITY(string_t iClass);
-EXT_FUNC void AddEntityHashValue(entvars_t *pev, const char *value, hash_types_e fieldType);
-EXT_FUNC void RemoveEntityHashValue(entvars_t *pev, const char *value, hash_types_e fieldType);
+edict_t *CREATE_NAMED_ENTITY(string_t iClass);
+void AddEntityHashValue(entvars_t *pev, const char *value, hash_types_e fieldType);
+void RemoveEntityHashValue(entvars_t *pev, const char *value, hash_types_e fieldType);
 
-EXT_FUNC int  DispatchSpawn(edict_t *pent);
-EXT_FUNC void DispatchKeyValue(edict_t *pentKeyvalue, KeyValueData *pkvd);
-EXT_FUNC void DispatchTouch(edict_t *pentTouched, edict_t *pentOther);
-EXT_FUNC void DispatchUse(edict_t *pentUsed, edict_t *pentOther);
-EXT_FUNC void DispatchThink(edict_t *pent);
-EXT_FUNC void DispatchBlocked(edict_t *pentBlocked, edict_t *pentOther);
-EXT_FUNC void DispatchSave(edict_t *pent, SAVERESTOREDATA *pSaveData);
-EXT_FUNC int  DispatchRestore(edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity);
-EXT_FUNC void DispatchObjectCollsionBox(edict_t *pent);
-EXT_FUNC void SaveWriteFields(SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount);
-EXT_FUNC void SaveReadFields(SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount);
-EXT_FUNC void OnFreeEntPrivateData(edict_t *pEnt);
-EXT_FUNC void OnGameShutdown();
+int  DispatchSpawn(edict_t *pent);
+void DispatchKeyValue(edict_t *pentKeyvalue, KeyValueData *pkvd);
+void DispatchTouch(edict_t *pentTouched, edict_t *pentOther);
+void DispatchUse(edict_t *pentUsed, edict_t *pentOther);
+void DispatchThink(edict_t *pent);
+void DispatchBlocked(edict_t *pentBlocked, edict_t *pentOther);
+void DispatchSave(edict_t *pent, SAVERESTOREDATA *pSaveData);
+int  DispatchRestore(edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity);
+void DispatchObjectCollsionBox(edict_t *pent);
+void SaveWriteFields(SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount);
+void SaveReadFields(SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount);
+void OnFreeEntPrivateData(edict_t *pEnt);
+void OnGameShutdown();
 
 void SetObjectCollisionBox(entvars_t *pev);
 CBaseEntity *FindGlobalEntity(string_t classname, string_t globalname);

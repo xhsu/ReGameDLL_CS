@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_m249, CM249, CCSM249)
+LINK_ENTITY_TO_CLASS(weapon_m249, CM249)
 
 void CM249::Spawn()
 {
@@ -12,10 +12,6 @@ void CM249::Spawn()
 	m_iDefaultAmmo = M249_DEFAULT_GIVE;
 	m_flAccuracy = 0.2f;
 	m_iShotsFired = 0;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = M249_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -124,11 +120,7 @@ void CM249::M249Fire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = M249_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 8192, 2, BULLET_PLAYER_556MM,
 		flBaseDamage, M249_RANGE_MODIFER, m_pPlayer->pev, false, m_pPlayer->random_seed);
 

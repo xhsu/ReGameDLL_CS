@@ -90,4 +90,4 @@ void CMapInfo::Spawn()
 	pev->effects |= EF_NODRAW;
 }
 
-LINK_ENTITY_TO_CLASS(info_map_parameters, CMapInfo, CCSMapInfo)
+LINK_ENTITY_TO_CLASS(info_map_parameters, CMapInfo)

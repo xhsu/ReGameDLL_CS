@@ -300,12 +300,12 @@ void BlinkAccount(CBasePlayer *pPlayer, int numBlinks)
 	MESSAGE_END();
 }
 
-BOOL EXT_FUNC ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char *szRejectReason)
+BOOL ClientConnect(edict_t *pEntity, const char *pszName, const char *pszAddress, char *szRejectReason)
 {
 	return g_pGameRules->ClientConnected(pEntity, pszName, pszAddress, szRejectReason);
 }
 
-void EXT_FUNC ClientDisconnect(edict_t *pEntity)
+void ClientDisconnect(edict_t *pEntity)
 {
 	CBasePlayer *pPlayer = CBasePlayer::Instance(pEntity);
 
@@ -349,7 +349,7 @@ void respawn(entvars_t *pev, BOOL fCopyCorpse)
 		if (CSGameRules()->m_iTotalRoundsPlayed > 0)
 			CSGameRules()->MarkSpawnSkipped();
 
-		CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pev);
+		CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pev);
 		if (CSGameRules()->IsCareer() && CSGameRules()->ShouldSkipSpawn() && pPlayer->IsAlive())
 			g_skipCareerInitialSpawn = true;
 
@@ -363,7 +363,7 @@ void respawn(entvars_t *pev, BOOL fCopyCorpse)
 }
 
 // Suicide...
-void EXT_FUNC ClientKill(edict_t *pEntity)
+void ClientKill(edict_t *pEntity)
 {
 	entvars_t *pev = &pEntity->v;
 	CBasePlayer *pPlayer = CBasePlayer::Instance(pev);
@@ -393,9 +393,7 @@ void EXT_FUNC ClientKill(edict_t *pEntity)
 	}
 }
 
-LINK_HOOK_VOID_CHAIN(ShowMenu, (CBasePlayer *pPlayer, int bitsValidSlots, int nDisplayTime, BOOL fNeedMore, char *pszText), pPlayer, bitsValidSlots, nDisplayTime, fNeedMore, pszText)
-
-void EXT_FUNC __API_HOOK(ShowMenu)(CBasePlayer *pPlayer, int bitsValidSlots, int nDisplayTime, BOOL fNeedMore, char *pszText)
+void ShowMenu(CBasePlayer *pPlayer, int bitsValidSlots, int nDisplayTime, BOOL fNeedMore, char *pszText)
 {
 	MESSAGE_BEGIN(MSG_ONE, gmsgShowMenu, nullptr, pPlayer->pev);
 		WRITE_SHORT(bitsValidSlots);
@@ -405,23 +403,18 @@ void EXT_FUNC __API_HOOK(ShowMenu)(CBasePlayer *pPlayer, int bitsValidSlots, int
 	MESSAGE_END();
 }
 
-LINK_HOOK_VOID_CHAIN(ShowVGUIMenu, (CBasePlayer *pPlayer, int MenuType, int BitMask, char *szOldMenu), pPlayer, MenuType, BitMask, szOldMenu);
-
-void EXT_FUNC __API_HOOK(ShowVGUIMenu)(CBasePlayer *pPlayer, int MenuType, int BitMask, char *szOldMenu)
+void ShowVGUIMenu(CBasePlayer *pPlayer, int MenuType, int BitMask, char *szOldMenu)
 {
-#ifdef REGAMEDLL_ADD
 	if (CSGameRules()->ShouldSkipShowMenu()) {
 		CSGameRules()->MarkShowMenuSkipped();
 		pPlayer->ResetMenu();
 		return;
 	}
 
-	if (pPlayer->CSPlayer()->m_bForceShowMenu) {
+	if (pPlayer->m_bForceShowMenu) {
 		ShowMenu(pPlayer, BitMask, -1, 0, szOldMenu);
 		return;
 	}
-
-#endif
 
 	if (pPlayer->m_bVGUIMenus || MenuType > VGUI_Menu_Buy_Item)
 	{
@@ -447,7 +440,7 @@ NOXREF int CountTeams()
 		if (FNullEnt(pEntity->edict()))
 			break;
 
-		CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pEntity->pev);
+		CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pEntity->pev);
 
 		if (pPlayer->m_iTeam == UNASSIGNED)
 			continue;
@@ -481,7 +474,7 @@ void ListPlayers(CBasePlayer *current)
 		if (pEntity->IsDormant())
 			continue;
 
-		CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pEntity->pev);
+		CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pEntity->pev);
 		int iUserID = GETPLAYERUSERID(ENT(pPlayer->pev));
 
 		Q_sprintf(cNumber, "%d", iUserID);
@@ -508,7 +501,7 @@ int CountTeamPlayers(int iTeam)
 		if (pEntity->IsDormant())
 			continue;
 
-		if (GetClassPtr<CCSPlayer>((CBasePlayer *)pEntity->pev)->m_iTeam == iTeam)
+		if (GetClassPtr((CBasePlayer *)pEntity->pev)->m_iTeam == iTeam)
 		{
 			nCount++;
 		}
@@ -543,7 +536,7 @@ void ProcessKickVote(CBasePlayer *pVotingPlayer, CBasePlayer *pKickPlayer)
 		if (FNullEnt(pTempEntity->edict()))
 			break;
 
-		pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pTempEntity->pev);
+		pTempPlayer = GetClassPtr((CBasePlayer *)pTempEntity->pev);
 
 		if (!pTempPlayer || pTempPlayer->m_iTeam == UNASSIGNED)
 			continue;
@@ -580,7 +573,7 @@ void ProcessKickVote(CBasePlayer *pVotingPlayer, CBasePlayer *pKickPlayer)
 			if (FNullEnt(pTempEntity->edict()))
 				break;
 
-			pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pTempEntity->pev);
+			pTempPlayer = GetClassPtr((CBasePlayer *)pTempEntity->pev);
 
 			if (!pTempPlayer || pTempPlayer->m_iTeam == UNASSIGNED)
 				continue;
@@ -616,10 +609,10 @@ void CheckStartMoney()
 
 }
 
-void EXT_FUNC ClientPutInServer(edict_t *pEntity)
+void ClientPutInServer(edict_t *pEntity)
 {
 	entvars_t *pev = &pEntity->v;
-	CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pev);
+	CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pev);
 
 	pPlayer->SetCustomDecalFrames(-1);
 	pPlayer->SetPrefsFromUserinfo(GET_INFO_BUFFER(pEntity));
@@ -735,9 +728,7 @@ void EXT_FUNC ClientPutInServer(edict_t *pEntity)
 			*pApersand = ' ';
 	}
 
-#ifdef REGAMEDLL_API
-	pPlayer->CSPlayer()->Reset();
-#endif
+	pPlayer->m_bForceShowMenu = false;
 
 	UTIL_ClientPrintAll(HUD_PRINTNOTIFY, "#Game_connected", (sName[0] != '\0') ? sName : "<unconnected>");
 }
@@ -754,7 +745,7 @@ void Host_Say(edict_t *pEntity, BOOL teamonly)
 	bool bSenderDead = false;
 
 	entvars_t *pev = &pEntity->v;
-	CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pev);
+	CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pev);
 
 	if (pPlayer->m_flLastTalk != 0.0f && gpGlobals->time - pPlayer->m_flLastTalk < 0.66f)
 		return;
@@ -1516,9 +1507,7 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 	}
 }
 
-LINK_HOOK_CHAIN(CBaseEntity *, BuyWeaponByWeaponID, (CBasePlayer *pPlayer, WeaponIdType weaponID), pPlayer, weaponID)
-
-CBaseEntity *EXT_FUNC __API_HOOK(BuyWeaponByWeaponID)(CBasePlayer *pPlayer, WeaponIdType weaponID)
+CBaseEntity *BuyWeaponByWeaponID(CBasePlayer *pPlayer, WeaponIdType weaponID)
 {
 	if (!pPlayer->CanPlayerBuy(true))
 		return nullptr;
@@ -1577,9 +1566,7 @@ CBaseEntity *EXT_FUNC __API_HOOK(BuyWeaponByWeaponID)(CBasePlayer *pPlayer, Weap
 	return pEntity;
 }
 
-LINK_HOOK_VOID_CHAIN(HandleMenu_ChooseAppearance, (CBasePlayer *pPlayer, int slot), pPlayer, slot)
-
-void EXT_FUNC __API_HOOK(HandleMenu_ChooseAppearance)(CBasePlayer *pPlayer, int slot)
+void HandleMenu_ChooseAppearance(CBasePlayer *pPlayer, int slot)
 {
 	int numSkins = AreRunningCZero() ? CZ_NUM_SKIN : CS_NUM_SKIN;
 
@@ -1734,11 +1721,9 @@ void EXT_FUNC __API_HOOK(HandleMenu_ChooseAppearance)(CBasePlayer *pPlayer, int 
 	}
 }
 
-LINK_HOOK_CHAIN(BOOL, HandleMenu_ChooseTeam, (CBasePlayer *pPlayer, int slot), pPlayer, slot)
-
 // returns true if the selection has been handled and the player's menu
 // can be closed...false if the menu should be displayed again
-BOOL EXT_FUNC __API_HOOK(HandleMenu_ChooseTeam)(CBasePlayer *pPlayer, int slot)
+BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 {
 	// If this player is a VIP, don't allow him to switch teams/appearances unless the following conditions are met :
 	// a) There is another TEAM_CT player who is in the queue to be a VIP
@@ -2239,9 +2224,7 @@ void Radio3(CBasePlayer *pPlayer, int slot)
 	}
 }
 
-LINK_HOOK_CHAIN(bool, BuyGunAmmo, (CBasePlayer *pPlayer, CBasePlayerItem *weapon, bool bBlinkMoney), pPlayer, weapon, bBlinkMoney)
-
-bool EXT_FUNC __API_HOOK(BuyGunAmmo)(CBasePlayer *pPlayer, CBasePlayerItem *weapon, bool bBlinkMoney)
+bool BuyGunAmmo(CBasePlayer *pPlayer, CBasePlayerItem *weapon, bool bBlinkMoney)
 {
 	if (!pPlayer->CanPlayerBuy(true))
 		return false;
@@ -2338,7 +2321,7 @@ CBaseEntity *EntityFromUserID(int userID)
 		if (FNullEnt(pTempEntity->edict()))
 			break;
 
-		CBasePlayer *pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pTempEntity->pev);
+		CBasePlayer *pTempPlayer = GetClassPtr((CBasePlayer *)pTempEntity->pev);
 
 		if (pTempPlayer->m_iTeam != UNASSIGNED && userID == GETPLAYERUSERID(pTempEntity->edict()))
 		{
@@ -2358,7 +2341,7 @@ NOXREF int CountPlayersInServer()
 		if (FNullEnt(pTempEntity->edict()))
 			break;
 
-		CBasePlayer *pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pTempEntity->pev);
+		CBasePlayer *pTempPlayer = GetClassPtr((CBasePlayer *)pTempEntity->pev);
 
 		if (pTempPlayer->m_iTeam != UNASSIGNED)
 		{
@@ -2561,11 +2544,11 @@ BOOL HandleRadioAliasCommands(CBasePlayer *pPlayer, const char *pszCommand)
 	return FALSE;
 }
 
-void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
+void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 {
 	const char *pstr = nullptr;
 	entvars_t *pev = &pEntity->v;
-	CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pev);
+	CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pev);
 
 	if (FStrEq(pcmd, "say"))
 	{
@@ -2638,7 +2621,7 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 				CBaseEntity *pKickEntity = EntityFromUserID(iVoteID);
 				if (pKickEntity)
 				{
-					CBasePlayer *pKickPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pKickEntity->pev);
+					CBasePlayer *pKickPlayer = GetClassPtr((CBasePlayer *)pKickEntity->pev);
 
 					if (pKickPlayer->m_iTeam != pPlayer->m_iTeam)
 					{
@@ -2827,8 +2810,8 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 #ifdef REGAMEDLL_ADD
 		auto canOpenOldMenu = [pPlayer]()-> bool
 		{
-			if (!pPlayer->m_bVGUIMenus || pPlayer->CSPlayer()->m_bForceShowMenu) {
-				pPlayer->CSPlayer()->m_bForceShowMenu = false;
+			if (!pPlayer->m_bVGUIMenus || pPlayer->m_bForceShowMenu) {
+				pPlayer->m_bForceShowMenu = false;
 				return true;
 			}
 
@@ -3259,12 +3242,12 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 #endif
 	else
 	{
-		if (g_pGameRules->ClientCommand_DeadOrAlive(GetClassPtr<CCSPlayer>((CBasePlayer *)pev), pcmd))
+		if (g_pGameRules->ClientCommand_DeadOrAlive(GetClassPtr((CBasePlayer *)pev), pcmd))
 			return;
 
 		if (TheBots)
 		{
-			if (TheBots->ClientCommand(GetClassPtr<CCSPlayer>((CBasePlayer *)pev), pcmd))
+			if (TheBots->ClientCommand(GetClassPtr((CBasePlayer *)pev), pcmd))
 				return;
 		}
 
@@ -3410,24 +3393,22 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 			}
 			else if (FStrEq(pcmd, "fov"))
 			{
-#if 0
 				if (CVAR_GET_FLOAT("sv_cheats") != 0.0f && CMD_ARGC() > 1)
-					GetClassPtr<CCSPlayer>((CBasePlayer *)pev)->m_iFOV = Q_atoi(CMD_ARGV(1));
+					GetClassPtr((CBasePlayer *)pev)->m_iFOV = Q_atoi(CMD_ARGV(1));
 				else
-					CLIENT_PRINTF(pEntity, print_console, UTIL_VarArgs("\"fov\" is \"%d\"\n", int(GetClassPtr<CCSPlayer>((CBasePlayer *)pev)->m_iFOV)));
-#endif
+					CLIENT_PRINTF(pEntity, print_console, UTIL_VarArgs("\"fov\" is \"%d\"\n", int(GetClassPtr((CBasePlayer *)pev)->m_iFOV)));
 			}
 			else if (FStrEq(pcmd, "use"))
 			{
-				GetClassPtr<CCSPlayer>((CBasePlayer *)pev)->SelectItem(parg1);
+				GetClassPtr((CBasePlayer *)pev)->SelectItem(parg1);
 			}
 			else if (((pstr = Q_strstr(pcmd, "weapon_"))) && (pstr == pcmd))
 			{
-				GetClassPtr<CCSPlayer>((CBasePlayer *)pev)->SelectItem(pcmd);
+				GetClassPtr((CBasePlayer *)pev)->SelectItem(pcmd);
 			}
 			else if (FStrEq(pcmd, "lastinv"))
 			{
-				GetClassPtr<CCSPlayer>((CBasePlayer *)pev)->SelectLastItem();
+				GetClassPtr((CBasePlayer *)pev)->SelectLastItem();
 			}
 			else if (FStrEq(pcmd, "buyammo1"))
 			{
@@ -3568,7 +3549,7 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 				if (HandleRadioAliasCommands(pPlayer, pcmd))
 					return;
 
-				if (!g_pGameRules->ClientCommand(GetClassPtr<CCSPlayer>((CBasePlayer *)pev), pcmd))
+				if (!g_pGameRules->ClientCommand(GetClassPtr((CBasePlayer *)pev), pcmd))
 				{
 					// tell the user they entered an unknown command
 					char command[128];
@@ -3593,7 +3574,7 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 }
 
 // Use CMD_ARGV, CMD_ARGV, and CMD_ARGC to get pointers the character string command.
-void EXT_FUNC ClientCommand_(edict_t *pEntity)
+void ClientCommand_(edict_t *pEntity)
 {
 	// Is the client spawned yet?
 	if (!pEntity->pvPrivateData)
@@ -3603,11 +3584,11 @@ void EXT_FUNC ClientCommand_(edict_t *pEntity)
 	Q_strncpy(command, CMD_ARGV_(0), sizeof command - 1);
 	command[sizeof command - 1] = '\0';
 
-	g_ReGameHookchains.m_InternalCommand.callChain(InternalCommand, pEntity, command, CMD_ARGV_(1));
+	InternalCommand(pEntity, command, CMD_ARGV_(1));
 }
 
 // called after the player changes userinfo - gives dll a chance to modify it before it gets sent into the rest of the engine.
-void EXT_FUNC ClientUserInfoChanged(edict_t *pEntity, char *infobuffer)
+void ClientUserInfoChanged(edict_t *pEntity, char *infobuffer)
 {
 	// Is the client spawned yet?
 	if (!pEntity->pvPrivateData)
@@ -3642,14 +3623,10 @@ void EXT_FUNC ClientUserInfoChanged(edict_t *pEntity, char *infobuffer)
 	}
 
 	// was already checking on pvPrivateData
-#ifndef REGAMEDLL_FIXES
-	g_pGameRules->ClientUserInfoChanged(GetClassPtr<CCSPlayer>((CBasePlayer *)&pEntity->v), infobuffer);
-#else
 	g_pGameRules->ClientUserInfoChanged(pPlayer, infobuffer);
-#endif
 }
 
-void EXT_FUNC ServerDeactivate()
+void ServerDeactivate()
 {
 	// It's possible that the engine will call this function more times than is necessary
 	// Therefore, only run it one time for each call to ServerActivate
@@ -3675,7 +3652,7 @@ void EXT_FUNC ServerDeactivate()
 	WeaponInfoReset();
 }
 
-void EXT_FUNC ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
+void ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 {
 	int i;
 	CBaseEntity *pClass;
@@ -3734,7 +3711,7 @@ void EXT_FUNC ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 #endif
 }
 
-void EXT_FUNC PlayerPreThink(edict_t *pEntity)
+void PlayerPreThink(edict_t *pEntity)
 {
 	entvars_t *pev = &pEntity->v;
 	CBasePlayer *pPlayer = (CBasePlayer *)GET_PRIVATE(pEntity);
@@ -3745,7 +3722,7 @@ void EXT_FUNC PlayerPreThink(edict_t *pEntity)
 	}
 }
 
-void EXT_FUNC PlayerPostThink(edict_t *pEntity)
+void PlayerPostThink(edict_t *pEntity)
 {
 	entvars_t *pev = &pEntity->v;
 	CBasePlayer *pPlayer = (CBasePlayer *)GET_PRIVATE(pEntity);
@@ -3756,12 +3733,12 @@ void EXT_FUNC PlayerPostThink(edict_t *pEntity)
 	}
 }
 
-void EXT_FUNC ParmsNewLevel()
+void ParmsNewLevel()
 {
 	;
 }
 
-void EXT_FUNC ParmsChangeLevel()
+void ParmsChangeLevel()
 {
 	// retrieve the pointer to the save data
 	SAVERESTOREDATA *pSaveData = (SAVERESTOREDATA *)gpGlobals->pSaveData;
@@ -3772,7 +3749,7 @@ void EXT_FUNC ParmsChangeLevel()
 	}
 }
 
-void EXT_FUNC StartFrame()
+void StartFrame()
 {
 	if (g_pGameRules)
 	{
@@ -4214,7 +4191,7 @@ void ClientPrecache()
 	m_usResetDecals = g_engfuncs.pfnPrecacheEvent(1, "events/decal_reset.sc");
 }
 
-const char *EXT_FUNC GetGameDescription()
+const char *GetGameDescription()
 {
 #ifdef REGAMEDLL_ADD
 	if (CSGameRules()) {
@@ -4228,12 +4205,12 @@ const char *EXT_FUNC GetGameDescription()
 	return "Counter-Strike";
 }
 
-void EXT_FUNC SysEngine_Error(const char *error_string)
+void SysEngine_Error(const char *error_string)
 {
 	;
 }
 
-void EXT_FUNC PlayerCustomization(edict_t *pEntity, customization_t *pCust)
+void PlayerCustomization(edict_t *pEntity, customization_t *pCust)
 {
 	CBasePlayer *pPlayer = (CBasePlayer *)GET_PRIVATE(pEntity);
 
@@ -4264,7 +4241,7 @@ void EXT_FUNC PlayerCustomization(edict_t *pEntity, customization_t *pCust)
 	}
 }
 
-void EXT_FUNC SpectatorConnect(edict_t *pEntity)
+void SpectatorConnect(edict_t *pEntity)
 {
 	CBaseSpectator *pPlayer = (CBaseSpectator *)GET_PRIVATE(pEntity);
 
@@ -4274,7 +4251,7 @@ void EXT_FUNC SpectatorConnect(edict_t *pEntity)
 	}
 }
 
-void EXT_FUNC SpectatorDisconnect(edict_t *pEntity)
+void SpectatorDisconnect(edict_t *pEntity)
 {
 	CBaseSpectator *pPlayer = (CBaseSpectator *)GET_PRIVATE(pEntity);
 
@@ -4284,7 +4261,7 @@ void EXT_FUNC SpectatorDisconnect(edict_t *pEntity)
 	}
 }
 
-void EXT_FUNC SpectatorThink(edict_t *pEntity)
+void SpectatorThink(edict_t *pEntity)
 {
 	CBaseSpectator *pPlayer = (CBaseSpectator *)GET_PRIVATE(pEntity);
 
@@ -4294,7 +4271,7 @@ void EXT_FUNC SpectatorThink(edict_t *pEntity)
 	}
 }
 
-void EXT_FUNC SetupVisibility(edict_t *pViewEntity, edict_t *pClient, unsigned char **pvs, unsigned char **pas)
+void SetupVisibility(edict_t *pViewEntity, edict_t *pClient, unsigned char **pvs, unsigned char **pas)
 {
 	edict_t *pView = pClient;
 
@@ -4387,7 +4364,7 @@ bool CheckEntityRecentlyInPVS(int clientnum, int entitynum, float currenttime)
 	return false;
 }
 
-BOOL EXT_FUNC AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *host, int hostflags, BOOL player, unsigned char *pSet)
+BOOL AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *host, int hostflags, BOOL player, unsigned char *pSet)
 {
 	if (ent != host)
 	{
@@ -4553,7 +4530,7 @@ BOOL EXT_FUNC AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, e
 }
 
 // Creates baselines used for network encoding, especially for player data since players are not spawned until connect time.
-void EXT_FUNC CreateBaseline(int player, int eindex, struct entity_state_s *baseline, edict_t *entity, int playermodelindex, Vector player_mins, Vector player_maxs)
+void CreateBaseline(int player, int eindex, struct entity_state_s *baseline, edict_t *entity, int playermodelindex, Vector player_mins, Vector player_maxs)
 {
 	baseline->origin = entity->v.origin;
 	baseline->angles = entity->v.angles;
@@ -4765,14 +4742,14 @@ void Custom_Encode(struct delta_s *pFields, const unsigned char *from, const uns
 }
 
 // Allows game .dll to override network encoding of certain types of entities and tweak values, etc.
-void EXT_FUNC RegisterEncoders()
+void RegisterEncoders()
 {
 	DELTA_ADDENCODER("Entity_Encode", Entity_Encode);
 	DELTA_ADDENCODER("Custom_Encode", Custom_Encode);
 	DELTA_ADDENCODER("Player_Encode", Player_Encode);
 }
 
-int EXT_FUNC GetWeaponData(edict_t *pEdict, struct weapon_data_s *info)
+int GetWeaponData(edict_t *pEdict, struct weapon_data_s *info)
 {
 #ifdef CLIENT_WEAPONS
 	entvars_t *pev = &pEdict->v;
@@ -4797,11 +4774,7 @@ int EXT_FUNC GetWeaponData(edict_t *pEdict, struct weapon_data_s *info)
 				ItemInfo II;
 				Q_memset(&II, 0, sizeof(II));
 
-#ifdef REGAMEDLL_API
-				pPlayerItem->CSPlayerItem()->GetItemInfo(&II);
-#else
 				weapon->GetItemInfo(&II);
-#endif
 
 				if (II.iId >= 0 && II.iId < MAX_WEAPONS)
 				{
@@ -4835,7 +4808,7 @@ int EXT_FUNC GetWeaponData(edict_t *pEdict, struct weapon_data_s *info)
 }
 
 // Data sent to current client only engine sets cd to 0 before calling.
-void EXT_FUNC UpdateClientData(const edict_t *ent, int sendweapons, struct clientdata_s *cd)
+void UpdateClientData(const edict_t *ent, int sendweapons, struct clientdata_s *cd)
 {
 	if (!ent || !ent->pvPrivateData)
 		return;
@@ -4908,11 +4881,7 @@ void EXT_FUNC UpdateClientData(const edict_t *ent, int sendweapons, struct clien
 
 		int iUser3 = 0;
 
-		if (
-#ifdef REGAMEDLL_API
-			pPlayer->CSPlayer()->m_bCanShootOverride ||
-#endif
-			(pPlayer->m_bCanShoot && !pPlayer->m_bIsDefusing))
+		if (pPlayer->m_bCanShoot && !pPlayer->m_bIsDefusing)
 			iUser3 |= PLAYER_CAN_SHOOT;
 
 		if (g_pGameRules->IsFreezePeriod())
@@ -4939,13 +4908,7 @@ void EXT_FUNC UpdateClientData(const edict_t *ent, int sendweapons, struct clien
 			Q_memset(&II, 0, sizeof(II));
 
 			CBasePlayerWeapon *weapon = (CBasePlayerWeapon *)pPlayer->m_pActiveItem->GetWeaponPtr();
-			if (weapon && weapon->UseDecrement() &&
-#ifdef REGAMEDLL_API
-				weapon->CSPlayerItem()->GetItemInfo(&II)
-#else
-				weapon->GetItemInfo(&II)
-#endif
-				)
+			if (weapon && weapon->UseDecrement() && weapon->GetItemInfo(&II))
 			{
 				cd->m_iId = II.iId;
 
@@ -4964,7 +4927,7 @@ void EXT_FUNC UpdateClientData(const edict_t *ent, int sendweapons, struct clien
 	}
 }
 
-void EXT_FUNC CmdStart(const edict_t *pEdict, const struct usercmd_s *cmd, unsigned int random_seed)
+void CmdStart(const edict_t *pEdict, const struct usercmd_s *cmd, unsigned int random_seed)
 {
 	entvars_t *pev = const_cast<entvars_t *>(&pEdict->v);
 	CBasePlayer *pPlayer = CBasePlayer::Instance(pev);
@@ -4978,7 +4941,7 @@ void EXT_FUNC CmdStart(const edict_t *pEdict, const struct usercmd_s *cmd, unsig
 	pPlayer->random_seed = random_seed;
 }
 
-void EXT_FUNC CmdEnd(const edict_t *pEdict)
+void CmdEnd(const edict_t *pEdict)
 {
 	entvars_t *pev = const_cast<entvars_t *>(&pEdict->v);
 	CBasePlayer *pPlayer = CBasePlayer::Instance(pev);
@@ -4993,7 +4956,7 @@ void EXT_FUNC CmdEnd(const edict_t *pEdict)
 		UTIL_SetSize(pev, VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
 }
 
-int EXT_FUNC ConnectionlessPacket(const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size)
+int ConnectionlessPacket(const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size)
 {
 	// Parse stuff from args
 	int max_buffer_size = *response_buffer_size;
@@ -5007,7 +4970,7 @@ int EXT_FUNC ConnectionlessPacket(const struct netadr_s *net_from, const char *a
 	return 0;
 }
 
-BOOL EXT_FUNC GetHullBounds(int hullnumber, float *mins, float *maxs)
+BOOL GetHullBounds(int hullnumber, float *mins, float *maxs)
 {
 #ifdef REGAMEDLL_ADD
 	if (hullbounds_sets.value == 0.0f)
@@ -5057,7 +5020,7 @@ BOOL EXT_FUNC GetHullBounds(int hullnumber, float *mins, float *maxs)
 
 // Create pseudo-baselines for items that aren't placed in the map at spawn time, but which are likely
 // to be created during play ( e.g., grenades, ammo packs, projectiles, corpses, etc. )
-void EXT_FUNC CreateInstancedBaselines()
+void CreateInstancedBaselines()
 {
 #ifndef REGAMEDLL_FIXES
 	int iret = 0;
@@ -5073,7 +5036,7 @@ void EXT_FUNC CreateInstancedBaselines()
 #endif
 }
 
-int EXT_FUNC InconsistentFile(const edict_t *pEdict, const char *filename, char *disconnect_message)
+int InconsistentFile(const edict_t *pEdict, const char *filename, char *disconnect_message)
 {
 	// Server doesn't care?
 	if (!CVAR_GET_FLOAT("mp_consistency"))
@@ -5091,7 +5054,7 @@ int EXT_FUNC InconsistentFile(const edict_t *pEdict, const char *filename, char 
 // Most games right now should return 0, until client-side weapon prediction code is written
 // and tested for them ( note you can predict weapons, but not do lag compensation, too,
 // if you want.
-int EXT_FUNC AllowLagCompensation()
+int AllowLagCompensation()
 {
 	return 1;
 }

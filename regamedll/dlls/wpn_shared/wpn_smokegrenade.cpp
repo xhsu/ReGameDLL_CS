@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_smokegrenade, CSmokeGrenade, CCSSmokeGrenade)
+LINK_ENTITY_TO_CLASS(weapon_smokegrenade, CSmokeGrenade)
 
 void CSmokeGrenade::Spawn()
 {
@@ -274,9 +274,7 @@ void CSmokeGrenade::WeaponIdle()
 	}
 }
 
-LINK_HOOK_CLASS_CHAIN3(BOOL, CBasePlayerWeapon, CSmokeGrenade, CanDeploy)
-
-BOOL EXT_FUNC CSmokeGrenade::__API_HOOK(CanDeploy)()
+BOOL CSmokeGrenade::CanDeploy()
 {
 	return m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] != 0;
 }

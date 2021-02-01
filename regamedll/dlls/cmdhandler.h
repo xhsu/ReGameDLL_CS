@@ -30,12 +30,12 @@
 
 void InstallCommands();
 
-EXT_FUNC void SV_Continue_f();
-EXT_FUNC void SV_CareerMatchLimit_f();
-EXT_FUNC void SV_CareerAddTask_f();
-EXT_FUNC void SV_Career_EndRound_f();
-EXT_FUNC void SV_Career_Restart_f();
-EXT_FUNC void SV_Tutor_Toggle_f();
+void SV_Continue_f();
+void SV_CareerMatchLimit_f();
+void SV_CareerAddTask_f();
+void SV_Career_EndRound_f();
+void SV_Career_Restart_f();
+void SV_Tutor_Toggle_f();
 
-EXT_FUNC void SV_LoopPerformance_f();
-EXT_FUNC void SV_PrintEntities_f();
+void SV_LoopPerformance_f();
+void SV_PrintEntities_f();

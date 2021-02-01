@@ -4,7 +4,7 @@ CSoundEnt *pSoundEnt = nullptr;
 
 // The entity that spawns when the world spawns,
 // and handles the world's active and free sound lists.
-LINK_ENTITY_TO_CLASS(soundent, CSoundEnt, CCSSoundEnt)
+LINK_ENTITY_TO_CLASS(soundent, CSoundEnt)
 
 // CSound - Clear - zeros all fields for a sound
 void CSound::Clear()

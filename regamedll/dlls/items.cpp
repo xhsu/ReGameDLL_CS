@@ -42,7 +42,7 @@ ItemInfo itemInfo[] = {
 	DEFINE_ITEMINFO(ITEM_BATTERY,       "item_battery"),
 };
 
-LINK_ENTITY_TO_CLASS(world_items, CWorldItem, CCSWorldItem)
+LINK_ENTITY_TO_CLASS(world_items, CWorldItem)
 
 void CWorldItem::KeyValue(KeyValueData *pkvd)
 {
@@ -184,7 +184,7 @@ BOOL CItemSuit::MyTouch(CBasePlayer *pPlayer)
 	return TRUE;
 }
 
-LINK_ENTITY_TO_CLASS(item_suit, CItemSuit, CCSItemSuit)
+LINK_ENTITY_TO_CLASS(item_suit, CItemSuit)
 
 void CItemBattery::Spawn()
 {
@@ -246,7 +246,7 @@ BOOL CItemBattery::MyTouch(CBasePlayer *pPlayer)
 	return FALSE;
 }
 
-LINK_ENTITY_TO_CLASS(item_battery, CItemBattery, CCSItemBattery)
+LINK_ENTITY_TO_CLASS(item_battery, CItemBattery)
 
 void CItemAntidote::Spawn()
 {
@@ -273,7 +273,7 @@ BOOL CItemAntidote::MyTouch(CBasePlayer *pPlayer)
 	return TRUE;
 }
 
-LINK_ENTITY_TO_CLASS(item_antidote, CItemAntidote, CCSItemAntidote)
+LINK_ENTITY_TO_CLASS(item_antidote, CItemAntidote)
 
 void CItemSecurity::Spawn()
 {
@@ -312,7 +312,7 @@ BOOL CItemSecurity::MyTouch(CBasePlayer *pPlayer)
 	return TRUE;
 }
 
-LINK_ENTITY_TO_CLASS(item_security, CItemSecurity, CCSItemSecurity)
+LINK_ENTITY_TO_CLASS(item_security, CItemSecurity)
 
 void CItemLongJump::Spawn()
 {
@@ -354,7 +354,7 @@ BOOL CItemLongJump::MyTouch(CBasePlayer *pPlayer)
 	return FALSE;
 }
 
-LINK_ENTITY_TO_CLASS(item_longjump, CItemLongJump, CCSItemLongJump)
+LINK_ENTITY_TO_CLASS(item_longjump, CItemLongJump)
 
 void CItemKevlar::Spawn()
 {
@@ -408,7 +408,7 @@ BOOL CItemKevlar::MyTouch(CBasePlayer *pPlayer)
 	return TRUE;
 }
 
-LINK_ENTITY_TO_CLASS(item_kevlar, CItemKevlar, CCSItemKevlar)
+LINK_ENTITY_TO_CLASS(item_kevlar, CItemKevlar)
 
 void CItemAssaultSuit::Spawn()
 {
@@ -457,7 +457,7 @@ BOOL CItemAssaultSuit::MyTouch(CBasePlayer *pPlayer)
 	return TRUE;
 }
 
-LINK_ENTITY_TO_CLASS(item_assaultsuit, CItemAssaultSuit, CCSItemAssaultSuit)
+LINK_ENTITY_TO_CLASS(item_assaultsuit, CItemAssaultSuit)
 
 void CItemThighPack::Spawn()
 {
@@ -505,7 +505,7 @@ BOOL CItemThighPack::MyTouch(CBasePlayer *pPlayer)
 	return TRUE;
 }
 
-LINK_ENTITY_TO_CLASS(item_thighpack, CItemThighPack, CCSItemThighPack)
+LINK_ENTITY_TO_CLASS(item_thighpack, CItemThighPack)
 
 ItemID GetItemIdByName(const char *pszName)
 {

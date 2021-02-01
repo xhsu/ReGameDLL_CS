@@ -191,8 +191,8 @@ struct
 	{ HOSTAGE_CHATTER_DEATH_CRY, "hostage/hdie/hdeath3.wav" },
 };
 
-LINK_ENTITY_TO_CLASS(hostage_entity, CHostage, CCSHostage)
-LINK_ENTITY_TO_CLASS(monster_scientist, CHostage, CCSHostage)
+LINK_ENTITY_TO_CLASS(hostage_entity, CHostage)
+LINK_ENTITY_TO_CLASS(monster_scientist, CHostage)
 
 void CHostage::Spawn()
 {
@@ -399,7 +399,7 @@ void CHostage::IdleThink()
 		}
 		else
 		{
-			pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)m_hTargetEnt->pev);
+			pPlayer = GetClassPtr((CBasePlayer *)m_hTargetEnt->pev);
 		}
 
 		if (!pPlayer || pPlayer->m_iTeam == CT)
@@ -640,7 +640,7 @@ BOOL CHostage::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float
 	CBasePlayer *pAttacker = nullptr;
 	if (pevAttacker)
 	{
-		CBaseEntity *pAttackingEnt = GetClassPtr<CCSEntity>((CBaseEntity *)pevAttacker);
+		CBaseEntity *pAttackingEnt = GetClassPtr((CBaseEntity *)pevAttacker);
 		if (pAttackingEnt->Classify() == CLASS_VEHICLE)
 		{
 			CBaseEntity *pDriver = ((CFuncVehicle *)pAttackingEnt)->m_pDriver;
@@ -652,7 +652,7 @@ BOOL CHostage::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float
 
 		if (pAttackingEnt->IsPlayer())
 		{
-			pAttacker = GetClassPtr<CCSPlayer>((CBasePlayer *)pevAttacker);
+			pAttacker = GetClassPtr((CBasePlayer *)pevAttacker);
 		}
 	}
 
@@ -1032,7 +1032,7 @@ void CHostage::DoFollow()
 		return;
 	}
 
-	pFollowing = GetClassPtr<CCSEntity>((CBaseEntity *)m_hTargetEnt->pev);
+	pFollowing = GetClassPtr((CBaseEntity *)m_hTargetEnt->pev);
 	m_LocalNav->SetTargetEnt(pFollowing);
 
 	vecDest = pFollowing->pev->origin;
@@ -1124,7 +1124,7 @@ void CHostage::MoveToward(const Vector &vecLoc)
 	CBaseEntity *pFollowing;
 	real_t flDist;
 
-	pFollowing = GetClassPtr<CCSEntity>((CBaseEntity *)m_hTargetEnt->pev);
+	pFollowing = GetClassPtr((CBaseEntity *)m_hTargetEnt->pev);
 	vecMove = vecLoc - pev->origin;
 
 	Vector vecAng(0, UTIL_VecToAngles(vecMove).y, 0);
@@ -1187,7 +1187,7 @@ void CHostage::NavReady()
 		return;
 	}
 
-	pFollowing = GetClassPtr<CCSEntity>((CBaseEntity *)m_hTargetEnt->pev);
+	pFollowing = GetClassPtr((CBaseEntity *)m_hTargetEnt->pev);
 	vecDest = pFollowing->pev->origin;
 
 	if (!(pFollowing->pev->flags & FL_ONGROUND))
@@ -1245,7 +1245,7 @@ void CHostage::SendHostagePositionMsg()
 		if (pEntity->pev->flags == FL_DORMANT)
 			continue;
 
-		CBasePlayer *pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pEntity->pev);
+		CBasePlayer *pTempPlayer = GetClassPtr((CBasePlayer *)pEntity->pev);
 
 		if (pTempPlayer->pev->deadflag == DEAD_NO && pTempPlayer->m_iTeam == CT)
 		{
@@ -1274,7 +1274,7 @@ void CHostage::SendHostageEventMsg()
 		if (pEntity->pev->flags == FL_DORMANT)
 			continue;
 
-		CBasePlayer *pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pEntity->pev);
+		CBasePlayer *pTempPlayer = GetClassPtr((CBasePlayer *)pEntity->pev);
 
 		if (pTempPlayer->pev->deadflag == DEAD_NO && pTempPlayer->m_iTeam == CT)
 		{

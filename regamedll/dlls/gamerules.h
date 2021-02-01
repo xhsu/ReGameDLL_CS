@@ -575,7 +575,7 @@ public:
 	bool NeededPlayersCheck();
 
 	// Setup counts for m_iNumTerrorist, m_iNumCT, m_iNumSpawnableTerrorist, m_iNumSpawnableCT, etc.
-	VFUNC void InitializePlayerCounts(int &NumAliveTerrorist, int &NumAliveCT, int &NumDeadTerrorist, int &NumDeadCT);
+	virtual void InitializePlayerCounts(int &NumAliveTerrorist, int &NumAliveCT, int &NumDeadTerrorist, int &NumDeadCT);
 
 	// Check to see if the round is over for the various game types. Terminates the round
 	// and returns true if the round should end.
@@ -590,7 +590,6 @@ public:
 	// for internal functions API
 	void OnRoundFreezeEnd();
 	bool OnRoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay);
-	bool OnRoundEnd_Intercept(int winStatus, ScenarioEventEndRound event, float tmDelay);
 
 	bool RoundOver(float tmDelay);
 	bool NeededPlayersCheck(float tmDelay);
@@ -656,21 +655,21 @@ public:
 	void StackVIPQueue();
 	void ResetCurrentVIP();
 
-	VFUNC void BalanceTeams();
-	VFUNC void SwapAllPlayers();
-	VFUNC void UpdateTeamScores();
-	VFUNC void EndRoundMessage(const char *sentence, ScenarioEventEndRound event);
-	VFUNC void SetAccountRules(RewardRules rules, int amount) { m_rgRewardAccountRules[rules] = static_cast<RewardAccount>(amount); }
-	VFUNC RewardAccount GetAccountRules(RewardRules rules) const { return m_rgRewardAccountRules[rules]; }
+	virtual void BalanceTeams();
+	virtual void SwapAllPlayers();
+	virtual void UpdateTeamScores();
+	virtual void EndRoundMessage(const char *sentence, ScenarioEventEndRound event);
+	virtual void SetAccountRules(RewardRules rules, int amount) { m_rgRewardAccountRules[rules] = static_cast<RewardAccount>(amount); }
+	virtual RewardAccount GetAccountRules(RewardRules rules) const { return m_rgRewardAccountRules[rules]; }
 
 	void DisplayMaps(CBasePlayer *pPlayer, int iVote);
 	void ResetAllMapVotes();
 	void ProcessMapVote(CBasePlayer *pPlayer, int iVote);
 
 	// BOMB MAP FUNCTIONS
-	VFUNC BOOL IsThereABomber();
-	VFUNC BOOL IsThereABomb();
-	VFUNC TeamName SelectDefaultTeam();
+	virtual BOOL IsThereABomber();
+	virtual BOOL IsThereABomb();
+	virtual TeamName SelectDefaultTeam();
 
 	bool IsMatchStarted() { return (m_flRestartRoundTime != 0.0f || m_fCareerRoundMenuTime != 0.0f || m_fCareerMatchMenuTime != 0.0f); }
 	void SendMOTDToClient(edict_t *client);
@@ -685,8 +684,8 @@ public:
 	bool IsFreeForAll() const;
 	bool CanPlayerBuy(CBasePlayer *pPlayer) const;
 
-	VFUNC bool HasRoundTimeExpired();
-	VFUNC bool IsBombPlanted();
+	virtual bool HasRoundTimeExpired();
+	virtual bool IsBombPlanted();
 
 private:
 	void MarkLivingPlayersOnTeamAsNotReceivingMoneyNextRound(int iTeam);

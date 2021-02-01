@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_fiveseven, CFiveSeven, CCSFiveSeven)
+LINK_ENTITY_TO_CLASS(weapon_fiveseven, CFiveSeven)
 
 void CFiveSeven::Spawn()
 {
@@ -12,10 +12,6 @@ void CFiveSeven::Spawn()
 	m_iDefaultAmmo = FIVESEVEN_DEFAULT_GIVE;
 	m_iWeaponState &= ~WPNSTATE_SHIELD_DRAWN;
 	m_flAccuracy = 0.92f;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = FIVESEVEN_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -152,11 +148,7 @@ void CFiveSeven::FiveSevenFire(float flSpread, float flCycleTime, BOOL fUseSemi)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = FIVESEVEN_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 4096, 1, BULLET_PLAYER_57MM, flBaseDamage, FIVESEVEN_RANGE_MODIFER, m_pPlayer->pev, false, m_pPlayer->random_seed);
 
 #ifdef CLIENT_WEAPONS

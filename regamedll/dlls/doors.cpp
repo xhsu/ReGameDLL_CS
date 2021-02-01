@@ -177,10 +177,10 @@ void CBaseDoor::KeyValue(KeyValueData *pkvd)
 // 2)	base
 // 3)	stone chain
 // 4)	screechy metal
-LINK_ENTITY_TO_CLASS(func_door, CBaseDoor, CCSDoor)
+LINK_ENTITY_TO_CLASS(func_door, CBaseDoor)
 
 // func_water - same as a door.
-LINK_ENTITY_TO_CLASS(func_water, CBaseDoor, CCSDoor)
+LINK_ENTITY_TO_CLASS(func_water, CBaseDoor)
 
 void CBaseDoor::Spawn()
 {
@@ -796,7 +796,7 @@ void CBaseDoor::Blocked(CBaseEntity *pOther)
 
 				if (FClassnameIs(pentTarget, "func_door") || FClassnameIs(pentTarget, "func_door_rotating"))
 				{
-					pDoor = GetClassPtr<CCSDoor>((CBaseDoor *)VARS(pentTarget));
+					pDoor = GetClassPtr((CBaseDoor *)VARS(pentTarget));
 
 					if (pDoor->m_flWait >= 0)
 					{
@@ -869,7 +869,7 @@ void CBaseDoor::Blocked(CBaseEntity *pOther)
 // 2)	base
 // 3)	stone chain
 // 4)	screechy metal
-LINK_ENTITY_TO_CLASS(func_door_rotating, CRotDoor, CCSRotDoor)
+LINK_ENTITY_TO_CLASS(func_door_rotating, CRotDoor)
 
 void CRotDoor::Restart()
 {
@@ -988,7 +988,7 @@ TYPEDESCRIPTION CMomentaryDoor::m_SaveData[] =
 	DEFINE_FIELD(CMomentaryDoor, m_bMoveSnd, FIELD_CHARACTER),
 };
 
-LINK_ENTITY_TO_CLASS(momentary_door, CMomentaryDoor, CCSMomentaryDoor)
+LINK_ENTITY_TO_CLASS(momentary_door, CMomentaryDoor)
 IMPLEMENT_SAVERESTORE(CMomentaryDoor, CBaseToggle)
 
 void CMomentaryDoor::Spawn()

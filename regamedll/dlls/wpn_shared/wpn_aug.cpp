@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_aug, CAUG, CCSAUG)
+LINK_ENTITY_TO_CLASS(weapon_aug, CAUG)
 
 void CAUG::Spawn()
 {
@@ -12,10 +12,6 @@ void CAUG::Spawn()
 	m_iDefaultAmmo = AUG_DEFAULT_GIVE;
 	m_flAccuracy = 0.2f;
 	m_iShotsFired = 0;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = AUG_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -137,11 +133,7 @@ void CAUG::AUGFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = AUG_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 8192, 2, BULLET_PLAYER_556MM,
 		flBaseDamage, AUG_RANGE_MODIFER, m_pPlayer->pev, false, m_pPlayer->random_seed);
 

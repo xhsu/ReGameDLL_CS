@@ -50,7 +50,7 @@ void CRuleBrushEntity::Spawn()
 	CRuleEntity::Spawn();
 }
 
-LINK_ENTITY_TO_CLASS(game_score, CGameScore, CCSGameScore)
+LINK_ENTITY_TO_CLASS(game_score, CGameScore)
 
 void CGameScore::Spawn()
 {
@@ -89,7 +89,7 @@ void CGameScore::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 	}
 }
 
-LINK_ENTITY_TO_CLASS(game_end, CGameEnd, CCSGameEnd)
+LINK_ENTITY_TO_CLASS(game_end, CGameEnd)
 
 void CGameEnd::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
@@ -106,7 +106,7 @@ TYPEDESCRIPTION CGameText::m_SaveData[] =
 	DEFINE_ARRAY(CGameText, m_textParms, FIELD_CHARACTER, sizeof(hudtextparms_t)),
 };
 
-LINK_ENTITY_TO_CLASS(game_text, CGameText, CCSGameText)
+LINK_ENTITY_TO_CLASS(game_text, CGameText)
 IMPLEMENT_SAVERESTORE(CGameText, CRulePointEntity)
 
 void CGameText::KeyValue(KeyValueData *pkvd)
@@ -225,7 +225,7 @@ void CGameText::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useT
 
 }
 
-LINK_ENTITY_TO_CLASS(game_team_master, CGameTeamMaster, CCSGameTeamMaster)
+LINK_ENTITY_TO_CLASS(game_team_master, CGameTeamMaster)
 
 void CGameTeamMaster::KeyValue(KeyValueData *pkvd)
 {
@@ -335,7 +335,7 @@ bool CGameTeamMaster::TeamMatch(CBaseEntity *pActivator)
 #endif
 }
 
-LINK_ENTITY_TO_CLASS(game_team_set, CGameTeamSet, CCSGameTeamSet)
+LINK_ENTITY_TO_CLASS(game_team_set, CGameTeamSet)
 
 void CGameTeamSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
@@ -367,7 +367,7 @@ TYPEDESCRIPTION CGamePlayerZone::m_SaveData[] =
 	DEFINE_FIELD(CGamePlayerZone, m_iszOutCount, FIELD_STRING),
 };
 
-LINK_ENTITY_TO_CLASS(game_zone_player, CGamePlayerZone, CCSGamePlayerZone)
+LINK_ENTITY_TO_CLASS(game_zone_player, CGamePlayerZone)
 IMPLEMENT_SAVERESTORE(CGamePlayerZone, CRuleBrushEntity)
 
 void CGamePlayerZone::KeyValue(KeyValueData *pkvd)
@@ -453,7 +453,7 @@ void CGamePlayerZone::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 	}
 }
 
-LINK_ENTITY_TO_CLASS(game_player_hurt, CGamePlayerHurt, CCSGamePlayerHurt)
+LINK_ENTITY_TO_CLASS(game_player_hurt, CGamePlayerHurt)
 
 void CGamePlayerHurt::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
@@ -476,7 +476,7 @@ void CGamePlayerHurt::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 	}
 }
 
-LINK_ENTITY_TO_CLASS(game_counter, CGameCounter, CCSGameCounter)
+LINK_ENTITY_TO_CLASS(game_counter, CGameCounter)
 
 void CGameCounter::Spawn()
 {
@@ -522,7 +522,7 @@ void CGameCounter::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE u
 	}
 }
 
-LINK_ENTITY_TO_CLASS(game_counter_set, CGameCounterSet, CCSGameCounterSet)
+LINK_ENTITY_TO_CLASS(game_counter_set, CGameCounterSet)
 
 void CGameCounterSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
@@ -537,7 +537,7 @@ void CGameCounterSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 	}
 }
 
-LINK_ENTITY_TO_CLASS(game_player_equip, CGamePlayerEquip, CCSGamePlayerEquip)
+LINK_ENTITY_TO_CLASS(game_player_equip, CGamePlayerEquip)
 
 void CGamePlayerEquip::KeyValue(KeyValueData *pkvd)
 {
@@ -603,7 +603,7 @@ void CGamePlayerEquip::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	EquipPlayer(pActivator);
 }
 
-LINK_ENTITY_TO_CLASS(game_player_team, CGamePlayerTeam, CCSGamePlayerTeam)
+LINK_ENTITY_TO_CLASS(game_player_team, CGamePlayerTeam)
 
 const char *CGamePlayerTeam::TargetTeamName(const char *pszTargetName)
 {

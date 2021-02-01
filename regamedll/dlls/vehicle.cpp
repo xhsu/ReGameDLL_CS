@@ -17,7 +17,7 @@ TYPEDESCRIPTION CFuncVehicle::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CFuncVehicle, CBaseEntity)
-LINK_ENTITY_TO_CLASS(func_vehicle, CFuncVehicle, CCSFuncVehicle)
+LINK_ENTITY_TO_CLASS(func_vehicle, CFuncVehicle)
 
 void CFuncVehicle::KeyValue(KeyValueData *pkvd)
 {
@@ -933,7 +933,7 @@ void CFuncVehicle::Precache()
 	m_usAdjustPitch = PRECACHE_EVENT(1, "events/vehicle.sc");
 }
 
-LINK_ENTITY_TO_CLASS(func_vehiclecontrols, CFuncVehicleControls, CCSFuncVehicleControls)
+LINK_ENTITY_TO_CLASS(func_vehiclecontrols, CFuncVehicleControls)
 
 void CFuncVehicleControls::Find()
 {

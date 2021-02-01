@@ -334,7 +334,7 @@ void CCSBotManager::ClientDisconnect(CBasePlayer *pPlayer)
 
 	FREE_PRIVATE(pPlayer->edict());
 
-	pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pevTemp);
+	pPlayer = GetClassPtr((CBasePlayer *)pevTemp);
 	AddEntityHashValue(pPlayer->pev, STRING(pPlayer->pev->classname), CLASSNAME);
 	pPlayer->pev->flags = FL_DORMANT;
 }
@@ -672,7 +672,7 @@ void CCSBotManager::ServerCommand(const char *pcmd)
 				if (pEntity->IsDormant())
 					continue;
 
-				CBasePlayer *playerOrBot = GetClassPtr<CCSPlayer>((CBasePlayer *)pEntity->pev);
+				CBasePlayer *playerOrBot = GetClassPtr((CBasePlayer *)pEntity->pev);
 
 				if (playerOrBot->IsBot())
 				{
@@ -1282,7 +1282,7 @@ bool CCSBotManager::AddBot(const BotProfile *profile, BotProfileTeamType team)
 		return false;
 	}
 
-	CCSBot *pBot = CreateBot<CCSBot, CAPI_CSBot>(profile);
+	CCSBot *pBot = CreateBot<CCSBot>(profile);
 	if (!pBot)
 	{
 		return false;

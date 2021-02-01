@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_mp5navy, CMP5N, CCSMP5N)
+LINK_ENTITY_TO_CLASS(weapon_mp5navy, CMP5N)
 
 void CMP5N::Spawn()
 {
@@ -12,10 +12,6 @@ void CMP5N::Spawn()
 	m_iDefaultAmmo = MP5NAVY_DEFAULT_GIVE;
 	m_flAccuracy = 0.0f;
 	m_bDelayFire = false;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = MP5N_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -115,11 +111,7 @@ void CMP5N::MP5NFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = MP5N_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 8192, 1, BULLET_PLAYER_9MM,
 		flBaseDamage, MP5N_RANGE_MODIFER, m_pPlayer->pev, false, m_pPlayer->random_seed);
 

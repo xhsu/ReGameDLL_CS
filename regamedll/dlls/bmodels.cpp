@@ -6,7 +6,7 @@ Vector VecBModelOrigin(entvars_t *pevBModel)
 	return pevBModel->absmin + (pevBModel->size * 0.5f);
 }
 
-LINK_ENTITY_TO_CLASS(func_wall, CFuncWall, CCSFuncWall)
+LINK_ENTITY_TO_CLASS(func_wall, CFuncWall)
 
 void CFuncWall::Spawn()
 {
@@ -30,7 +30,7 @@ void CFuncWall::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useT
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_wall_toggle, CFuncWallToggle, CCSFuncWallToggle)
+LINK_ENTITY_TO_CLASS(func_wall_toggle, CFuncWallToggle)
 
 void CFuncWallToggle::Spawn()
 {
@@ -102,7 +102,7 @@ void CFuncWallToggle::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_conveyor, CFuncConveyor, CCSFuncConveyor)
+LINK_ENTITY_TO_CLASS(func_conveyor, CFuncConveyor)
 
 void CFuncConveyor::Spawn()
 {
@@ -149,7 +149,7 @@ void CFuncConveyor::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	UpdateSpeed(pev->speed);
 }
 
-LINK_ENTITY_TO_CLASS(func_illusionary, CFuncIllusionary, CCSFuncIllusionary)
+LINK_ENTITY_TO_CLASS(func_illusionary, CFuncIllusionary)
 
 void CFuncIllusionary::KeyValue(KeyValueData *pkvd)
 {
@@ -181,7 +181,7 @@ void CFuncIllusionary::Spawn()
 	// MAKE_STATIC(ENT(pev));
 }
 
-LINK_ENTITY_TO_CLASS(func_monsterclip, CFuncMonsterClip, CCSFuncMonsterClip)
+LINK_ENTITY_TO_CLASS(func_monsterclip, CFuncMonsterClip)
 
 void CFuncMonsterClip::Spawn()
 {
@@ -204,7 +204,7 @@ TYPEDESCRIPTION CFuncRotating::m_SaveData[] =
 	DEFINE_FIELD(CFuncRotating, m_sounds, FIELD_INTEGER)
 };
 
-LINK_ENTITY_TO_CLASS(func_rotating, CFuncRotating, CCSFuncRotating)
+LINK_ENTITY_TO_CLASS(func_rotating, CFuncRotating)
 IMPLEMENT_SAVERESTORE(CFuncRotating, CBaseEntity)
 
 void CFuncRotating::KeyValue(KeyValueData *pkvd)
@@ -691,7 +691,7 @@ TYPEDESCRIPTION CPendulum::m_SaveData[] =
 	DEFINE_FIELD(CPendulum, m_start, FIELD_VECTOR),
 };
 
-LINK_ENTITY_TO_CLASS(func_pendulum, CPendulum, CCSPendulum)
+LINK_ENTITY_TO_CLASS(func_pendulum, CPendulum)
 IMPLEMENT_SAVERESTORE(CPendulum, CBaseEntity)
 
 void CPendulum::KeyValue(KeyValueData *pkvd)

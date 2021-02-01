@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_hegrenade, CHEGrenade, CCSHEGrenade)
+LINK_ENTITY_TO_CLASS(weapon_hegrenade, CHEGrenade)
 
 void CHEGrenade::Spawn()
 {
@@ -260,9 +260,7 @@ void CHEGrenade::WeaponIdle()
 	}
 }
 
-LINK_HOOK_CLASS_CHAIN3(BOOL, CBasePlayerWeapon, CHEGrenade, CanDeploy)
-
-BOOL EXT_FUNC CHEGrenade::__API_HOOK(CanDeploy)()
+BOOL CHEGrenade::CanDeploy()
 {
 	return m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] != 0;
 }

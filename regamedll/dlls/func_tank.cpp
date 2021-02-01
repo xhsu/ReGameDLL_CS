@@ -650,7 +650,7 @@ void CFuncTank::StopRotSound()
 	pev->spawnflags &= ~SF_TANK_SOUNDON;
 }
 
-LINK_ENTITY_TO_CLASS(func_tank, CFuncTankGun, CCSFuncTankGun)
+LINK_ENTITY_TO_CLASS(func_tank, CFuncTankGun)
 
 void CFuncTankGun::Fire(const Vector &barrelEnd, const Vector &forward, entvars_t *pevAttacker)
 {
@@ -698,7 +698,7 @@ TYPEDESCRIPTION CFuncTankLaser::m_SaveData[] =
 	DEFINE_FIELD(CFuncTankLaser, m_laserTime, FIELD_TIME),
 };
 
-LINK_ENTITY_TO_CLASS(func_tanklaser, CFuncTankLaser, CCSFuncTankLaser)
+LINK_ENTITY_TO_CLASS(func_tanklaser, CFuncTankLaser)
 IMPLEMENT_SAVERESTORE(CFuncTankLaser, CFuncTank)
 
 void CFuncTankLaser::Activate()
@@ -793,7 +793,7 @@ void CFuncTankLaser::Fire(const Vector &barrelEnd, const Vector &forward, entvar
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_tankrocket, CFuncTankRocket, CCSFuncTankRocket)
+LINK_ENTITY_TO_CLASS(func_tankrocket, CFuncTankRocket)
 
 void CFuncTankRocket::Precache()
 {
@@ -822,7 +822,7 @@ void CFuncTankRocket::Fire(const Vector &barrelEnd, const Vector &forward, entva
 	}
 }
 
-LINK_ENTITY_TO_CLASS(func_tankmortar, CFuncTankMortar, CCSFuncTankMortar)
+LINK_ENTITY_TO_CLASS(func_tankmortar, CFuncTankMortar)
 
 void CFuncTankMortar::KeyValue(KeyValueData *pkvd)
 {
@@ -867,7 +867,7 @@ TYPEDESCRIPTION CFuncTankControls::m_SaveData[] =
 	DEFINE_FIELD(CFuncTankControls, m_pTank, FIELD_CLASSPTR),
 };
 
-LINK_ENTITY_TO_CLASS(func_tankcontrols, CFuncTankControls, CCSFuncTankControls)
+LINK_ENTITY_TO_CLASS(func_tankcontrols, CFuncTankControls)
 IMPLEMENT_SAVERESTORE(CFuncTankControls, CBaseEntity)
 
 void CFuncTankControls::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)

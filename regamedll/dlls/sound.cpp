@@ -64,7 +64,7 @@ TYPEDESCRIPTION CAmbientGeneric::m_SaveData[] =
 	DEFINE_ARRAY(CAmbientGeneric, m_dpv, FIELD_CHARACTER, sizeof(dynpitchvol_t)),
 };
 
-LINK_ENTITY_TO_CLASS(ambient_generic, CAmbientGeneric, CCSAmbientGeneric)
+LINK_ENTITY_TO_CLASS(ambient_generic, CAmbientGeneric)
 IMPLEMENT_SAVERESTORE(CAmbientGeneric, CBaseEntity)
 
 // -1 : "Default"
@@ -847,7 +847,7 @@ TYPEDESCRIPTION CEnvSound::m_SaveData[] =
 	DEFINE_FIELD(CEnvSound, m_flRoomtype, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(env_sound, CEnvSound, CCSEnvSound)
+LINK_ENTITY_TO_CLASS(env_sound, CEnvSound)
 IMPLEMENT_SAVERESTORE(CEnvSound, CBaseEntity)
 
 void CEnvSound::KeyValue(KeyValueData *pkvd)
@@ -868,7 +868,7 @@ void CEnvSound::KeyValue(KeyValueData *pkvd)
 // and can see the given player entity (pevTarget)
 BOOL FEnvSoundInRange(entvars_t *pev, entvars_t *pevTarget, float *pflRange)
 {
-	CEnvSound *pSound = GetClassPtr<CCSEnvSound>((CEnvSound *)pev);
+	CEnvSound *pSound = GetClassPtr((CEnvSound *)pev);
 	Vector vecSpot1 = pev->origin + pev->view_ofs;
 	Vector vecSpot2 = pevTarget->origin + pevTarget->view_ofs;
 	Vector vecRange;
@@ -919,7 +919,7 @@ void CEnvSound::Think()
 	}
 
 	{
-		CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)VARS(pentPlayer));
+		CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)VARS(pentPlayer));
 		float flRange;
 
 		// check to see if this is the sound entity that is
@@ -1820,7 +1820,7 @@ TYPEDESCRIPTION CSpeaker::m_SaveData[] =
 	DEFINE_FIELD(CSpeaker, m_preset, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(speaker, CSpeaker, CCSSpeaker)
+LINK_ENTITY_TO_CLASS(speaker, CSpeaker)
 IMPLEMENT_SAVERESTORE(CSpeaker, CBaseEntity)
 
 // ambient_generic - general-purpose user-defined static sound

@@ -185,11 +185,10 @@ public:
 	void DefuseBombStart(CBasePlayer *pPlayer);
 	void DefuseBombEnd(CBasePlayer *pPlayer, bool bDefused);
 
-	static CGrenade *ShootTimed(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time);
-	static CGrenade *ShootTimed2(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, int iTeam, unsigned short usEvent);
-	static CGrenade *ShootContact(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity);
-	static CGrenade *ShootSmokeGrenade(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, unsigned short usEvent);
-	static CGrenade *ShootSatchelCharge(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity);
+	static CGrenade *ShootTimed(entvars_t *pevOwner, Vector& vecStart, Vector& vecVelocity, float time);
+	static CGrenade *ShootTimed2(entvars_t *pevOwner, Vector& vecStart, Vector& vecVelocity, float time, int iTeam, unsigned short usEvent);
+	static CGrenade *ShootSmokeGrenade(entvars_t *pevOwner, Vector& vecStart, Vector& vecVelocity, float time, unsigned short usEvent);
+	static CGrenade *ShootSatchelCharge(entvars_t *pevOwner, Vector& vecStart, Vector& vecVelocity);
 	static void UseSatchelCharges(entvars_t *pevOwner, SATCHELCODE code);
 public:
 	void Explode(Vector vecSrc, Vector vecAim);
@@ -197,21 +196,6 @@ public:
 	void Explode2(TraceResult *pTrace, int bitsDamageType);
 	void Explode3(TraceResult *pTrace, int bitsDamageType);
 	void SG_Explode(TraceResult *pTrace, int bitsDamageType);
-
-#ifdef REGAMEDLL_API
-	static CGrenade *ShootTimed_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time);
-	static CGrenade *ShootTimed2_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, int iTeam, unsigned short usEvent);
-	static CGrenade *ShootSmokeGrenade_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, unsigned short usEvent);
-	static CGrenade *ShootSatchelCharge_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity);
-
-	void DefuseBombStart_OrigFunc(CBasePlayer *pPlayer);
-	void DefuseBombEnd_OrigFunc(CBasePlayer *pPlayer, bool bDefused);
-
-	void Explode_OrigFunc(TraceResult *pTrace, int bitsDamageType);
-	void Explode3_OrigFunc(TraceResult *pTrace, int bitsDamageType);
-	void Explode2_OrigFunc(TraceResult *pTrace, int bitsDamageType);
-	void SG_Detonate_OrigFunc();
-#endif
 
 	void EXPORT Smoke();
 	void EXPORT Smoke2();
@@ -264,7 +248,6 @@ public:
 };
 
 // Items that the player has in their inventory that they can use
-class CCSPlayerItem;
 class CBasePlayerItem: public CBaseAnimating
 {
 public:
@@ -305,10 +288,6 @@ public:
 	void CheckRespawn();
 
 public:
-#ifdef REGAMEDLL_API
-	CCSPlayerItem *CSPlayerItem() const;
-#endif
-
 	const char *pszAmmo1() const;
 	int iMaxAmmo1() const;
 	const char *pszAmmo2() const;
@@ -327,13 +306,6 @@ public:
 	CBasePlayerItem *m_pNext;
 	int m_iId;							// WEAPON_???
 };
-
-#ifdef REGAMEDLL_API
-inline CCSPlayerItem *CBasePlayerItem::CSPlayerItem() const
-{
-	return reinterpret_cast<CCSPlayerItem *>(this->m_pEntity);
-}
-#endif
 
 // inventory items that
 class CCSPlayerWeapon;
@@ -393,7 +365,6 @@ public:
 	void SetPlayerShieldAnim();
 	void ResetPlayerShieldAnim();
 	bool ShieldSecondaryFire(int iUpAnim, int iDownAnim);
-	void HandleInfiniteAmmo();
 	void InstantReload(bool bCanRefillBPAmmo = false);
 	bool DefaultShotgunReload(int iAnim, int iStartAnim, float fDelay, float fStartDelay, const char *pszReloadSound1 = nullptr, const char *pszReloadSound2 = nullptr);
 

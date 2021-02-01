@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(gib, CGib, CCSGib)
+LINK_ENTITY_TO_CLASS(gib, CGib)
 
 void CGib::LimitVelocity()
 {
@@ -25,7 +25,7 @@ NOXREF void CGib::SpawnStickyGibs(entvars_t *pevVictim, Vector vecOrigin, int cG
 
 	for (int i = 0; i < cGibs; i++)
 	{
-		CGib *pGib = GetClassPtr<CCSGib>((CGib *)nullptr);
+		CGib *pGib = GetClassPtr((CGib *)nullptr);
 
 		pGib->Spawn("models/stickygib.mdl");
 		pGib->pev->body = RANDOM_LONG(0, 2);
@@ -76,11 +76,9 @@ NOXREF void CGib::SpawnStickyGibs(entvars_t *pevVictim, Vector vecOrigin, int cG
 	}
 }
 
-LINK_HOOK_GLOB_CLASS_CHAIN(CGib *, CGib, SpawnHeadGib, (entvars_t *pevVictim), pevVictim)
-
-CGib *CGib::__API_HOOK(SpawnHeadGib)(entvars_t *pevVictim)
+CGib *CGib::SpawnHeadGib(entvars_t *pevVictim)
 {
-	CGib *pGib = GetClassPtr<CCSGib>((CGib *)nullptr);
+	CGib *pGib = GetClassPtr((CGib *)nullptr);
 
 	if (g_Language == LANGUAGE_GERMAN)
 	{
@@ -140,13 +138,11 @@ CGib *CGib::__API_HOOK(SpawnHeadGib)(entvars_t *pevVictim)
 	return pGib;
 }
 
-LINK_HOOK_GLOB_CLASS_VOID_CHAIN(CGib, SpawnRandomGibs, (entvars_t *pevVictim, int cGibs, int human), pevVictim, cGibs, human)
-
-void CGib::__API_HOOK(SpawnRandomGibs)(entvars_t *pevVictim, int cGibs, int human)
+void CGib::SpawnRandomGibs(entvars_t *pevVictim, int cGibs, int human)
 {
 	for (int cSplat = 0; cSplat < cGibs; cSplat++)
 	{
-		CGib *pGib = GetClassPtr<CCSGib>((CGib *)nullptr);
+		CGib *pGib = GetClassPtr((CGib *)nullptr);
 
 		if (g_Language == LANGUAGE_GERMAN)
 		{
@@ -211,9 +207,7 @@ void CGib::__API_HOOK(SpawnRandomGibs)(entvars_t *pevVictim, int cGibs, int huma
 	}
 }
 
-LINK_HOOK_CLASS_VOID_CHAIN(CGib, BounceGibTouch, (CBaseEntity *pOther), pOther)
-
-void CGib::__API_HOOK(BounceGibTouch)(CBaseEntity *pOther)
+void CGib::BounceGibTouch(CBaseEntity *pOther)
 {
 	if (pev->flags & FL_ONGROUND)
 	{
@@ -271,9 +265,7 @@ void CGib::StickyGibTouch(CBaseEntity *pOther)
 	pev->movetype = MOVETYPE_NONE;
 }
 
-LINK_HOOK_CLASS_VOID_CHAIN(CGib, Spawn, (const char *szGibModel), szGibModel)
-
-void CGib::__API_HOOK(Spawn)(const char *szGibModel)
+void CGib::Spawn(const char *szGibModel)
 {
 	pev->movetype = MOVETYPE_BOUNCE;
 
@@ -306,9 +298,7 @@ void CGib::__API_HOOK(Spawn)(const char *szGibModel)
 	m_cBloodDecals = 5;
 }
 
-LINK_HOOK_CLASS_VOID_CHAIN2(CGib, WaitTillLand)
-
-void CGib::__API_HOOK(WaitTillLand)()
+void CGib::WaitTillLand()
 {
 	if (!IsInWorld())
 	{
@@ -320,13 +310,6 @@ void CGib::__API_HOOK(WaitTillLand)()
 	{
 		SetThink(&CBaseEntity::SUB_StartFadeOut);
 		pev->nextthink = gpGlobals->time + m_lifeTime;
-
-#ifndef REGAMEDLL_FIXES
-		if (m_bloodColor != DONT_BLEED)
-		{
-			CSoundEnt::InsertSound(bits_SOUND_MEAT, pev->origin, 384, 25);
-		}
-#endif
 	}
 	else
 	{

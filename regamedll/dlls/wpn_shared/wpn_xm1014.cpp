@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_xm1014, CXM1014, CCSXM1014)
+LINK_ENTITY_TO_CLASS(weapon_xm1014, CXM1014)
 
 void CXM1014::Spawn()
 {
@@ -10,10 +10,6 @@ void CXM1014::Spawn()
 	SET_MODEL(edict(), "models/w_xm1014.mdl");
 
 	m_iDefaultAmmo = XM1014_DEFAULT_GIVE;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = XM1014_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -124,12 +120,7 @@ void CXM1014::PrimaryAttack()
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = XM1014_DAMAGE;
-#endif
-
 	Vector vecCone(XM1014_CONE_VECTOR);
 
 #ifdef REGAMEDLL_FIXES

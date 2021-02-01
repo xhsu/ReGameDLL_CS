@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_famas, CFamas, CCSFamas)
+LINK_ENTITY_TO_CLASS(weapon_famas, CFamas)
 
 void CFamas::Spawn()
 {
@@ -12,11 +12,7 @@ void CFamas::Spawn()
 	m_iDefaultAmmo = FAMAS_DEFAULT_GIVE;
 	m_iFamasShotsFired = 0;
 	m_flFamasShoot = 0;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = FAMAS_DAMAGE;
 	m_flBaseDamageBurst = FAMAS_DAMAGE_BURST;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -164,11 +160,7 @@ void CFamas::FamasFire(float flSpread, float flCycleTime, BOOL fUseAutoAim, BOOL
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = bFireBurst ? m_flBaseDamageBurst : CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = bFireBurst ? FAMAS_DAMAGE_BURST : FAMAS_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 8192, 2, BULLET_PLAYER_556MM,
 		flBaseDamage, FAMAS_RANGE_MODIFER, m_pPlayer->pev, false, m_pPlayer->random_seed);
 

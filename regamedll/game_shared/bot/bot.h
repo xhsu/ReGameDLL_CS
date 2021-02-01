@@ -38,7 +38,7 @@ constexpr float g_flBotFullThinkInterval = 1.0 / 10.0;
 
 class BotProfile;
 
-template <class T, class TWrap>
+template <class T>
 T *CreateBot(const BotProfile *profile)
 {
 	edict_t *pentBot;
@@ -70,7 +70,7 @@ T *CreateBot(const BotProfile *profile)
 #endif
 
 		FREE_PRIVATE(pentBot);
-		pBot = GetClassPtr<TWrap>((T *)VARS(pentBot));
+		pBot = GetClassPtr((T *)VARS(pentBot));
 		pBot->Initialize(profile);
 
 		return pBot;

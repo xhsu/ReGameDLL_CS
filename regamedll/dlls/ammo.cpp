@@ -96,7 +96,7 @@ void C9MMAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_9mm, C9MMAmmo, CCS9MMAmmo)
+LINK_ENTITY_TO_CLASS(ammo_9mm, C9MMAmmo)
 
 void CBuckShotAmmo::Spawn()
 {
@@ -111,7 +111,7 @@ void CBuckShotAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_buckshot, CBuckShotAmmo, CCSBuckShotAmmo)
+LINK_ENTITY_TO_CLASS(ammo_buckshot, CBuckShotAmmo)
 
 void C556NatoAmmo::Spawn()
 {
@@ -126,7 +126,7 @@ void C556NatoAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_556nato, C556NatoAmmo, CCS556NatoAmmo)
+LINK_ENTITY_TO_CLASS(ammo_556nato, C556NatoAmmo)
 
 void C556NatoBoxAmmo::Spawn()
 {
@@ -141,7 +141,7 @@ void C556NatoBoxAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_556natobox, C556NatoBoxAmmo, CCS556NatoBoxAmmo)
+LINK_ENTITY_TO_CLASS(ammo_556natobox, C556NatoBoxAmmo)
 
 void C762NatoAmmo::Spawn()
 {
@@ -156,7 +156,7 @@ void C762NatoAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_762nato, C762NatoAmmo, CCS762NatoAmmo)
+LINK_ENTITY_TO_CLASS(ammo_762nato, C762NatoAmmo)
 
 void C45ACPAmmo::Spawn()
 {
@@ -171,7 +171,7 @@ void C45ACPAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_45acp, C45ACPAmmo, CCS45ACPAmmo)
+LINK_ENTITY_TO_CLASS(ammo_45acp, C45ACPAmmo)
 
 void C50AEAmmo::Spawn()
 {
@@ -186,7 +186,7 @@ void C50AEAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_50ae, C50AEAmmo, CCS50AEAmmo)
+LINK_ENTITY_TO_CLASS(ammo_50ae, C50AEAmmo)
 
 void C338MagnumAmmo::Spawn()
 {
@@ -201,7 +201,7 @@ void C338MagnumAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_338magnum, C338MagnumAmmo, CCS338MagnumAmmo)
+LINK_ENTITY_TO_CLASS(ammo_338magnum, C338MagnumAmmo)
 
 void C57MMAmmo::Spawn()
 {
@@ -216,7 +216,7 @@ void C57MMAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_57mm, C57MMAmmo, CCS57MMAmmo)
+LINK_ENTITY_TO_CLASS(ammo_57mm, C57MMAmmo)
 
 void C357SIGAmmo::Spawn()
 {
@@ -231,4 +231,4 @@ void C357SIGAmmo::Precache()
 	PRECACHE_SOUND("items/9mmclip1.wav");
 }
 
-LINK_ENTITY_TO_CLASS(ammo_357sig, C357SIGAmmo, CCS357SIGAmmo)
+LINK_ENTITY_TO_CLASS(ammo_357sig, C357SIGAmmo)

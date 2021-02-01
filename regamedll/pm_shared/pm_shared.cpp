@@ -129,7 +129,7 @@ void PM_InitTextureTypes()
 	bTextureTypeInit = true;
 }
 
-char EXT_FUNC PM_FindTextureType(char *name)
+char PM_FindTextureType(char *name)
 {
 	int left, right, pivot;
 	int val;
@@ -365,9 +365,7 @@ void PM_CatagorizeTextureType()
 	pmove->chtexturetype = PM_FindTextureType(pmove->sztexturename);
 }
 
-LINK_HOOK_VOID_CHAIN2(PM_UpdateStepSound);
-
-void EXT_FUNC __API_HOOK(PM_UpdateStepSound)()
+void PM_UpdateStepSound()
 {
 	float fvol;
 	vec3_t knee;
@@ -1274,14 +1272,7 @@ void PM_WaterMove()
 	PM_FlyMove();
 }
 
-LINK_HOOK_VOID_CHAIN(PM_AirMove, (int playerIndex = 0), pmove->player_index + 1);
-
-void EXT_FUNC __API_HOOK(PM_AirMove)(int playerIndex)
-{
-	PM_AirMove_internal();
-}
-
-void PM_AirMove_internal()
+void PM_AirMove()
 {
 	int i;
 	vec3_t wishvel;
@@ -3187,13 +3178,11 @@ void PM_CreateStuckTable()
 	}
 }
 
-LINK_HOOK_VOID_CHAIN(PM_Move, (struct playermove_s *ppmove, int server), ppmove, server);
-
 // This module implements the shared player physics code between any particular game and
 // the engine. The same PM_Move routine is built into the game .dll and the client .dll and is
 // invoked by each side as appropriate. There should be no distinction, internally, between server
 // and client. This will ensure that prediction behaves appropriately.
-void EXT_FUNC __API_HOOK(PM_Move)(struct playermove_s *ppmove, int server)
+void PM_Move(struct playermove_s *ppmove, int server)
 {
 	assert(pm_shared_initialized);
 
@@ -3232,9 +3221,7 @@ NOXREF int PM_GetPhysEntInfo(int ent)
 	return -1;
 }
 
-LINK_HOOK_VOID_CHAIN(PM_Init, (struct playermove_s *ppmove), ppmove);
-
-void EXT_FUNC __API_HOOK(PM_Init)(struct playermove_s *ppmove)
+void PM_Init(struct playermove_s *ppmove)
 {
 	assert(!pm_shared_initialized);
 

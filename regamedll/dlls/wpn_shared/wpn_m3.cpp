@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_m3, CM3, CCSM3)
+LINK_ENTITY_TO_CLASS(weapon_m3, CM3)
 
 void CM3::Spawn()
 {
@@ -10,10 +10,6 @@ void CM3::Spawn()
 	SET_MODEL(edict(), "models/w_m3.mdl");
 
 	m_iDefaultAmmo = M3_DEFAULT_GIVE;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = M3_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -126,12 +122,7 @@ void CM3::PrimaryAttack()
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = M3_DAMAGE;
-#endif
-
 	Vector vecCone(M3_CONE_VECTOR);
 
 #ifdef REGAMEDLL_FIXES

@@ -6,7 +6,7 @@ TYPEDESCRIPTION CLight::m_SaveData[] =
 	DEFINE_FIELD(CLight, m_iszPattern, FIELD_STRING),
 };
 
-LINK_ENTITY_TO_CLASS(light, CLight, CCSLight)
+LINK_ENTITY_TO_CLASS(light, CLight)
 IMPLEMENT_SAVERESTORE(CLight, CPointEntity)
 
 // Cache user-entity-field values until spawn is called.
@@ -101,8 +101,8 @@ void CLight::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType
 	}
 }
 
-LINK_ENTITY_TO_CLASS(light_spot, CLight, CCSLight)
-LINK_ENTITY_TO_CLASS(light_environment, CEnvLight, CCSEnvLight)
+LINK_ENTITY_TO_CLASS(light_spot, CLight)
+LINK_ENTITY_TO_CLASS(light_environment, CEnvLight)
 
 void CEnvLight::KeyValue(KeyValueData *pkvd)
 {

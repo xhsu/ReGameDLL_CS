@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_awp, CAWP, CCSAWP)
+LINK_ENTITY_TO_CLASS(weapon_awp, CAWP)
 
 void CAWP::Spawn()
 {
@@ -10,10 +10,6 @@ void CAWP::Spawn()
 	SET_MODEL(ENT(pev), "models/w_awp.mdl");
 
 	m_iDefaultAmmo = AWP_DEFAULT_GIVE;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = AWP_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -165,11 +161,7 @@ void CAWP::AWPFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = AWP_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 8192, 3, BULLET_PLAYER_338MAG, flBaseDamage, AWP_RANGE_MODIFER, m_pPlayer->pev, true, m_pPlayer->random_seed);
 
 #ifdef CLIENT_WEAPONS

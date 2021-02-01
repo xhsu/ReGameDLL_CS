@@ -296,7 +296,12 @@ enum sbar_data
 
 enum MusicState { SILENT, CALM, INTENSE };
 
-class CCSPlayer;
+enum class EProtectionState : BYTE
+{
+	NoSet,
+	Active,
+	Expired,
+};
 
 class CStripWeapons: public CPointEntity {
 public:
@@ -381,59 +386,6 @@ public:
 	virtual void Blind(float flUntilTime, float flHoldTime, float flFadeTime, int iAlpha);
 	virtual void OnTouchingWeapon(CWeaponBox *pWeapon) { }
 
-#ifdef REGAMEDLL_API
-	void Spawn_OrigFunc();
-	void Precache_OrigFunc();
-	int ObjectCaps_OrigFunc();
-	int Classify_OrigFunc();
-	void TraceAttack_OrigFunc(entvars_t *pevAttacker, float flDamage, VectorRef vecDir, TraceResult *ptr, int bitsDamageType);
-	BOOL TakeDamage_OrigFunc(entvars_t *pevInflictor, entvars_t *pevAttacker, FloatRef flDamage, int bitsDamageType);
-	BOOL TakeHealth_OrigFunc(float flHealth, int bitsDamageType);
-	void Killed_OrigFunc(entvars_t *pevAttacker, int iGib);
-	void AddPoints_OrigFunc(int score, BOOL bAllowNegativeScore);
-	void AddPointsToTeam_OrigFunc(int score, BOOL bAllowNegativeScore);
-	BOOL AddPlayerItem_OrigFunc(CBasePlayerItem *pItem);
-	BOOL RemovePlayerItem_OrigFunc(CBasePlayerItem *pItem);
-	int GiveAmmo_OrigFunc(int iAmount, const char *szName, int iMax);
-	void ResetMaxSpeed_OrigFunc();
-	void Jump_OrigFunc();
-	void Duck_OrigFunc();
-	void PreThink_OrigFunc();
-	void PostThink_OrigFunc();
-	void UpdateClientData_OrigFunc();
-	void ImpulseCommands_OrigFunc();
-	void RoundRespawn_OrigFunc();
-	void Blind_OrigFunc(float flUntilTime, float flHoldTime, float flFadeTime, int iAlpha);
-	EXT_FUNC CBasePlayer *Observer_IsValidTarget_OrigFunc(int iPlayerIndex, bool bSameTeam);
-	void Radio_OrigFunc(const char *msg_id, const char *msg_verbose = nullptr, short pitch = 100, bool showIcon = true);
-	void AddAccount_OrigFunc(int amount, RewardType type = RT_NONE, bool bTrackChange = true);
-	void Disappear_OrigFunc();
-	void MakeVIP_OrigFunc();
-	void GiveDefaultItems_OrigFunc();
-	bool SetClientUserInfoName_OrigFunc(char *infobuffer, char *szNewName);
-	void SetAnimation_OrigFunc(PLAYER_ANIM playerAnim);
-	void StartObserver_OrigFunc(Vector &vecPosition, Vector &vecViewAngle);
-	CBaseEntity *DropPlayerItem_OrigFunc(const char *pszItemName);
-	CBaseEntity *GiveNamedItem_OrigFunc(const char *pszName);
-	CBaseEntity *DropShield_OrigFunc(bool bDeploy = true);
-	void GiveShield_OrigFunc(bool bDeploy = true);
-	bool HasRestrictItem_OrigFunc(ItemID item, ItemRestType type);
-	void OnSpawnEquip_OrigFunc(bool addDefault = true, bool equipGame = true);
-	bool MakeBomber_OrigFunc();
-	bool GetIntoGame_OrigFunc();
-	void StartDeathCam_OrigFunc();
-	CGrenade *ThrowGrenade_OrigFunc(CBasePlayerWeapon *pWeapon, VectorRef vecSrc, VectorRef vecThrow, float time, unsigned short usEvent = 0);
-	void SwitchTeam_OrigFunc();
-	bool CanSwitchTeam_OrigFunc(TeamName teamToSwap);
-	void SetSpawnProtection_OrigFunc(float flProtectionTime);
-	void RemoveSpawnProtection_OrigFunc();
-	bool HintMessageEx_OrigFunc(const char *pMessage, float duration = 6.0f, bool bDisplayIfPlayerDead = false, bool bOverride = false);
-	void UseEmpty_OrigFunc();
-	void DropIdlePlayer_OrigFunc(const char *reason);
-
-	CCSPlayer *CSPlayer() const;
-#endif // REGAMEDLL_API
-
 public:
 	static CBasePlayer *Instance(edict_t *pEdict) { return GET_PRIVATE<CBasePlayer>(pEdict ? pEdict : ENT(0)); }
 	static CBasePlayer *Instance(entvars_t *pev) { return Instance(ENT(pev)); }
@@ -455,7 +407,7 @@ public:
 	void SmartRadio();
 	void ThrowWeapon(char *pszItemName);
 	void ThrowPrimary();
-	CGrenade *ThrowGrenade(CBasePlayerWeapon *pWeapon, Vector vecSrc, Vector vecThrow, float time, unsigned short usEvent = 0);
+	CGrenade *ThrowGrenade(CBasePlayerWeapon *pWeapon, Vector& vecSrc, Vector& vecThrow, float time, unsigned short usEvent = 0);
 	void AddAccount(int amount, RewardType type = RT_NONE, bool bTrackChange = true);
 	void Disappear();
 	void MakeVIP();
@@ -478,7 +430,6 @@ public:
 	void SetPlayerModel(BOOL HasC4);
 	bool SetClientUserInfoName(char *infobuffer, char *szNewName);
 	void SetClientUserInfoModel(char *infobuffer, char *szNewModel);
-	void SetClientUserInfoModel_api(char *infobuffer, char *szNewModel);
 	void SetNewPlayerModel(const char *modelName);
 	BOOL SwitchWeapon(CBasePlayerItem *pWeapon);
 	void CheckPowerups();
@@ -885,6 +836,26 @@ public:
 	int m_iLastClientHealth;
 	float m_tmNextAccountHealthUpdate;
 #endif
+
+	inline EProtectionState GetProtectionState() const
+	{
+		// no protection set
+		if (m_flSpawnProtectionEndTime <= 0.0f)
+			return EProtectionState::NoSet;
+
+		// check if end time of protection isn't expired yet
+		if (m_flSpawnProtectionEndTime >= gpGlobals->time)
+			return EProtectionState::Active;
+
+		// has expired
+		return EProtectionState::Expired;
+	}
+
+	bool m_bForceShowMenu{ false };
+	char m_szModel[48]{ "\0" };
+	float m_flSpawnProtectionEndTime{ 0.0f };
+	bool m_bGameForcingRespawn{ false };
+	float m_flRespawnPending{ 0.0f };
 };
 
 CWeaponBox *CreateWeaponBox(CBasePlayerItem *pItem, CBasePlayer *pPlayerOwner, const char *modelName, Vector &origin, Vector &angles, Vector &velocity, float lifeTime, bool packAmmo);
@@ -919,22 +890,12 @@ inline bool CBasePlayer::IsReloading() const
 	return false;
 }
 
-#ifdef REGAMEDLL_API
-inline CCSPlayer *CBasePlayer::CSPlayer() const {
-	return reinterpret_cast<CCSPlayer *>(this->m_pEntity);
-}
-#endif
-
-#ifdef REGAMEDLL_FIXES
-
 // returns a CBaseEntity pointer to a player by index.  Only returns if the player is spawned and connected otherwise returns NULL
 // Index is 1 based
 inline CBasePlayer *UTIL_PlayerByIndex(int playerIndex)
 {
 	return GET_PRIVATE<CBasePlayer>(INDEXENT(playerIndex));
 }
-
-#endif
 
 inline CBasePlayer *UTIL_PlayerByIndexSafe(int playerIndex)
 {

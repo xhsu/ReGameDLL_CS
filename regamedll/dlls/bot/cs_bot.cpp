@@ -32,7 +32,7 @@
 // Give 3rd-party to get the virtual table of the object.
 // Example: AMXModX module: Hamsandwich
 // RegisterHam(Ham_Spawn, "bot", "CCSBot__Spawn", 1);
-LINK_ENTITY_TO_CLASS(bot, CCSBot, CAPI_CSBot)
+LINK_ENTITY_TO_CLASS(bot, CCSBot)
 #endif
 
 // Return the number of bots following the given player
@@ -100,7 +100,7 @@ bool CCSBot::Jump(bool mustJump)
 // NOTE: We dont want to directly call Attack() here, or the bots will have super-human reaction times when injured
 BOOL CCSBot::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType)
 {
-	CBaseEntity *pAttacker = GetClassPtr<CCSEntity>((CBaseEntity *)pevInflictor);
+	CBaseEntity *pAttacker = GetClassPtr((CBaseEntity *)pevInflictor);
 
 	// if we were attacked by a teammate, rebuke
 	if (pAttacker->IsPlayer())

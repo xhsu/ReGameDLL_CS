@@ -64,7 +64,7 @@ public:
 	void EXPORT TriggerDecal(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
 };
 
-LINK_ENTITY_TO_CLASS(infodecal, CDecal, CCSDecal)
+LINK_ENTITY_TO_CLASS(infodecal, CDecal)
 
 void CDecal::Spawn()
 {
@@ -159,7 +159,7 @@ public:
 	virtual int ObjectCaps() { return FCAP_DONT_SAVE; }
 };
 
-LINK_ENTITY_TO_CLASS(bodyque, CCorpse, CCSCorpse)
+LINK_ENTITY_TO_CLASS(bodyque, CCorpse)
 
 static void InitBodyQue()
 {
@@ -205,7 +205,7 @@ void ClearBodyQue()
 	;
 }
 
-LINK_ENTITY_TO_CLASS(worldspawn, CWorld, CCSWorld)
+LINK_ENTITY_TO_CLASS(worldspawn, CWorld)
 
 void CWorld::Spawn()
 {
@@ -296,22 +296,7 @@ void CWorld::Precache()
 	g_pGameRules = InstallGameRules();
 
 	// NOTE: What is the essence of soundent in CS 1.6? I think this is for NPC monsters - s1lent
-#ifndef REGAMEDLL_FIXES
-	// UNDONE why is there so much Spawn code in the Precache function? I'll just keep it here
 
-	// LATER - do we want a sound ent in deathmatch? (sjb)
-	//pSoundEnt = CBaseEntity::Create("soundent", g_vecZero, g_vecZero, edict());
-	pSoundEnt = GetClassPtr<CCSSoundEnt>((CSoundEnt *)nullptr);
-
-	if (pSoundEnt == nullptr)
-	{
-		ALERT(at_console, "**COULD NOT CREATE SOUNDENT**\n");
-	}
-	else
-	{
-		pSoundEnt->Spawn();
-	}
-#endif
 	InitBodyQue();
 
 	// init sentence group playback stuff from sentences.txt.

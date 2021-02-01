@@ -180,7 +180,7 @@ void CFuncPlat::CallHitBottom()
 	HitBottom();
 }
 
-LINK_ENTITY_TO_CLASS(func_plat, CFuncPlat, CCSFuncPlat)
+LINK_ENTITY_TO_CLASS(func_plat, CFuncPlat)
 
 #define noiseMovement noise
 #define noiseStopMoving noise1
@@ -242,7 +242,7 @@ void CFuncPlat::Setup()
 
 void PlatSpawnInsideTrigger(entvars_t *pevPlatform)
 {
-	GetClassPtr<CCSPlatTrigger>((CPlatTrigger *)nullptr)->SpawnInsideTrigger(GetClassPtr<CCSFuncPlat>((CFuncPlat *)pevPlatform));
+	GetClassPtr((CPlatTrigger *)nullptr)->SpawnInsideTrigger(GetClassPtr((CFuncPlat *)pevPlatform));
 }
 
 void CFuncPlat::Precache()
@@ -465,7 +465,7 @@ TYPEDESCRIPTION CFuncPlatRot::m_SaveData[] =
 	DEFINE_FIELD(CFuncPlatRot, m_start, FIELD_VECTOR),
 };
 
-LINK_ENTITY_TO_CLASS(func_platrot, CFuncPlatRot, CCSFuncPlatRot)
+LINK_ENTITY_TO_CLASS(func_platrot, CFuncPlatRot)
 IMPLEMENT_SAVERESTORE(CFuncPlatRot, CFuncPlat)
 
 void CFuncPlatRot::SetupRotation()
@@ -549,7 +549,7 @@ TYPEDESCRIPTION CFuncTrain::m_SaveData[] =
 	DEFINE_FIELD(CFuncTrain, m_activated, FIELD_BOOLEAN),
 };
 
-LINK_ENTITY_TO_CLASS(func_train, CFuncTrain, CCSFuncTrain)
+LINK_ENTITY_TO_CLASS(func_train, CFuncTrain)
 IMPLEMENT_SAVERESTORE(CFuncTrain, CBasePlatTrain)
 
 void CFuncTrain::KeyValue(KeyValueData *pkvd)
@@ -898,7 +898,7 @@ TYPEDESCRIPTION CFuncTrackTrain::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CFuncTrackTrain, CBaseEntity)
-LINK_ENTITY_TO_CLASS(func_tracktrain, CFuncTrackTrain, CCSFuncTrackTrain)
+LINK_ENTITY_TO_CLASS(func_tracktrain, CFuncTrackTrain)
 
 void CFuncTrackTrain::KeyValue(KeyValueData *pkvd)
 {
@@ -1543,7 +1543,7 @@ void CFuncTrackTrain::Precache()
 	m_usAdjustPitch = PRECACHE_EVENT(1, "events/train.sc");
 }
 
-LINK_ENTITY_TO_CLASS(func_traincontrols, CFuncTrainControls, CCSFuncTrainControls)
+LINK_ENTITY_TO_CLASS(func_traincontrols, CFuncTrainControls)
 
 void CFuncTrainControls::Find()
 {
@@ -1590,7 +1590,7 @@ TYPEDESCRIPTION CFuncTrackChange::m_SaveData[] =
 	DEFINE_FIELD(CFuncTrackChange, m_use, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(func_trackchange, CFuncTrackChange, CCSFuncTrackChange)
+LINK_ENTITY_TO_CLASS(func_trackchange, CFuncTrackChange)
 IMPLEMENT_SAVERESTORE(CFuncTrackChange, CFuncPlatRot)
 
 void CFuncTrackChange::Spawn()
@@ -1929,7 +1929,7 @@ void CFuncTrackChange::HitTop()
 	EnableUse();
 }
 
-LINK_ENTITY_TO_CLASS(func_trackautochange, CFuncTrackAuto, CCSFuncTrackAuto)
+LINK_ENTITY_TO_CLASS(func_trackautochange, CFuncTrackAuto)
 
 // Auto track change
 void CFuncTrackAuto::UpdateAutoTargets(int toggleState)
@@ -2025,7 +2025,7 @@ TYPEDESCRIPTION CGunTarget::m_SaveData[] =
 	DEFINE_FIELD(CGunTarget, m_on, FIELD_BOOLEAN),
 };
 
-LINK_ENTITY_TO_CLASS(func_guntarget, CGunTarget, CCSGunTarget)
+LINK_ENTITY_TO_CLASS(func_guntarget, CGunTarget)
 IMPLEMENT_SAVERESTORE(CGunTarget, CBaseMonster)
 
 void CGunTarget::Spawn()

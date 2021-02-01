@@ -303,7 +303,7 @@ CBaseEntity *UTIL_FindEntityByString_Old(CBaseEntity *pStartEntity, const char *
 	return nullptr;
 }
 
-CBaseEntity *EXT_FUNC UTIL_FindEntityByString(CBaseEntity *pStartEntity, const char *szKeyword, const char *szValue)
+CBaseEntity *UTIL_FindEntityByString(CBaseEntity *pStartEntity, const char *szKeyword, const char *szValue)
 {
 	edict_t	*pentEntity;
 	int startEntityIndex;
@@ -417,7 +417,7 @@ CBaseEntity *UTIL_FindEntityGeneric(const char *szWhatever, const Vector &vecSrc
 }
 
 #ifndef REGAMEDLL_FIXES
-CBasePlayer *EXT_FUNC UTIL_PlayerByIndex(int playerIndex)
+CBasePlayer *UTIL_PlayerByIndex(int playerIndex)
 {
 	CBasePlayer *pPlayer = nullptr;
 	if (playerIndex > 0 && playerIndex <= gpGlobals->maxClients)

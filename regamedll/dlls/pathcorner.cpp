@@ -5,7 +5,7 @@ TYPEDESCRIPTION CPathCorner::m_SaveData[] =
 	DEFINE_FIELD(CPathCorner, m_flWait, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(path_corner, CPathCorner, CCSPathCorner)
+LINK_ENTITY_TO_CLASS(path_corner, CPathCorner)
 IMPLEMENT_SAVERESTORE(CPathCorner, CPointEntity)
 
 void CPathCorner::KeyValue(KeyValueData *pkvd)
@@ -36,7 +36,7 @@ TYPEDESCRIPTION CPathTrack::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CPathTrack, CBaseEntity)
-LINK_ENTITY_TO_CLASS(path_track, CPathTrack, CCSPathTrack)
+LINK_ENTITY_TO_CLASS(path_track, CPathTrack)
 
 void CPathTrack::KeyValue(KeyValueData *pkvd)
 {

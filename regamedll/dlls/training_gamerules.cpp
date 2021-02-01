@@ -294,7 +294,7 @@ TYPEDESCRIPTION CBaseGrenCatch::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CBaseGrenCatch, CBaseEntity)
-LINK_ENTITY_TO_CLASS(func_grencatch, CBaseGrenCatch, CCSGrenCatch)
+LINK_ENTITY_TO_CLASS(func_grencatch, CBaseGrenCatch)
 
 void CBaseGrenCatch::Spawn()
 {
@@ -423,7 +423,7 @@ TYPEDESCRIPTION CFuncWeaponCheck::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CFuncWeaponCheck, CBaseEntity)
-LINK_ENTITY_TO_CLASS(func_weaponcheck, CFuncWeaponCheck, CCSFuncWeaponCheck)
+LINK_ENTITY_TO_CLASS(func_weaponcheck, CFuncWeaponCheck)
 
 void CFuncWeaponCheck::Spawn()
 {

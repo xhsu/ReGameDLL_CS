@@ -12,8 +12,8 @@ void CGenericCycler::Spawn()
 	GenericCyclerSpawn(pev->model, Vector(-16, -16, 0), Vector(16, 16, 72));
 }
 
-LINK_ENTITY_TO_CLASS(cycler, CGenericCycler, CCSGenericCycler)
-LINK_ENTITY_TO_CLASS(cycler_prdroid, CCyclerProbe, CCSCyclerProbe)
+LINK_ENTITY_TO_CLASS(cycler, CGenericCycler)
+LINK_ENTITY_TO_CLASS(cycler_prdroid, CCyclerProbe)
 
 void CCyclerProbe::Spawn()
 {
@@ -149,7 +149,7 @@ TYPEDESCRIPTION CCyclerSprite::m_SaveData[] =
 	DEFINE_FIELD(CCyclerSprite, m_maxFrame, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(cycler_sprite, CCyclerSprite, CCSCyclerSprite)
+LINK_ENTITY_TO_CLASS(cycler_sprite, CCyclerSprite)
 IMPLEMENT_SAVERESTORE(CCyclerSprite, CBaseEntity)
 
 void CCyclerSprite::Spawn()
@@ -230,7 +230,7 @@ void CCyclerSprite::Animate(float frames)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(cycler_weapon, CWeaponCycler, CCSWeaponCycler)
+LINK_ENTITY_TO_CLASS(cycler_weapon, CWeaponCycler)
 
 void CWeaponCycler::Spawn()
 {
@@ -296,7 +296,7 @@ TYPEDESCRIPTION CWreckage::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CWreckage, CBaseToggle)
-LINK_ENTITY_TO_CLASS(cycler_wreckage, CWreckage, CCSWreckage)
+LINK_ENTITY_TO_CLASS(cycler_wreckage, CWreckage)
 
 void CWreckage::Spawn()
 {

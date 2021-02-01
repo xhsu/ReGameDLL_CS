@@ -10,7 +10,7 @@ TYPEDESCRIPTION CRecharge::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CRecharge, CBaseEntity)
-LINK_ENTITY_TO_CLASS(func_recharge, CRecharge, CCSRecharge)
+LINK_ENTITY_TO_CLASS(func_recharge, CRecharge)
 
 void CRecharge::KeyValue(KeyValueData *pkvd)
 {

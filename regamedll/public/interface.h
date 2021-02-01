@@ -87,7 +87,7 @@ public:
 	EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, __g_##className##_singleton)
 
 #ifdef _WIN32
-	#define EXPORT_FUNCTION __declspec(dllexport) EXT_FUNC
+	#define EXPORT_FUNCTION __declspec(dllexport)
 #else
 	#define EXPORT_FUNCTION __attribute__((visibility("default"))) EXT_FUNC
 #endif // _WIN32

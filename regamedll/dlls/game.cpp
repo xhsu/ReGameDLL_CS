@@ -177,17 +177,17 @@ void GameDLL_EndRound_f()
 
 		if (pCmd[0] == '1' || !Q_stricmp(pCmd, "T"))
 		{
-			CSGameRules()->OnRoundEnd_Intercept(WINSTATUS_TERRORISTS, ROUND_TERRORISTS_WIN, CSGameRules()->GetRoundRestartDelay());
+			CSGameRules()->OnRoundEnd(WINSTATUS_TERRORISTS, ROUND_TERRORISTS_WIN, CSGameRules()->GetRoundRestartDelay());
 			return;
 		}
 		else if (pCmd[0] == '2' || !Q_stricmp(pCmd, "CT"))
 		{
-			CSGameRules()->OnRoundEnd_Intercept(WINSTATUS_CTS, ROUND_CTS_WIN, CSGameRules()->GetRoundRestartDelay());
+			CSGameRules()->OnRoundEnd(WINSTATUS_CTS, ROUND_CTS_WIN, CSGameRules()->GetRoundRestartDelay());
 			return;
 		}
 	}
 
-	CSGameRules()->OnRoundEnd_Intercept(WINSTATUS_DRAW, ROUND_END_DRAW, CSGameRules()->GetRoundRestartDelay());
+	CSGameRules()->OnRoundEnd(WINSTATUS_DRAW, ROUND_END_DRAW, CSGameRules()->GetRoundRestartDelay());
 }
 
 void GameDLL_SwapTeams_f()
@@ -198,7 +198,7 @@ void GameDLL_SwapTeams_f()
 
 #endif // REGAMEDLL_ADD
 
-void EXT_FUNC GameDLLInit()
+void GameDLLInit()
 {
 	g_pskill          = CVAR_GET_POINTER("skill");
 	g_psv_gravity     = CVAR_GET_POINTER("sv_gravity");

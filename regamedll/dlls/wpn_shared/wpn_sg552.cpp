@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_sg552, CSG552, CCSSG552)
+LINK_ENTITY_TO_CLASS(weapon_sg552, CSG552)
 
 void CSG552::Spawn()
 {
@@ -12,10 +12,6 @@ void CSG552::Spawn()
 	m_iDefaultAmmo = SG552_DEFAULT_GIVE;
 	m_flAccuracy = 0.2f;
 	m_iShotsFired = 0;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = SG552_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -136,11 +132,7 @@ void CSG552::SG552Fire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = SG552_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 8192, 2, BULLET_PLAYER_556MM,
 		flBaseDamage, SG552_RANGE_MODIFER, m_pPlayer->pev, false, m_pPlayer->random_seed);
 

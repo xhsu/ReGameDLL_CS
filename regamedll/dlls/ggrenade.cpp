@@ -19,7 +19,7 @@ TYPEDESCRIPTION CGrenade::m_SaveData[] =
 	DEFINE_FIELD(CGrenade, m_usEvent, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(grenade, CGrenade, CCSGrenade)
+LINK_ENTITY_TO_CLASS(grenade, CGrenade)
 
 void CGrenade::Explode(Vector vecSrc, Vector vecAim)
 {
@@ -28,10 +28,8 @@ void CGrenade::Explode(Vector vecSrc, Vector vecAim)
 	Explode(&tr, DMG_BLAST);
 }
 
-LINK_HOOK_CLASS_VOID_CUSTOM2_CHAIN(CGrenade, ExplodeFlashbang, Explode, (TraceResult *pTrace, int bitsDamageType), pTrace, bitsDamageType)
-
 // UNDONE: temporary scorching for PreAlpha - find a less sleazy permenant solution.
-void CGrenade::__API_HOOK(Explode)(TraceResult *pTrace, int bitsDamageType)
+void CGrenade::Explode(TraceResult *pTrace, int bitsDamageType)
 {
 	float flRndSound; // sound randomizer
 
@@ -92,9 +90,7 @@ void CGrenade::__API_HOOK(Explode)(TraceResult *pTrace, int bitsDamageType)
 	}
 }
 
-LINK_HOOK_CLASS_VOID_CUSTOM2_CHAIN(CGrenade, ExplodeBomb, Explode2, (TraceResult *pTrace, int bitsDamageType), pTrace, bitsDamageType)
-
-void CGrenade::__API_HOOK(Explode2)(TraceResult *pTrace, int bitsDamageType)
+void CGrenade::Explode2(TraceResult *pTrace, int bitsDamageType)
 {
 	float flRndSound; // sound randomizer
 
@@ -238,9 +234,7 @@ void CGrenade::__API_HOOK(Explode2)(TraceResult *pTrace, int bitsDamageType)
 
 }
 
-LINK_HOOK_CLASS_VOID_CUSTOM2_CHAIN(CGrenade, ExplodeHeGrenade, Explode3, (TraceResult *pTrace, int bitsDamageType), pTrace, bitsDamageType)
-
-void CGrenade::__API_HOOK(Explode3)(TraceResult *pTrace, int bitsDamageType)
+void CGrenade::Explode3(TraceResult *pTrace, int bitsDamageType)
 {
 	float flRndSound; // sound randomizer
 
@@ -560,9 +554,7 @@ void CGrenade::Detonate()
 	Explode(&tr, DMG_BLAST);
 }
 
-LINK_HOOK_CLASS_VOID_CUSTOM2_CHAIN2(CGrenade, ExplodeSmokeGrenade, SG_Detonate)
-
-void CGrenade::__API_HOOK(SG_Detonate)()
+void CGrenade::SG_Detonate()
 {
 	TraceResult tr;
 	Vector vecSpot;
@@ -856,39 +848,9 @@ void CGrenade::Spawn()
 	m_fRegisteredSound = FALSE;
 }
 
-NOXREF CGrenade *CGrenade::ShootContact(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity)
+CGrenade *CGrenade::ShootTimed2(entvars_t *pevOwner, Vector& vecStart, Vector& vecVelocity, float time, int iTeam, unsigned short usEvent)
 {
-	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
-	pGrenade->Spawn();
-
-	// contact grenades arc lower
-	pGrenade->pev->gravity = 0.5f; // lower gravity since grenade is aerodynamic and engine doesn't know it.
-
-	UTIL_SetOrigin(pGrenade->pev, vecStart);
-	pGrenade->pev->velocity = vecVelocity;
-	pGrenade->pev->angles = UTIL_VecToAngles(pGrenade->pev->velocity);
-	pGrenade->pev->owner = ENT(pevOwner);
-
-	// make monsters afaid of it while in the air
-	pGrenade->SetThink(&CGrenade::DangerSoundThink);
-	pGrenade->pev->nextthink = gpGlobals->time;
-
-	// Tumble in air
-	pGrenade->pev->avelocity.x = RANDOM_FLOAT(-100, -500);
-
-	// Explode on contact
-	pGrenade->SetTouch(&CGrenade::ExplodeTouch);
-
-	pGrenade->pev->dmg = gSkillData.plrDmgM203Grenade;
-	pGrenade->m_bJustBlew = true;
-	return pGrenade;
-}
-
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, ThrowHeGrenade, CGrenade::ShootTimed2, (entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, int iTeam, unsigned short usEvent), pevOwner, vecStart, vecVelocity, time, iTeam, usEvent)
-
-CGrenade *CGrenade::__API_HOOK(ShootTimed2)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, int iTeam, unsigned short usEvent)
-{
-	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
+	CGrenade *pGrenade = GetClassPtr((CGrenade *)nullptr);
 	pGrenade->Spawn();
 
 	UTIL_SetOrigin(pGrenade->pev, vecStart);
@@ -920,11 +882,9 @@ CGrenade *CGrenade::__API_HOOK(ShootTimed2)(entvars_t *pevOwner, VectorRef vecSt
 	return pGrenade;
 }
 
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, ThrowFlashbang, CGrenade::ShootTimed, (entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time), pevOwner, vecStart, vecVelocity, time)
-
-CGrenade *CGrenade::__API_HOOK(ShootTimed)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time)
+CGrenade *CGrenade::ShootTimed(entvars_t *pevOwner, Vector& vecStart, Vector& vecVelocity, float time)
 {
-	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
+	CGrenade *pGrenade = GetClassPtr((CGrenade *)nullptr);
 	pGrenade->Spawn();
 
 	UTIL_SetOrigin(pGrenade->pev, vecStart);
@@ -965,9 +925,7 @@ CGrenade *CGrenade::__API_HOOK(ShootTimed)(entvars_t *pevOwner, VectorRef vecSta
 
 constexpr float NEXT_DEFUSE_TIME = 0.5f;
 
-LINK_HOOK_CLASS_VOID_CHAIN(CGrenade, DefuseBombStart, (CBasePlayer *pPlayer), pPlayer)
-
-void CGrenade::__API_HOOK(DefuseBombStart)(CBasePlayer *pPlayer)
+void CGrenade::DefuseBombStart(CBasePlayer *pPlayer)
 {
 	// freeze the player in place while defusing
 	SET_CLIENT_MAXSPEED(pPlayer->edict(), 1);
@@ -1025,9 +983,7 @@ void CGrenade::__API_HOOK(DefuseBombStart)(CBasePlayer *pPlayer)
 #endif
 }
 
-LINK_HOOK_CLASS_VOID_CHAIN(CGrenade, DefuseBombEnd, (CBasePlayer *pPlayer, bool bDefused), pPlayer, bDefused)
-
-void CGrenade::__API_HOOK(DefuseBombEnd)(CBasePlayer *pPlayer, bool bDefused)
+void CGrenade::DefuseBombEnd(CBasePlayer *pPlayer, bool bDefused)
 {
 	if (bDefused)
 	{
@@ -1147,7 +1103,7 @@ void CGrenade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useTy
 		return;
 
 	// TODO: We must be sure that the activator is a player.
-	CBasePlayer *pPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pActivator->pev);
+	CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pActivator->pev);
 
 #ifdef REGAMEDLL_FIXES
 	if (!pPlayer->IsPlayer())
@@ -1182,11 +1138,9 @@ void CGrenade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useTy
 	DefuseBombStart(pPlayer);
 }
 
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, PlantBomb, CGrenade::ShootSatchelCharge, (entvars_t *pevOwner, Vector vecStart, Vector vecAngles), pevOwner, vecStart, vecAngles)
-
-CGrenade *CGrenade::__API_HOOK(ShootSatchelCharge)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecAngles)
+CGrenade *CGrenade::ShootSatchelCharge(entvars_t *pevOwner, Vector& vecStart, Vector& vecAngles)
 {
-	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
+	CGrenade *pGrenade = GetClassPtr((CGrenade *)nullptr);
 	pGrenade->pev->movetype = MOVETYPE_TOSS;
 
 	MAKE_STRING_CLASS("grenade", pGrenade->pev);
@@ -1252,11 +1206,9 @@ CGrenade *CGrenade::__API_HOOK(ShootSatchelCharge)(entvars_t *pevOwner, VectorRe
 	return pGrenade;
 }
 
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, ThrowSmokeGrenade, CGrenade::ShootSmokeGrenade, (entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, unsigned short usEvent), pevOwner, vecStart, vecVelocity, time, usEvent)
-
-CGrenade *CGrenade::__API_HOOK(ShootSmokeGrenade)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, unsigned short usEvent)
+CGrenade *CGrenade::ShootSmokeGrenade(entvars_t *pevOwner, Vector& vecStart, Vector& vecVelocity, float time, unsigned short usEvent)
 {
-	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
+	CGrenade *pGrenade = GetClassPtr((CGrenade *)nullptr);
 	pGrenade->Spawn();
 
 	UTIL_SetOrigin(pGrenade->pev, vecStart);

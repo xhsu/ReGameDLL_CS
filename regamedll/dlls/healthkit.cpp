@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(item_healthkit, CHealthKit, CCSHealthKit)
+LINK_ENTITY_TO_CLASS(item_healthkit, CHealthKit)
 
 void CHealthKit::Spawn()
 {
@@ -60,7 +60,7 @@ TYPEDESCRIPTION CWallHealth::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CWallHealth, CBaseEntity)
-LINK_ENTITY_TO_CLASS(func_healthcharger, CWallHealth, CCSWallHealth)
+LINK_ENTITY_TO_CLASS(func_healthcharger, CWallHealth)
 
 void CWallHealth::KeyValue(KeyValueData *pkvd)
 {

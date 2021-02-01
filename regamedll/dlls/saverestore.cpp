@@ -1086,19 +1086,19 @@ void CGlobalState::ClearStates()
 	Reset();
 }
 
-void EXT_FUNC SaveGlobalState(SAVERESTOREDATA *pSaveData)
+void SaveGlobalState(SAVERESTOREDATA *pSaveData)
 {
 	CSave saveHelper(pSaveData);
 	gGlobalState.Save(saveHelper);
 }
 
-void EXT_FUNC RestoreGlobalState(SAVERESTOREDATA *pSaveData)
+void RestoreGlobalState(SAVERESTOREDATA *pSaveData)
 {
 	CRestore restoreHelper(pSaveData);
 	gGlobalState.Restore(restoreHelper);
 }
 
-void EXT_FUNC ResetGlobalState()
+void ResetGlobalState()
 {
 	gGlobalState.ClearStates();
 

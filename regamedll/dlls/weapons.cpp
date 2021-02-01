@@ -785,13 +785,6 @@ bool CBasePlayerWeapon::HasSecondaryAttack()
 		return true;
 	}
 
-#ifdef REGAMEDLL_API
-	if (CSPlayerWeapon()->m_bHasSecondaryAttack)
-	{
-		return true;
-	}
-#endif
-
 	switch (m_iId)
 	{
 	case WEAPON_AK47:
@@ -800,9 +793,7 @@ bool CBasePlayerWeapon::HasSecondaryAttack()
 	case WEAPON_ELITE:
 	case WEAPON_FIVESEVEN:
 	case WEAPON_MP5N:
-#ifdef BUILD_LATEST_FIXES
 	case WEAPON_UMP45:
-#endif
 	case WEAPON_M249:
 	case WEAPON_M3:
 	case WEAPON_TMP:
@@ -817,40 +808,6 @@ bool CBasePlayerWeapon::HasSecondaryAttack()
 	}
 
 	return true;
-}
-
-void CBasePlayerWeapon::HandleInfiniteAmmo()
-{
-	int nInfiniteAmmo = 0;
-
-#ifdef REGAMEDLL_API
-	nInfiniteAmmo = m_pPlayer->CSPlayer()->m_iWeaponInfiniteAmmo;
-#endif
-
-	if (!nInfiniteAmmo)
-		nInfiniteAmmo = static_cast<int>(infiniteAmmo.value);
-
-	if (nInfiniteAmmo == WPNMODE_INFINITE_CLIP && !IsGrenadeWeapon(m_iId))
-	{
-		m_iClip = iMaxClip();
-	}
-	else if ((nInfiniteAmmo == WPNMODE_INFINITE_BPAMMO &&
-#ifdef REGAMEDLL_API
-		((m_pPlayer->CSPlayer()->m_iWeaponInfiniteIds & (1 << m_iId)) || (m_pPlayer->CSPlayer()->m_iWeaponInfiniteIds <= 0 && !IsGrenadeWeapon(m_iId)))
-#endif
-		)
-		|| (IsGrenadeWeapon(m_iId) && infiniteGrenades.value == 1.0f))
-	{
-		if (pszAmmo1())
-		{
-			m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] = iMaxAmmo1();
-		}
-
-		if (pszAmmo2())
-		{
-			m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] = iMaxAmmo2();
-		}
-	}
 }
 
 void CBasePlayerWeapon::ItemPostFrame()
@@ -956,11 +913,7 @@ void CBasePlayerWeapon::ItemPostFrame()
 
 		// Can't shoot during the freeze period
 		// Always allow firing in single player
-		if (
-#ifdef REGAMEDLL_API
-			m_pPlayer->CSPlayer()->m_bCanShootOverride ||
-#endif
-			(m_pPlayer->m_bCanShoot && g_pGameRules->IsMultiplayer() && !g_pGameRules->IsFreezePeriod() && !m_pPlayer->m_bIsDefusing) || !g_pGameRules->IsMultiplayer())
+		if ((m_pPlayer->m_bCanShoot && g_pGameRules->IsMultiplayer() && !g_pGameRules->IsFreezePeriod() && !m_pPlayer->m_bIsDefusing) || !g_pGameRules->IsMultiplayer())
 		{
 			PrimaryAttack();
 		}
@@ -1038,17 +991,9 @@ void CBasePlayerWeapon::ItemPostFrame()
 			}
 		}
 
-#ifdef BUILD_LATEST
-		HandleInfiniteAmmo();
-#endif
-
 		WeaponIdle();
 		return;
 	}
-
-#ifdef BUILD_LATEST
-	HandleInfiniteAmmo();
-#endif
 
 	// catch all
 	if (ShouldWeaponIdle())
@@ -1064,16 +1009,12 @@ void CBasePlayerItem::DestroyItem()
 		// if attached to a player, remove.
 		if (m_pPlayer->RemovePlayerItem(this))
 		{
-
-#ifdef REGAMEDLL_FIXES
 			m_pPlayer->pev->weapons &= ~(1 << m_iId);
 
 			// No more weapon
 			if ((m_pPlayer->pev->weapons & ~(1 << WEAPON_SUIT)) == 0) {
 				m_pPlayer->m_iHideHUD |= HIDEHUD_WEAPONS;
 			}
-#endif
-
 		}
 	}
 
@@ -1136,14 +1077,6 @@ void CBasePlayerItem::AttachToPlayer(CBasePlayer *pPlayer)
 
 void CBasePlayerWeapon::Spawn()
 {
-	ItemInfo info;
-	Q_memset(&info, 0, sizeof(info));
-
-	if (GetItemInfo(&info)) {
-		CSPlayerItem()->SetItemInfo(&info);
-	}
-
-	CSPlayerWeapon()->m_bHasSecondaryAttack = HasSecondaryAttack();
 }
 
 // CALLED THROUGH the newly-touched weapon's instance. The existing player weapon is pOriginal
@@ -1307,28 +1240,21 @@ BOOL CBasePlayerWeapon::IsUseable()
 	return TRUE;
 }
 
-LINK_HOOK_CLASS_CHAIN2(BOOL, CBasePlayerWeapon, CanDeploy)
-
-BOOL EXT_FUNC CBasePlayerWeapon::__API_HOOK(CanDeploy)()
+BOOL CBasePlayerWeapon::CanDeploy()
 {
 	return TRUE;
 }
 
-LINK_HOOK_CLASS_CHAIN(BOOL, CBasePlayerWeapon, DefaultDeploy, (char *szViewModel, char *szWeaponModel, int iAnim, char *szAnimExt, int skiplocal), szViewModel, szWeaponModel, iAnim, szAnimExt, skiplocal)
-
-BOOL EXT_FUNC CBasePlayerWeapon::__API_HOOK(DefaultDeploy)(char *szViewModel, char *szWeaponModel, int iAnim, char *szAnimExt, int skiplocal)
+BOOL CBasePlayerWeapon::DefaultDeploy(char *szViewModel, char *szWeaponModel, int iAnim, char *szAnimExt, int skiplocal)
 {
 	if (!CanDeploy())
 		return FALSE;
 
 	m_pPlayer->TabulateAmmo();
-#ifdef REGAMEDLL_API
-	m_pPlayer->pev->viewmodel = ALLOC_STRING(szViewModel);
-	m_pPlayer->pev->weaponmodel = ALLOC_STRING(szWeaponModel);
-#else
+
 	m_pPlayer->pev->viewmodel = MAKE_STRING(szViewModel);
 	m_pPlayer->pev->weaponmodel = MAKE_STRING(szWeaponModel);
-#endif
+
 	model_name = m_pPlayer->pev->viewmodel;
 	Q_strcpy(m_pPlayer->m_szAnimExtention, szAnimExt);
 	SendWeaponAnim(iAnim, skiplocal);
@@ -1371,9 +1297,8 @@ void CBasePlayerWeapon::ReloadSound()
 	}
 }
 
-LINK_HOOK_CLASS_CHAIN(int, CBasePlayerWeapon, DefaultReload, (int iClipSize, int iAnim, float fDelay), iClipSize, iAnim, fDelay)
 
-int EXT_FUNC CBasePlayerWeapon::__API_HOOK(DefaultReload)(int iClipSize, int iAnim, float fDelay)
+int CBasePlayerWeapon::DefaultReload(int iClipSize, int iAnim, float fDelay)
 {
 	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		return FALSE;
@@ -1395,9 +1320,7 @@ int EXT_FUNC CBasePlayerWeapon::__API_HOOK(DefaultReload)(int iClipSize, int iAn
 	return TRUE;
 }
 
-LINK_HOOK_CLASS_CHAIN(bool, CBasePlayerWeapon, DefaultShotgunReload, (int iAnim, int iStartAnim, float fDelay, float fStartDelay, const char *pszReloadSound1, const char *pszReloadSound2), iAnim, iStartAnim, fDelay, fStartDelay, pszReloadSound1, pszReloadSound2)
-
-bool EXT_FUNC CBasePlayerWeapon::__API_HOOK(DefaultShotgunReload)(int iAnim, int iStartAnim, float fDelay, float fStartDelay, const char *pszReloadSound1, const char *pszReloadSound2)
+bool CBasePlayerWeapon::DefaultShotgunReload(int iAnim, int iStartAnim, float fDelay, float fStartDelay, const char *pszReloadSound1, const char *pszReloadSound2)
 {
 	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 || m_iClip == iMaxClip())
 		return false;
@@ -1637,7 +1560,7 @@ TYPEDESCRIPTION CWeaponBox::m_SaveData[] =
 	DEFINE_FIELD(CWeaponBox, m_cAmmoTypes, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(weaponbox, CWeaponBox, CCSWeaponBox)
+LINK_ENTITY_TO_CLASS(weaponbox, CWeaponBox)
 IMPLEMENT_SAVERESTORE(CWeaponBox, CBaseEntity)
 
 void CWeaponBox::Precache()
@@ -1674,7 +1597,7 @@ void CWeaponBox::BombThink()
 		if (!pPlayer->IsPlayer() || pPlayer->IsDormant())
 			continue;
 
-		CBasePlayer *pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pPlayer->pev);
+		CBasePlayer *pTempPlayer = GetClassPtr((CBasePlayer *)pPlayer->pev);
 
 		if (pTempPlayer->pev->deadflag == DEAD_NO && pTempPlayer->m_iTeam == TERRORIST)
 		{
@@ -1690,9 +1613,7 @@ void CWeaponBox::BombThink()
 	pev->nextthink = gpGlobals->time + 1.0f;
 }
 
-LINK_HOOK_CLASS_VOID_CHAIN(CWeaponBox, SetModel, (const char *pszModelName), pszModelName)
-
-void CWeaponBox::__API_HOOK(SetModel)(const char *pszModelName)
+void CWeaponBox::SetModel(const char *pszModelName)
 {
 	SET_MODEL(ENT(pev), pszModelName);
 }
@@ -1832,7 +1753,7 @@ void CWeaponBox::Touch(CBaseEntity *pOther)
 					if (pEntity->pev->flags == FL_DORMANT)
 						continue;
 
-					CBasePlayer *pTempPlayer = GetClassPtr<CCSPlayer>((CBasePlayer *)pEntity->pev);
+					CBasePlayer *pTempPlayer = GetClassPtr((CBasePlayer *)pEntity->pev);
 
 					if (pTempPlayer->pev->deadflag == DEAD_NO && pTempPlayer->m_iTeam == TERRORIST)
 					{
@@ -2507,13 +2428,9 @@ void CArmoury::SetObjectCollisionBox()
 }
 #endif
 
-LINK_ENTITY_TO_CLASS(armoury_entity, CArmoury, CCSArmoury)
+LINK_ENTITY_TO_CLASS(armoury_entity, CArmoury)
 
-#ifdef REGAMEDLL_API
-#define m_ItemInfoEx CSPlayerItem()->m_ItemInfo
-#else
 #define m_ItemInfoEx m_ItemInfoArray[m_iId]
-#endif
 
 const char *CBasePlayerItem::pszAmmo1() const
 {

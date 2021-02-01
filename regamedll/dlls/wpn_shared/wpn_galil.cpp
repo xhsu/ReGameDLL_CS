@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(weapon_galil, CGalil, CCSGalil)
+LINK_ENTITY_TO_CLASS(weapon_galil, CGalil)
 
 void CGalil::Spawn()
 {
@@ -10,10 +10,6 @@ void CGalil::Spawn()
 	SET_MODEL(edict(), "models/w_galil.mdl");
 
 	m_iDefaultAmmo = GALIL_DEFAULT_GIVE;
-
-#ifdef REGAMEDLL_API
-	CSPlayerWeapon()->m_flBaseDamage = GALIL_DAMAGE;
-#endif
 
 	// Get ready to fall down
 	FallInit();
@@ -129,11 +125,7 @@ void CGalil::GalilFire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-#ifdef REGAMEDLL_API
-	float flBaseDamage = CSPlayerWeapon()->m_flBaseDamage;
-#else
 	float flBaseDamage = GALIL_DAMAGE;
-#endif
 	vecDir = m_pPlayer->FireBullets3(vecSrc, vecAiming, flSpread, 8192, 2, BULLET_PLAYER_556MM,
 		flBaseDamage, GALIL_RANGE_MODIFER, m_pPlayer->pev, false, m_pPlayer->random_seed);
 

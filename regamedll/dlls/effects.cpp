@@ -7,7 +7,7 @@ TYPEDESCRIPTION CBubbling::m_SaveData[] =
 	DEFINE_FIELD(CBubbling, m_state, FIELD_INTEGER),
 };
 
-LINK_ENTITY_TO_CLASS(env_bubbles, CBubbling, CCSBubbling)
+LINK_ENTITY_TO_CLASS(env_bubbles, CBubbling)
 IMPLEMENT_SAVERESTORE(CBubbling, CBaseEntity)
 
 void CBubbling::Spawn()
@@ -101,7 +101,7 @@ void CBubbling::FizzThink()
 		pev->nextthink = gpGlobals->time + 2.5f - (0.1f * m_frequency);
 }
 
-LINK_ENTITY_TO_CLASS(beam, CBeam, CCSBeam)
+LINK_ENTITY_TO_CLASS(beam, CBeam)
 
 void CBeam::Spawn()
 {
@@ -165,7 +165,7 @@ const Vector &CBeam::GetEndPos()
 CBeam *CBeam::BeamCreate(const char *pSpriteName, int width)
 {
 	// Create a new entity with CBeam private data
-	CBeam *pBeam = GetClassPtr<CCSBeam>((CBeam *)nullptr);
+	CBeam *pBeam = GetClassPtr((CBeam *)nullptr);
 
 	MAKE_STRING_CLASS("beam", pBeam->pev);
 	pBeam->BeamInit(pSpriteName, width);
@@ -314,8 +314,8 @@ TYPEDESCRIPTION CLightning::m_SaveData[] =
 	DEFINE_FIELD(CLightning, m_radius, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(env_lightning, CLightning, CCSLightning)
-LINK_ENTITY_TO_CLASS(env_beam, CLightning, CCSLightning)
+LINK_ENTITY_TO_CLASS(env_lightning, CLightning)
+LINK_ENTITY_TO_CLASS(env_beam, CLightning)
 IMPLEMENT_SAVERESTORE(CLightning, CBeam)
 
 void CLightning::Spawn()
@@ -882,7 +882,7 @@ TYPEDESCRIPTION CLaser::m_SaveData[] =
 	DEFINE_FIELD(CLaser, m_firePosition, FIELD_POSITION_VECTOR),
 };
 
-LINK_ENTITY_TO_CLASS(env_laser, CLaser, CCSLaser)
+LINK_ENTITY_TO_CLASS(env_laser, CLaser)
 IMPLEMENT_SAVERESTORE(CLaser, CBeam)
 
 void CLaser::Spawn()
@@ -1080,7 +1080,7 @@ TYPEDESCRIPTION CGlow::m_SaveData[] =
 	DEFINE_FIELD(CGlow, m_maxFrame, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(env_glow, CGlow, CCSGlow)
+LINK_ENTITY_TO_CLASS(env_glow, CGlow)
 IMPLEMENT_SAVERESTORE(CGlow, CPointEntity)
 
 void CGlow::Spawn()
@@ -1119,7 +1119,7 @@ void CGlow::Animate(float frames)
 	}
 }
 
-LINK_ENTITY_TO_CLASS(env_bombglow, CBombGlow, CCSBombGlow)
+LINK_ENTITY_TO_CLASS(env_bombglow, CBombGlow)
 
 void CBombGlow::Spawn()
 {
@@ -1177,7 +1177,7 @@ TYPEDESCRIPTION CSprite::m_SaveData[] =
 	DEFINE_FIELD(CSprite, m_maxFrame, FIELD_FLOAT),
 };
 
-LINK_ENTITY_TO_CLASS(env_sprite, CSprite, CCSSprite)
+LINK_ENTITY_TO_CLASS(env_sprite, CSprite)
 IMPLEMENT_SAVERESTORE(CSprite, CPointEntity)
 
 void CSprite::Spawn()
@@ -1241,7 +1241,7 @@ void CSprite::SpriteInit(const char *pSpriteName, const Vector &origin)
 
 CSprite *CSprite::SpriteCreate(const char *pSpriteName, const Vector &origin, BOOL animate)
 {
-	CSprite *pSprite = GetClassPtr<CCSSprite>((CSprite *)nullptr);
+	CSprite *pSprite = GetClassPtr((CSprite *)nullptr);
 	pSprite->SpriteInit(pSpriteName, origin);
 
 	MAKE_STRING_CLASS("env_sprite", pSprite->pev);
@@ -1365,7 +1365,7 @@ TYPEDESCRIPTION CGibShooter::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CGibShooter, CBaseDelay)
-LINK_ENTITY_TO_CLASS(gibshooter, CGibShooter, CCSGibShooter)
+LINK_ENTITY_TO_CLASS(gibshooter, CGibShooter)
 
 void CGibShooter::Precache()
 {
@@ -1439,7 +1439,7 @@ CGib *CGibShooter::CreateGib()
 	if (CVAR_GET_FLOAT("violence_hgibs") == 0)
 		return nullptr;
 
-	CGib *pGib = GetClassPtr<CCSGib>((CGib *)nullptr);
+	CGib *pGib = GetClassPtr((CGib *)nullptr);
 
 	pGib->Spawn("models/hgibs.mdl");
 	pGib->m_bloodColor = BLOOD_COLOR_RED;
@@ -1519,7 +1519,7 @@ void CGibShooter::ShootThink()
 	}
 }
 
-LINK_ENTITY_TO_CLASS(env_shooter, CEnvShooter, CCSEnvShooter)
+LINK_ENTITY_TO_CLASS(env_shooter, CEnvShooter)
 
 void CEnvShooter::KeyValue(KeyValueData *pkvd)
 {
@@ -1570,7 +1570,7 @@ void CEnvShooter::Precache()
 
 CGib *CEnvShooter::CreateGib()
 {
-	CGib *pGib = GetClassPtr<CCSGib>((CGib *)nullptr);
+	CGib *pGib = GetClassPtr((CGib *)nullptr);
 
 	pGib->Spawn(STRING(pev->model));
 
@@ -1593,7 +1593,7 @@ CGib *CEnvShooter::CreateGib()
 	return pGib;
 }
 
-LINK_ENTITY_TO_CLASS(test_effect, CTestEffect, CCSTestEffect)
+LINK_ENTITY_TO_CLASS(test_effect, CTestEffect)
 
 void CTestEffect::Spawn()
 {
@@ -1667,7 +1667,7 @@ void CTestEffect::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE us
 	m_flStartTime = gpGlobals->time;
 }
 
-LINK_ENTITY_TO_CLASS(env_blood, CBlood, CCSBlood)
+LINK_ENTITY_TO_CLASS(env_blood, CBlood)
 
 void CBlood::Spawn()
 {
@@ -1757,7 +1757,7 @@ void CBlood::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType
 	}
 }
 
-LINK_ENTITY_TO_CLASS(env_shake, CShake, CCSShake)
+LINK_ENTITY_TO_CLASS(env_shake, CShake)
 
 void CShake::Spawn()
 {
@@ -1803,7 +1803,7 @@ void CShake::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType
 	UTIL_ScreenShake(pev->origin, Amplitude(), Frequency(), Duration(), Radius());
 }
 
-LINK_ENTITY_TO_CLASS(env_fade, CFade, CCSFade)
+LINK_ENTITY_TO_CLASS(env_fade, CFade)
 
 void CFade::Spawn()
 {
@@ -1854,7 +1854,7 @@ void CFade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType,
 	SUB_UseTargets(this, USE_TOGGLE, 0);
 }
 
-LINK_ENTITY_TO_CLASS(env_message, CMessage, CCSMessage)
+LINK_ENTITY_TO_CLASS(env_message, CMessage)
 
 void CMessage::Spawn()
 {
@@ -1949,7 +1949,7 @@ void CMessage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useTy
 	SUB_UseTargets(this, USE_TOGGLE, 0);
 }
 
-LINK_ENTITY_TO_CLASS(env_funnel, CEnvFunnel, CCSEnvFunnel)
+LINK_ENTITY_TO_CLASS(env_funnel, CEnvFunnel)
 
 void CEnvFunnel::Precache()
 {
@@ -1995,7 +1995,7 @@ void CEnvBeverage::Precache()
 	PRECACHE_SOUND("weapons/g_bounce3.wav");
 }
 
-LINK_ENTITY_TO_CLASS(env_beverage, CEnvBeverage, CCSEnvBeverage)
+LINK_ENTITY_TO_CLASS(env_beverage, CEnvBeverage)
 
 void CEnvBeverage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
 {
@@ -2037,7 +2037,7 @@ void CItemSoda::Precache()
 	;
 }
 
-LINK_ENTITY_TO_CLASS(item_sodacan, CItemSoda, CCSItemSoda)
+LINK_ENTITY_TO_CLASS(item_sodacan, CItemSoda)
 
 void CItemSoda::Spawn()
 {
@@ -2101,7 +2101,7 @@ void CItemSoda::CanTouch(CBaseEntity *pOther)
 	pev->nextthink = gpGlobals->time;
 }
 
-LINK_ENTITY_TO_CLASS(info_intermission, CInfoIntermission, CCSInfoIntermission)
+LINK_ENTITY_TO_CLASS(info_intermission, CInfoIntermission)
 
 void CInfoIntermission::Spawn()
 {

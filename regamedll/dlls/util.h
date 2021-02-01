@@ -97,10 +97,10 @@
 		PLAYBACK_EVENT_FULL(flags, who, index, delay, (float *)&g_vecZero, (float *)&g_vecZero, 0.0, 0.0, 0, 0, 0, 0)
 
 #define LINK_ENTITY_TO_CLASS(mapClassName, DLLClassName)\
-	C_DLLEXPORT void EXT_FUNC mapClassName(entvars_t *pev);\
+	C_DLLEXPORT void mapClassName(entvars_t *pev);\
 	void mapClassName(entvars_t *pev)\
 	{\
-		GetClassPtr<DLLClassName>((DLLClassName *)pev);\
+		GetClassPtr((DLLClassName *)pev);\
 	}
 
 constexpr EOFFSET eoNullEntity = (EOFFSET)0;	// Testing the three types of "entity" for nullity

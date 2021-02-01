@@ -221,7 +221,6 @@
 	static const bool __isLinux = true;
 #endif
 
-#define EXT_FUNC FORCE_STACK_ALIGN
 
 // Used to obtain the string name of a variable.
 #define nameof_variable(name) template_nameof_variable(name, #name)

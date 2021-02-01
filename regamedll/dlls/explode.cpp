@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-LINK_ENTITY_TO_CLASS(spark_shower, CShower, CCSShower)
+LINK_ENTITY_TO_CLASS(spark_shower, CShower)
 
 void CShower::Spawn()
 {
@@ -61,7 +61,7 @@ TYPEDESCRIPTION CEnvExplosion::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE(CEnvExplosion, CBaseMonster)
-LINK_ENTITY_TO_CLASS(env_explosion, CEnvExplosion, CCSEnvExplosion)
+LINK_ENTITY_TO_CLASS(env_explosion, CEnvExplosion)
 
 void CEnvExplosion::KeyValue(KeyValueData *pkvd)
 {
