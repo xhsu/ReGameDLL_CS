@@ -73,7 +73,7 @@ class CGameScore: public CRulePointEntity
 public:
 	virtual void Spawn();
 	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	int Points() const { return int(pev->frags); }
@@ -87,7 +87,7 @@ public:
 class CGameEnd: public CRulePointEntity
 {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 #define SF_ENVTEXT_ALLPLAYERS BIT(0) // Message will be displayed to all players instead of just the activator.
@@ -100,7 +100,7 @@ public:
 	virtual void KeyValue(KeyValueData *pkvd);
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	bool MessageToAll() const { return (pev->spawnflags & SF_ENVTEXT_ALLPLAYERS) == SF_ENVTEXT_ALLPLAYERS; }
@@ -128,7 +128,7 @@ public:
 	virtual int ObjectCaps() { return (CRulePointEntity::ObjectCaps() | FCAP_MASTER); }
 	virtual BOOL IsTriggered(CBaseEntity *pActivator);
 	virtual const char *TeamID();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	bool RemoveOnFire() const { return (pev->spawnflags & SF_TEAMMASTER_FIREONCE) == SF_TEAMMASTER_FIREONCE; }
@@ -139,7 +139,7 @@ private:
 
 public:
 	int m_teamIndex;
-	USE_TYPE m_triggerType;
+	EUseType m_triggerType;
 };
 
 #define SF_TEAMSET_FIREONCE  BIT(0) // Remove entity after firing.
@@ -149,7 +149,7 @@ public:
 class CGameTeamSet: public CRulePointEntity
 {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	bool RemoveOnFire() const { return (pev->spawnflags & SF_TEAMSET_FIREONCE) == SF_TEAMSET_FIREONCE; }
@@ -166,7 +166,7 @@ public:
 	virtual void KeyValue(KeyValueData *pkvd);
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -187,7 +187,7 @@ private:
 class CGamePlayerHurt: public CRulePointEntity
 {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	bool RemoveOnFire() const { return (pev->spawnflags & SF_PKILL_FIREONCE) == SF_PKILL_FIREONCE; }
@@ -202,7 +202,7 @@ class CGameCounter: public CRulePointEntity
 {
 public:
 	virtual void Spawn();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	bool RemoveOnFire() const { return (pev->spawnflags & SF_GAMECOUNT_FIREONCE) == SF_GAMECOUNT_FIREONCE; }
@@ -236,7 +236,7 @@ private:
 class CGameCounterSet: public CRulePointEntity
 {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	bool RemoveOnFire() const { return (pev->spawnflags & SF_GAMECOUNTSET_FIREONCE) == SF_GAMECOUNTSET_FIREONCE; }
@@ -252,7 +252,7 @@ class CGamePlayerEquip: public CRulePointEntity
 public:
 	virtual void KeyValue(KeyValueData *pkvd);
 	virtual void Touch(CBaseEntity *pOther);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	bool UseOnly() const { return (pev->spawnflags & SF_PLAYEREQUIP_USEONLY) == SF_PLAYEREQUIP_USEONLY; }
@@ -272,7 +272,7 @@ private:
 class CGamePlayerTeam: public CRulePointEntity
 {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 private:
 	bool RemoveOnFire() const { return (pev->spawnflags & SF_PTEAM_FIREONCE) == SF_PTEAM_FIREONCE; }

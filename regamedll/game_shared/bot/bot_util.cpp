@@ -389,7 +389,7 @@ bool UTIL_IsVisibleToTeam(const Vector &spot, int team, float maxRange)
 			continue;
 
 		TraceResult result;
-		UTIL_TraceLine(pPlayer->EyePosition(), spot, ignore_monsters, ignore_glass, ENT(pPlayer->pev), &result);
+		UTIL_TraceLine(pPlayer->EyePosition(), spot, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pPlayer->pev), &result);
 
 		if (result.flFraction == 1.0f)
 			return true;

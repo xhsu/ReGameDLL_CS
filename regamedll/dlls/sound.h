@@ -117,7 +117,7 @@ public:
 	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
 
 public:
-	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void EXPORT RampThink();
 	void InitModulationParms();
 
@@ -159,7 +159,7 @@ public:
 	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
 
 public:
-	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void EXPORT SpeakerThink();
 
 public:

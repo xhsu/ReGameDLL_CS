@@ -868,7 +868,7 @@ void CHostage::ApplyHostagePenalty(CBasePlayer *pAttacker)
 	}
 }
 
-void CHostage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CHostage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!pActivator->IsPlayer())
 		return;
@@ -1194,7 +1194,7 @@ void CHostage::NavReady()
 	{
 		TraceResult tr;
 		Vector vecDropDest = (pFollowing->pev->origin - Vector(0, 0, 300));
-		UTIL_TraceHull(vecDest, vecDropDest, ignore_monsters, human_hull, pFollowing->edict(), &tr);
+		UTIL_TraceHull(vecDest, vecDropDest, ETraceIgnores::Monsters, ETraceHull::Player, pFollowing->edict(), &tr);
 
 		if (tr.fStartSolid || tr.flFraction == 1.0f)
 		{
@@ -1351,7 +1351,7 @@ void CHostage::PreThink()
 	vecDest = vecSrc + pev->velocity * gpGlobals->frametime;
 	vecDest.z = vecSrc.z;
 
-	TRACE_MONSTER_HULL(edict(), vecSrc, vecDest, dont_ignore_monsters, edict(), &tr);
+	TRACE_MONSTER_HULL(edict(), vecSrc, vecDest, (int)ETraceIgnores::None, edict(), &tr);
 
 	if (tr.fStartSolid || tr.flFraction == 1.0f || tr.vecPlaneNormal.z > MaxUnitZSlope)
 	{
@@ -1363,7 +1363,7 @@ void CHostage::PreThink()
 	vecDest = vecSrc + (pev->velocity.Normalize() * 0.1f);
 	vecDest.z = vecSrc.z;
 
-	TRACE_MONSTER_HULL(edict(), vecSrc, vecDest, dont_ignore_monsters, edict(), &tr);
+	TRACE_MONSTER_HULL(edict(), vecSrc, vecDest, (int)ETraceIgnores::None, edict(), &tr);
 
 	if (tr.fStartSolid)
 	{
@@ -1374,7 +1374,7 @@ void CHostage::PreThink()
 	vecDest = tr.vecEndPos;
 	vecDest.z -= flInterval;
 
-	TRACE_MONSTER_HULL(edict(), vecSrc, vecDest, dont_ignore_monsters, edict(), &tr);
+	TRACE_MONSTER_HULL(edict(), vecSrc, vecDest, (int)ETraceIgnores::None, edict(), &tr);
 
 	if (tr.vecPlaneNormal.z < MaxUnitZSlope)
 	{

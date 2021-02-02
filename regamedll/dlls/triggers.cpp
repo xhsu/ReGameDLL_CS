@@ -65,13 +65,13 @@ void CAutoTrigger::KeyValue(KeyValueData *pkvd)
 		switch (type)
 		{
 		case 0:
-			m_triggerType = USE_OFF;
+			m_triggerType = EUseType::OFF;
 			break;
 		case 2:
-			m_triggerType = USE_TOGGLE;
+			m_triggerType = EUseType::TOGGLE;
 			break;
 		default:
-			m_triggerType = USE_ON;
+			m_triggerType = EUseType::ON;
 			break;
 		}
 		pkvd->fHandled = TRUE;
@@ -135,13 +135,13 @@ void CTriggerRelay::KeyValue(KeyValueData *pkvd)
 		switch (type)
 		{
 		case 0:
-			m_triggerType = USE_OFF;
+			m_triggerType = EUseType::OFF;
 			break;
 		case 2:
-			m_triggerType = USE_TOGGLE;
+			m_triggerType = EUseType::TOGGLE;
 			break;
 		default:
-			m_triggerType = USE_ON;
+			m_triggerType = EUseType::ON;
 			break;
 		}
 		pkvd->fHandled = TRUE;
@@ -157,7 +157,7 @@ void CTriggerRelay::Spawn()
 	;
 }
 
-void CTriggerRelay::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTriggerRelay::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	SUB_UseTargets(this, m_triggerType, 0);
 	if (pev->spawnflags & SF_RELAY_FIREONCE)
@@ -293,7 +293,7 @@ void CMultiManager::ManagerThink()
 	time = gpGlobals->time - m_startTime;
 	while (m_index < m_cTargets && m_flTargetDelay[m_index] <= time)
 	{
-		FireTargets(STRING(m_iTargetName[m_index]), m_hActivator, this, USE_TOGGLE, 0);
+		FireTargets(STRING(m_iTargetName[m_index]), m_hActivator, this, EUseType::TOGGLE, 0);
 		m_index++;
 	}
 
@@ -340,7 +340,7 @@ CMultiManager *CMultiManager::Clone()
 }
 
 // The USE function builds the time table and starts the entity thinking.
-void CMultiManager::ManagerUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CMultiManager::ManagerUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// In multiplayer games, clone the MM and execute in the clone (like a thread)
 	// to allow multiple players to trigger the same multimanager
@@ -369,11 +369,9 @@ void CRenderFxManager::Spawn()
 	pev->solid = SOLID_NOT;
 }
 
-#ifdef REGAMEDLL_FIXES
-
-void CRenderFxManager::OnDestroy()
+CRenderFxManager::~CRenderFxManager()
 {
-	m_RenderGroups.Purge();
+	m_RenderGroups.clear();
 }
 
 void CRenderFxManager::Restart()
@@ -390,13 +388,14 @@ void CRenderFxManager::Restart()
 		entvars_t *pevTarget = VARS(pentTarget);
 
 		// find render groups in our list of backup
-		int index = m_RenderGroups.Find(ENTINDEX(pevTarget));
-		if (index == m_RenderGroups.InvalidIndex()) {
+		auto iter = m_RenderGroups.find(ENTINDEX(pevTarget));
+		if (iter == m_RenderGroups.end())
+		{
 			// not found
 			continue;
 		}
 
-		RenderGroup_t *pGroup = &m_RenderGroups[index];
+		RenderGroup_t const* pGroup = &iter->second;
 		if (!(pev->spawnflags & SF_RENDER_MASKFX))
 			pevTarget->renderfx = pGroup->renderfx;
 
@@ -411,9 +410,7 @@ void CRenderFxManager::Restart()
 	}
 }
 
-#endif // REGAMEDLL_FIXES
-
-void CRenderFxManager::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CRenderFxManager::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (FStringNull(pev->target))
 		return;
@@ -426,7 +423,6 @@ void CRenderFxManager::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 
 		entvars_t *pevTarget = VARS(pentTarget);
 
-#ifdef REGAMEDLL_FIXES
 		RenderGroup_t group;
 		group.renderfx = pevTarget->renderfx;
 		group.renderamt = pevTarget->renderamt;
@@ -434,10 +430,8 @@ void CRenderFxManager::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 		group.rendercolor = pevTarget->rendercolor;
 
 		int entityIndex = ENTINDEX(pevTarget);
-		if (m_RenderGroups.Find(entityIndex) == m_RenderGroups.InvalidIndex()) {
-			m_RenderGroups.Insert(entityIndex, group);
-		}
-#endif
+		if (m_RenderGroups.find(entityIndex) == m_RenderGroups.end())
+			m_RenderGroups[entityIndex] = group;
 
 		if (!(pev->spawnflags & SF_RENDER_MASKFX))
 			pevTarget->renderfx = pev->renderfx;
@@ -577,7 +571,7 @@ void CTriggerCDAudio::Spawn()
 	InitTrigger();
 }
 
-void CTriggerCDAudio::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTriggerCDAudio::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	PlayTrack(pCaller->edict());
 }
@@ -683,7 +677,7 @@ void CTargetCDAudio::Spawn()
 	}
 }
 
-void CTargetCDAudio::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTargetCDAudio::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	Play(pCaller->edict());
 }
@@ -817,7 +811,7 @@ void CTriggerHurt::RadiationThink()
 }
 
 // ToggleUse - If this is the USE function for a trigger, its state will toggle every time it's fired
-void CBaseTrigger::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBaseTrigger::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (pev->solid == SOLID_NOT)
 	{
@@ -951,7 +945,7 @@ void CBaseTrigger::HurtTouch(CBaseEntity *pOther)
 			}
 		}
 
-		SUB_UseTargets(pOther, USE_TOGGLE, 0);
+		SUB_UseTargets(pOther, EUseType::TOGGLE, 0);
 		if (pev->spawnflags & SF_TRIGGER_HURT_TARGETONCE)
 		{
 			pev->target = 0;
@@ -1053,7 +1047,7 @@ void CBaseTrigger::ActivateMultiTrigger(CBaseEntity *pActivator)
 	// don't trigger again until reset
 	// pev->takedamage = DAMAGE_NO;
 	m_hActivator = pActivator;
-	SUB_UseTargets(m_hActivator, USE_TOGGLE, 0);
+	SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
 
 	if (pev->message && pActivator->IsPlayer())
 	{
@@ -1087,7 +1081,7 @@ void CBaseTrigger::MultiWaitOver()
 	SetThink(nullptr);
 }
 
-void CBaseTrigger::CounterUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBaseTrigger::CounterUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	m_cTriggersLeft--;
 	m_hActivator = pActivator;
@@ -1171,7 +1165,7 @@ void CFireAndDie::Precache()
 
 void CFireAndDie::Think()
 {
-	SUB_UseTargets(this, USE_TOGGLE, 0);
+	SUB_UseTargets(this, EUseType::TOGGLE, 0);
 	UTIL_Remove(this);
 }
 
@@ -1287,7 +1281,7 @@ edict_t *CChangeLevel::FindLandmark(const char *pLandmarkName)
 
 // CChangeLevel::Use - allows level transitions to be
 // triggered by buttons, etc.
-void CChangeLevel::UseChangeLevel(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CChangeLevel::UseChangeLevel(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	ChangeLevelNow(pActivator);
 }
@@ -1342,7 +1336,7 @@ void CChangeLevel::ChangeLevelNow(CBaseEntity *pActivator)
 	Q_strcpy(st_szNextMap, m_szMapName);
 
 	m_hActivator = pActivator;
-	SUB_UseTargets(pActivator, USE_TOGGLE, 0);
+	SUB_UseTargets(pActivator, EUseType::TOGGLE, 0);
 
 	// Init landmark to nullptr
 	st_szNextSpot[0] = '\0';
@@ -1870,9 +1864,9 @@ void CBombTarget::BombTargetTouch(CBaseEntity *pOther)
 	}
 }
 
-void CBombTarget::BombTargetUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBombTarget::BombTargetUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
-	SUB_UseTargets(nullptr, USE_TOGGLE, 0);
+	SUB_UseTargets(nullptr, EUseType::TOGGLE, 0);
 }
 
 LINK_ENTITY_TO_CLASS(func_hostage_rescue, CHostageRescue)
@@ -2000,7 +1994,7 @@ void CTriggerSave::SaveTouch(CBaseEntity *pOther)
 
 LINK_ENTITY_TO_CLASS(trigger_endsection, CTriggerEndSection)
 
-void CTriggerEndSection::EndSectionUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTriggerEndSection::EndSectionUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// Only save on clients
 	if (pActivator && !pActivator->IsNetClient())
@@ -2105,7 +2099,7 @@ void CTriggerChangeTarget::Spawn()
 	;
 }
 
-void CTriggerChangeTarget::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTriggerChangeTarget::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	CBaseEntity *pTarget = UTIL_FindEntityByTargetname(nullptr, pev->target);
 	if (pTarget)
@@ -2192,7 +2186,7 @@ void CTriggerCamera::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CTriggerCamera::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTriggerCamera::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!ShouldToggle(useType, m_state))
 		return;
@@ -2306,7 +2300,7 @@ void CTriggerCamera::FollowTarget()
 			m_hPlayer->ResetMaxSpeed();
 		}
 
-		SUB_UseTargets(this, USE_TOGGLE, 0);
+		SUB_UseTargets(this, EUseType::TOGGLE, 0);
 		pev->avelocity = Vector(0, 0, 0);
 		m_state = 0;
 		return;
@@ -2366,7 +2360,7 @@ void CTriggerCamera::Move()
 		// Fire the passtarget if there is one
 		if (!FStringNull(m_pentPath->pev->message))
 		{
-			FireTargets(STRING(m_pentPath->pev->message), this, this, USE_TOGGLE, 0);
+			FireTargets(STRING(m_pentPath->pev->message), this, this, EUseType::TOGGLE, 0);
 
 			if (m_pentPath->pev->spawnflags & SF_CORNER_FIREONCE)
 			{

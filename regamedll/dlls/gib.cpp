@@ -223,7 +223,7 @@ void CGib::BounceGibTouch(CBaseEntity *pOther)
 		{
 			TraceResult tr;
 			Vector vecSpot = pev->origin + Vector(0, 0, 8);
-			UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -24), ignore_monsters, ENT(pev), &tr);
+			UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -24), ETraceIgnores::Monsters, ENT(pev), &tr);
 			UTIL_BloodDecalTrace(&tr, m_bloodColor);
 			m_cBloodDecals--;
 		}
@@ -255,7 +255,7 @@ void CGib::StickyGibTouch(CBaseEntity *pOther)
 
 	vecSpot = pev->origin + pev->velocity * 32;
 
-	UTIL_TraceLine(pev->origin, vecSpot, ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(pev->origin, vecSpot, ETraceIgnores::Monsters, ENT(pev), &tr);
 	UTIL_BloodDecalTrace(&tr, m_bloodColor);
 
 	pev->velocity = tr.vecPlaneNormal * -1;

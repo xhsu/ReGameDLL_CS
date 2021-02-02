@@ -222,7 +222,7 @@ bool CHalfLifeTraining::PlayerCanBuy(CBasePlayer *pPlayer)
 void CHalfLifeTraining::PlayerKilled(CBasePlayer *pVictim, entvars_t *pKiller, entvars_t *pInflictor)
 {
 	SET_VIEW(pVictim->edict(), pVictim->edict());
-	FireTargets("game_playerdie", pVictim, pVictim, USE_TOGGLE, 0);
+	FireTargets("game_playerdie", pVictim, pVictim, EUseType::TOGGLE, 0);
 }
 
 void CHalfLifeTraining::CheckWinConditions()
@@ -238,7 +238,7 @@ void CHalfLifeTraining::CheckWinConditions()
 
 			pBomb->m_bJustBlew = false;
 			m_bBombDefused = false;
-			FireTargets(STRING(pBomb->pev->target), CBaseEntity::Instance(pBomb->pev->owner), CBaseEntity::Instance(pBomb->pev->owner), USE_TOGGLE, 0);
+			FireTargets(STRING(pBomb->pev->target), CBaseEntity::Instance(pBomb->pev->owner), CBaseEntity::Instance(pBomb->pev->owner), EUseType::TOGGLE, 0);
 			break;
 		}
 	}
@@ -256,7 +256,7 @@ void CHalfLifeTraining::CheckWinConditions()
 
 			pBomb->m_bJustBlew = false;
 			m_bTargetBombed = false;
-			FireTargets(STRING(pBomb->pev->noise1), CBaseEntity::Instance(pBomb->pev->owner), CBaseEntity::Instance(pBomb->pev->owner), USE_TOGGLE, 0);
+			FireTargets(STRING(pBomb->pev->noise1), CBaseEntity::Instance(pBomb->pev->owner), CBaseEntity::Instance(pBomb->pev->owner), EUseType::TOGGLE, 0);
 			break;
 		}
 	}
@@ -279,7 +279,7 @@ void CHalfLifeTraining::CheckWinConditions()
 		if (pRescueArea)
 		{
 			pHostage->pev->noise1 = 1;
-			FireTargets(STRING(pRescueArea->pev->target), nullptr, nullptr, USE_TOGGLE, 0);
+			FireTargets(STRING(pRescueArea->pev->target), nullptr, nullptr, EUseType::TOGGLE, 0);
 		}
 	}
 }
@@ -348,7 +348,7 @@ void CBaseGrenCatch::Think()
 	if ((m_NeedGrenadeType == GRENADETYPE_SMOKE && m_fSmokeTouching && !m_fSmokeTouchingLastFrame)
 		|| (m_NeedGrenadeType == GRENADETYPE_FLASH && m_fFlashTouched))
 	{
-		FireTargets(STRING(sTriggerOnGrenade), this, this, USE_TOGGLE, 0);
+		FireTargets(STRING(sTriggerOnGrenade), this, this, EUseType::TOGGLE, 0);
 
 		if (m_NeedGrenadeType == GRENADETYPE_SMOKE)
 		{
@@ -506,7 +506,7 @@ void CFuncWeaponCheck::Touch(CBaseEntity *pOther)
 				{
 					if (pev->speed > -1.0f)
 					{
-						FireTargets(STRING(sTriggerNoItems), pOther, pOther, USE_TOGGLE, 0);
+						FireTargets(STRING(sTriggerNoItems), pOther, pOther, EUseType::TOGGLE, 0);
 						pev->dmgtime = pev->speed + gpGlobals->time;
 
 						if (!pev->speed)
@@ -519,6 +519,6 @@ void CFuncWeaponCheck::Touch(CBaseEntity *pOther)
 		}
 	}
 
-	FireTargets(STRING(sTriggerWithItems), pOther, pOther, USE_TOGGLE, 0);
+	FireTargets(STRING(sTriggerWithItems), pOther, pOther, EUseType::TOGGLE, 0);
 	SUB_Remove();
 }

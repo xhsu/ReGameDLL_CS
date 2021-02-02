@@ -42,7 +42,7 @@ public:
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
 	virtual void Activate();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 	void SetPrevious(CPathTrack *pprevious);
 	void Link();
@@ -90,7 +90,7 @@ public:
 	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | FCAP_DIRECTIONAL_USE; }
 	virtual void OverrideReset();
 	virtual BOOL OnControls(entvars_t *pev);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual void Blocked(CBaseEntity *pOther);
 
 public:
@@ -142,7 +142,7 @@ public:
 	virtual int Classify();
 	virtual void OverrideReset();
 	virtual BOOL OnControls(entvars_t *pev);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual void Blocked(CBaseEntity *pOther);
 
 public:

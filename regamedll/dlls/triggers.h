@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "utlmap.h"
-
 class CFrictionModifier: public CBaseEntity
 {
 public:
@@ -70,7 +68,7 @@ public:
 	static TYPEDESCRIPTION m_SaveData[];
 
 	int m_globalstate;
-	USE_TYPE m_triggerType;
+	EUseType m_triggerType;
 };
 
 #define SF_RELAY_FIREONCE BIT(0)
@@ -83,12 +81,12 @@ public:
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return (CBaseDelay::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
 
-	USE_TYPE m_triggerType;
+	EUseType m_triggerType;
 };
 
 const int MAX_MM_TARGETS = 16; // maximum number of targets a single multi_manager entity may be assigned.
@@ -113,7 +111,7 @@ public:
 
 public:
 	void EXPORT ManagerThink();
-	void EXPORT ManagerUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT ManagerUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 private:
 	BOOL IsClone()
@@ -163,24 +161,22 @@ public:
 class CRenderFxManager: public CBaseEntity
 {
 public:
-	virtual void Spawn();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual ~CRenderFxManager() final;
 
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-	virtual void OnDestroy();
+public:
+	void Spawn() final;
+	void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) final;
+	void Restart() final;
 
 public:
 	struct RenderGroup_t
 	{
-		int rendermode;
-		float renderamt;
-		Vector rendercolor;
-		int renderfx;
+		int rendermode{ 0 };
+		float renderamt{ 0.0f };
+		Vector rendercolor{ g_vecZero };
+		int renderfx{ 0 };
 	};
-	CUtlMap<int, RenderGroup_t> m_RenderGroups;
-#endif
-
+	std::unordered_map<int, RenderGroup_t> m_RenderGroups;
 };
 
 #define SF_TRIGGER_ALLOWMONSTERS BIT(0) // monsters allowed to fire this trigger
@@ -201,8 +197,8 @@ public:
 	void EXPORT CDAudioTouch(CBaseEntity *pOther);
 	void ActivateMultiTrigger(CBaseEntity *pActivator);
 	void EXPORT MultiWaitOver();
-	void EXPORT CounterUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
-	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT CounterUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void InitTrigger();
 };
 
@@ -240,7 +236,7 @@ class CTriggerCDAudio: public CBaseTrigger
 public:
 	virtual void Spawn();
 	virtual void Touch(CBaseEntity *pOther);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void PlayTrack(edict_t *pEdict);
@@ -253,7 +249,7 @@ public:
 	virtual void Spawn();
 	virtual void KeyValue(KeyValueData *pkvd);
 	virtual void Think();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void Play(edict_t *pEdict);
@@ -342,7 +338,7 @@ public:
 	virtual int Restore(CRestore &restore);
 
 public:
-	void EXPORT UseChangeLevel(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT UseChangeLevel(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void EXPORT TriggerChangeLevel();
 	void EXPORT ExecuteChangeLevel();
 	void EXPORT TouchChangeLevel(CBaseEntity *pOther);
@@ -410,7 +406,7 @@ private:
 public:
 	virtual void Spawn();
 	void EXPORT BombTargetTouch(CBaseEntity *pOther);
-	void EXPORT BombTargetUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT BombTargetUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 class CHostageRescue: public CBaseTrigger
@@ -456,7 +452,7 @@ public:
 
 public:
 	void EXPORT EndSectionTouch(CBaseEntity *pOther);
-	void EXPORT EndSectionUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT EndSectionUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 class CTriggerGravity: public CBaseTrigger
@@ -476,7 +472,7 @@ public:
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -497,7 +493,7 @@ public:
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void EXPORT FollowTarget();

@@ -961,9 +961,9 @@ inline CNavArea *FindFirstAreaInDirection(const Vector *start, NavDirType dir, f
 		TraceResult result;
 
 		if (traceIgnore)
-			UTIL_TraceLine(*start, pos, ignore_monsters, ENT(traceIgnore->pev), &result);
+			UTIL_TraceLine(*start, pos, ETraceIgnores::Monsters, ENT(traceIgnore->pev), &result);
 		else
-			UTIL_TraceLine(*start, pos, ignore_monsters, nullptr, &result);
+			UTIL_TraceLine(*start, pos, ETraceIgnores::Monsters, nullptr, &result);
 
 		if (result.flFraction != 1.0f)
 			break;
@@ -1009,13 +1009,13 @@ inline bool testJumpDown(const Vector *fromPos, const Vector *toPos)
 	Vector to(toPos->x, toPos->y, from.z);
 
 	TraceResult result;
-	UTIL_TraceLine(from, to, ignore_monsters, nullptr, &result);
+	UTIL_TraceLine(from, to, ETraceIgnores::Monsters, nullptr, &result);
 	if (result.flFraction != 1.0f || result.fStartSolid)
 		return false;
 
 	from = to;
 	to.z = toPos->z + 2.0f;
-	UTIL_TraceLine(from, to, ignore_monsters, nullptr, &result);
+	UTIL_TraceLine(from, to, ETraceIgnores::Monsters, nullptr, &result);
 	if (result.flFraction != 1.0f || result.fStartSolid)
 		return false;
 
@@ -1525,7 +1525,7 @@ void BuildLadders()
 			Vector from = ladder->m_bottom + Vector(0.0f, GenerationStepSize, GenerationStepSize);
 			Vector to = ladder->m_top + Vector(0.0f, GenerationStepSize, -GenerationStepSize);
 
-			UTIL_TraceLine(from, to, ignore_monsters, ENT(pEntity->pev), &result);
+			UTIL_TraceLine(from, to, ETraceIgnores::Monsters, ENT(pEntity->pev), &result);
 
 			if (result.flFraction != 1.0f || result.fStartSolid)
 				ladder->m_dir = NORTH;
@@ -1538,7 +1538,7 @@ void BuildLadders()
 			Vector from = ladder->m_bottom + Vector(GenerationStepSize, 0.0f, GenerationStepSize);
 			Vector to = ladder->m_top + Vector(GenerationStepSize, 0.0f, -GenerationStepSize);
 
-			UTIL_TraceLine(from, to, ignore_monsters, ENT(pEntity->pev), &result);
+			UTIL_TraceLine(from, to, ETraceIgnores::Monsters, ENT(pEntity->pev), &result);
 
 			if (result.flFraction != 1.0f || result.fStartSolid)
 				ladder->m_dir = WEST;
@@ -1564,7 +1564,7 @@ void BuildLadders()
 
 			out = on;
 			AddDirectionVector(&out, ladder->m_dir, minLadderClearance);
-			UTIL_TraceLine(on, out, ignore_monsters, ENT(pEntity->pev), &result);
+			UTIL_TraceLine(on, out, ETraceIgnores::Monsters, ENT(pEntity->pev), &result);
 
 			if (result.flFraction == 1.0f && !result.fStartSolid)
 			{
@@ -1581,7 +1581,7 @@ void BuildLadders()
 
 			out = on;
 			AddDirectionVector(&out, ladder->m_dir, minLadderClearance);
-			UTIL_TraceLine(on, out, ignore_monsters, ENT(pEntity->pev), &result);
+			UTIL_TraceLine(on, out, ETraceIgnores::Monsters, ENT(pEntity->pev), &result);
 
 			if (result.flFraction == 1.0f && !result.fStartSolid)
 			{
@@ -2566,7 +2566,7 @@ bool IsHidingSpotInCover(const Vector *spot)
 
 	// if we are crouched underneath something, that counts as good cover
 	to = from + Vector(0, 0, 20.0f);
-	UTIL_TraceLine(from, to, ignore_monsters, nullptr, &result);
+	UTIL_TraceLine(from, to, ETraceIgnores::Monsters, nullptr, &result);
 	if (result.flFraction != 1.0f)
 		return true;
 
@@ -2577,7 +2577,7 @@ bool IsHidingSpotInCover(const Vector *spot)
 	{
 		to = from + Vector(coverRange * Q_cos(angle), coverRange * Q_sin(angle), HalfHumanHeight);
 
-		UTIL_TraceLine(from, to, ignore_monsters, nullptr, &result);
+		UTIL_TraceLine(from, to, ETraceIgnores::Monsters, nullptr, &result);
 
 		// if traceline hit something, it hit "cover"
 		if (result.flFraction != 1.0f)
@@ -2738,7 +2738,7 @@ void ClassifySniperSpot(HidingSpot *spot)
 				walkable.z = area->GetZ(&walkable) + HalfHumanHeight;
 
 				// check line of sight
-				UTIL_TraceLine(eye, walkable, ignore_monsters, ignore_glass, nullptr, &result);
+				UTIL_TraceLine(eye, walkable, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, nullptr, &result);
 
 				if (result.flFraction == 1.0f && !result.fStartSolid)
 				{
@@ -2897,7 +2897,7 @@ void CNavArea::AddSpotEncounters(const class CNavArea *from, NavDirType fromDir,
 				continue;
 
 			// check if we have LOS
-			UTIL_TraceLine(eye, Vector(spotPos->x, spotPos->y, spotPos->z + HalfHumanHeight), ignore_monsters, ignore_glass, nullptr, &result);
+			UTIL_TraceLine(eye, Vector(spotPos->x, spotPos->y, spotPos->z + HalfHumanHeight), ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, nullptr, &result);
 			if (result.flFraction != 1.0f)
 				continue;
 
@@ -3756,7 +3756,7 @@ void EditNavAreas(NavEditCmdType cmd)
 	Vector to = from + maxRange * dir;
 
 	TraceResult result;
-	UTIL_TraceLine(from, to, ignore_monsters, ignore_glass, ENT(pLocalPlayer->pev), &result);
+	UTIL_TraceLine(from, to, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pLocalPlayer->pev), &result);
 
 	if (result.flFraction != 1.0f)
 	{
@@ -4295,7 +4295,7 @@ bool GetGroundHeight(const Vector *pos, float *height, Vector *normal)
 	{
 		from = *pos + Vector(0, 0, offset);
 
-		UTIL_TraceLine(from, to, ignore_monsters, dont_ignore_glass, ignore, &result);
+		UTIL_TraceLine(from, to, ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ignore, &result);
 
 		if (result.flFraction != 1.0f && result.pHit)
 		{
@@ -4353,7 +4353,7 @@ bool GetSimpleGroundHeight(const Vector *pos, float *height, Vector *normal)
 
 	TraceResult result;
 
-	UTIL_TraceLine(*pos, to, ignore_monsters, dont_ignore_glass, nullptr, &result);
+	UTIL_TraceLine(*pos, to, ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, nullptr, &result);
 
 	if (result.fStartSolid)
 		return false;
@@ -4412,7 +4412,7 @@ inline bool IsAreaVisible(const Vector *pos, const CNavArea *area)
 		corner = *area->GetCorner((NavCornerType)c);
 		corner.z += 0.75f * HumanHeight;
 
-		UTIL_TraceLine(*pos, corner, ignore_monsters, nullptr, &result);
+		UTIL_TraceLine(*pos, corner, ETraceIgnores::Monsters, nullptr, &result);
 		if (result.flFraction == 1.0f)
 		{
 			// we can see this area
@@ -4763,7 +4763,7 @@ CNavArea *CNavAreaGrid::GetNearestNavArea(const Vector *pos, bool anyZ) const
 			if (!anyZ)
 			{
 				TraceResult result;
-				UTIL_TraceLine(source, areaPos + Vector(0, 0, HalfHumanHeight), ignore_monsters, ignore_glass, nullptr, &result);
+				UTIL_TraceLine(source, areaPos + Vector(0, 0, HalfHumanHeight), ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, nullptr, &result);
 				if (result.flFraction != 1.0f)
 					continue;
 			}

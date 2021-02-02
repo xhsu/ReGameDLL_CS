@@ -50,7 +50,7 @@ void CEnvGlobal::Spawn()
 	}
 }
 
-void CEnvGlobal::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CEnvGlobal::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	GLOBALESTATE oldState = gGlobalState.EntityGetState(m_globalstate);
 	GLOBALESTATE newState;
@@ -146,7 +146,7 @@ void CMultiSource::Restart()
 }
 #endif
 
-void CMultiSource::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CMultiSource::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	int i = 0;
 
@@ -171,11 +171,11 @@ void CMultiSource::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE u
 	if (IsTriggered(pActivator))
 	{
 		ALERT(at_aiconsole, "Multisource %s enabled (%d inputs)\n", STRING(pev->targetname), m_iTotal);
-		USE_TYPE useType = USE_TOGGLE;
+		EUseType useType = EUseType::TOGGLE;
 
 		if (!FStringNull(m_globalstate))
 		{
-			useType = USE_ON;
+			useType = EUseType::ON;
 		}
 
 		SUB_UseTargets(nullptr, useType, 0);
@@ -398,7 +398,7 @@ BOOL CBaseButton::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 		// Toggle buttons fire when they get back to their "home" position
 		if (!(pev->spawnflags & SF_BUTTON_TOGGLE))
 		{
-			SUB_UseTargets(m_hActivator, USE_TOGGLE, 0);
+			SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
 		}
 
 		ButtonReturn();
@@ -478,7 +478,7 @@ void CBaseButton::Spawn()
 		m_flLip = 4;
 	}
 
-	m_toggle_state = TS_AT_BOTTOM;
+	m_toggle_state = EToggleState::AT_BOTTOM;
 	m_vecPosition1 = pev->origin;
 
 	// Subtract 2 from size because the engine expands bboxes by 1 in all directions making the size too big
@@ -574,15 +574,15 @@ void CBaseButton::ButtonSpark()
 }
 
 // Button's Use function
-void CBaseButton::ButtonUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBaseButton::ButtonUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// Ignore touches if button is moving, or pushed-in and waiting to auto-come-out.
 	// UNDONE: Should this use ButtonResponseToTouch() too?
-	if (m_toggle_state == TS_GOING_UP || m_toggle_state == TS_GOING_DOWN)
+	if (m_toggle_state == EToggleState::GOING_UP || m_toggle_state == EToggleState::GOING_DOWN)
 		return;
 
 	m_hActivator = pActivator;
-	if (m_toggle_state == TS_AT_TOP)
+	if (m_toggle_state == EToggleState::AT_TOP)
 	{
 		if (!m_fStayPushed && (pev->spawnflags & SF_BUTTON_TOGGLE))
 		{
@@ -598,14 +598,14 @@ void CBaseButton::ButtonUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_T
 CBaseButton::BUTTON_CODE CBaseButton::ButtonResponseToTouch()
 {
 	// Ignore touches if button is moving, or pushed-in and waiting to auto-come-out.
-	if (m_toggle_state == TS_GOING_UP
-		|| m_toggle_state == TS_GOING_DOWN
-		|| (m_toggle_state == TS_AT_TOP && !m_fStayPushed && !(pev->spawnflags & SF_BUTTON_TOGGLE)))
+	if (m_toggle_state == EToggleState::GOING_UP
+		|| m_toggle_state == EToggleState::GOING_DOWN
+		|| (m_toggle_state == EToggleState::AT_TOP && !m_fStayPushed && !(pev->spawnflags & SF_BUTTON_TOGGLE)))
 	{
 		return BUTTON_NOTHING;
 	}
 
-	if (m_toggle_state == TS_AT_TOP)
+	if (m_toggle_state == EToggleState::AT_TOP)
 	{
 		if ((pev->spawnflags & SF_BUTTON_TOGGLE) && !m_fStayPushed)
 		{
@@ -645,7 +645,7 @@ void CBaseButton::ButtonTouch(CBaseEntity *pOther)
 	if (code == BUTTON_RETURN)
 	{
 		EMIT_SOUND(ENT(pev), CHAN_VOICE, (char *)STRING(pev->noise), VOL_NORM, ATTN_NORM);
-		SUB_UseTargets(m_hActivator, USE_TOGGLE, 0);
+		SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
 		ButtonReturn();
 	}
 	else // code == BUTTON_ACTIVATE
@@ -671,8 +671,8 @@ void CBaseButton::ButtonActivate()
 		PlayLockSounds(pev, &m_ls, FALSE, TRUE);
 	}
 
-	assert(m_toggle_state == TS_AT_BOTTOM);
-	m_toggle_state = TS_GOING_UP;
+	assert(m_toggle_state == EToggleState::AT_BOTTOM);
+	m_toggle_state = EToggleState::GOING_UP;
 
 	SetMoveDone(&CBaseButton::TriggerAndWait);
 	if (!m_fRotating)
@@ -688,12 +688,12 @@ void CBaseButton::ButtonActivate()
 // Button has reached the "in/up" position.  Activate its "targets", and pause before "popping out".
 void CBaseButton::TriggerAndWait()
 {
-	assert(m_toggle_state == TS_GOING_UP);
+	assert(m_toggle_state == EToggleState::GOING_UP);
 
 	if (!UTIL_IsMasterTriggered(m_sMaster, m_hActivator))
 		return;
 
-	m_toggle_state = TS_AT_TOP;
+	m_toggle_state = EToggleState::AT_TOP;
 
 	// If button automatically comes back out, start it moving out.
 	// Else re-instate touch method
@@ -718,14 +718,14 @@ void CBaseButton::TriggerAndWait()
 
 	// use alternate textures
 	pev->frame = 1;
-	SUB_UseTargets(m_hActivator, USE_TOGGLE, 0);
+	SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
 }
 
 // Starts the button moving "out/down".
 void CBaseButton::ButtonReturn()
 {
-	//assert(m_toggle_state == TS_AT_TOP);
-	m_toggle_state = TS_GOING_DOWN;
+	//assert(m_toggle_state == EToggleState::AT_TOP);
+	m_toggle_state = EToggleState::GOING_DOWN;
 
 	SetMoveDone(&CBaseButton::ButtonBackHome);
 	if (!m_fRotating)
@@ -763,8 +763,8 @@ void CBaseButton::Restart()
 // Button has returned to start state. Quiesce it.
 void CBaseButton::ButtonBackHome()
 {
-	assert(m_toggle_state == TS_GOING_DOWN);
-	m_toggle_state = TS_AT_BOTTOM;
+	assert(m_toggle_state == EToggleState::GOING_DOWN);
+	m_toggle_state = EToggleState::AT_BOTTOM;
 
 	if (pev->spawnflags & SF_BUTTON_TOGGLE
 #ifdef REGAMEDLL_FIXES
@@ -773,7 +773,7 @@ void CBaseButton::ButtonBackHome()
 )
 	{
 		//EMIT_SOUND(ENT(pev), CHAN_VOICE, (char *)STRING(pev->noise), 1, ATTN_NORM);
-		SUB_UseTargets(m_hActivator, USE_TOGGLE, 0);
+		SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
 	}
 
 	if (!FStringNull(pev->target))
@@ -791,7 +791,7 @@ void CBaseButton::ButtonBackHome()
 
 			if (pTarget)
 			{
-				pTarget->Use(m_hActivator, this, USE_TOGGLE, 0);
+				pTarget->Use(m_hActivator, this, EUseType::TOGGLE, 0);
 			}
 		}
 	}
@@ -876,7 +876,7 @@ void CRotButton::Spawn()
 	m_vecSpawn = pev->angles;
 #endif
 
-	m_toggle_state = TS_AT_BOTTOM;
+	m_toggle_state = EToggleState::AT_BOTTOM;
 	m_vecAngle1 = pev->angles;
 	m_vecAngle2 = pev->angles + pev->movedir * m_flMoveDistance;
 
@@ -985,7 +985,7 @@ void CMomentaryRotButton::PlaySound()
 // BUGBUG: This design causes a latentcy.  When the button is retriggered, the first impulse
 // will send the target in the wrong direction because the parameter is calculated based on the
 // current, not future position.
-void CMomentaryRotButton::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CMomentaryRotButton::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	pev->ideal_yaw = CBaseToggle::AxisDelta(pev->spawnflags, pev->angles, m_start) / m_flMoveDistance;
 
@@ -1081,7 +1081,7 @@ void CMomentaryRotButton::UpdateTarget(float value)
 			CBaseEntity *pEntity = CBaseEntity::Instance(pentTarget);
 			if (pEntity)
 			{
-				pEntity->Use(this, this, USE_SET, value);
+				pEntity->Use(this, this, EUseType::SET, value);
 			}
 		}
 	}
@@ -1252,14 +1252,14 @@ void CEnvSpark::SparkThink()
 	DoSpark(pev, pev->origin);
 }
 
-void CEnvSpark::SparkStart(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CEnvSpark::SparkStart(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	SetUse(&CEnvSpark::SparkStop);
 	SetThink(&CEnvSpark::SparkThink);
 	pev->nextthink = gpGlobals->time + (0.1f + RANDOM_FLOAT(0, m_flDelay));
 }
 
-void CEnvSpark::SparkStop(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CEnvSpark::SparkStop(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	SetUse(&CEnvSpark::SparkStart);
 	SetThink(nullptr);
@@ -1281,20 +1281,20 @@ void CButtonTarget::Spawn()
 	}
 }
 
-void CButtonTarget::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CButtonTarget::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
-	if (!ShouldToggle(useType, int(pev->frame)))
+	if (!ShouldToggle(useType, bool(pev->frame)))
 		return;
 
 	pev->frame = 1 - pev->frame;
 
 	if (pev->frame)
 	{
-		SUB_UseTargets(pActivator, USE_ON, 0);
+		SUB_UseTargets(pActivator, EUseType::ON, 0);
 	}
 	else
 	{
-		SUB_UseTargets(pActivator, USE_OFF, 0);
+		SUB_UseTargets(pActivator, EUseType::OFF, 0);
 	}
 }
 
@@ -1311,6 +1311,6 @@ int CButtonTarget::ObjectCaps()
 
 BOOL CButtonTarget::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType)
 {
-	Use(Instance(pevAttacker), this, USE_TOGGLE, 0);
+	Use(Instance(pevAttacker), this, EUseType::TOGGLE, 0);
 	return TRUE;
 }

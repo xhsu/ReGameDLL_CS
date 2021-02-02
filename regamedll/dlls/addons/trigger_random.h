@@ -49,7 +49,7 @@ public:
 	int Save(CSave &save);
 	int Restore(CRestore &restore);
 	int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 protected:
 	void InitUnique();

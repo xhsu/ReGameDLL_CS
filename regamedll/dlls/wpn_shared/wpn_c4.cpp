@@ -115,7 +115,7 @@ void CC4::PrimaryAttack()
 	if (!onGround)
 	{
 		TraceResult tr;
-		UTIL_TraceLine(m_pPlayer->pev->origin, m_pPlayer->pev->origin + Vector(0, 0, -8192), ignore_monsters, m_pPlayer->edict(), &tr);
+		UTIL_TraceLine(m_pPlayer->pev->origin, m_pPlayer->pev->origin + Vector(0, 0, -8192), ETraceIgnores::Monsters, m_pPlayer->edict(), &tr);
 		onGround = (tr.flFraction != 1.0 && m_pPlayer->pev->velocity.z == 0.0f);
 	}
 #endif
@@ -335,7 +335,7 @@ void CC4::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CC4::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CC4::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 #ifndef REGAMEDLL_FIXES
 	if (m_pPlayer)

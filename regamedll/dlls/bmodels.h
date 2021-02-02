@@ -41,7 +41,7 @@ public:
 
 	// Bmodels don't go across transitions
 	virtual int ObjectCaps() { return CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 #define SF_WALL_TOOGLE_START_OFF BIT(0)
@@ -51,7 +51,7 @@ class CFuncWallToggle: public CFuncWall
 {
 public:
 	virtual void Spawn();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 #ifdef REGAMEDLL_FIXES
 	virtual void Restart();
@@ -71,7 +71,7 @@ class CFuncConveyor: public CFuncWall
 {
 public:
 	virtual void Spawn();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void UpdateSpeed(float speed);
@@ -102,7 +102,7 @@ public:
 	virtual void Spawn();
 
 	// Clear out func_wall's use function
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value) {}
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) {}
 };
 
 #define SF_BRUSH_ROTATE_START_ON        BIT(0)
@@ -139,7 +139,7 @@ public:
 	void EXPORT SpinUp();
 	void EXPORT SpinDown();
 	void EXPORT HurtTouch(CBaseEntity *pOther);
-	void EXPORT RotatingUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT RotatingUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void EXPORT Rotate();
 	void RampPitchVol(BOOL fUp);
 
@@ -176,7 +176,7 @@ public:
 
 public:
 	void EXPORT Swing();
-	void EXPORT PendulumUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT PendulumUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void EXPORT Stop();
 
 	// this touch func makes the pendulum a rope

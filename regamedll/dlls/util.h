@@ -31,7 +31,6 @@
 #include "shake.h"
 #include "activity.h"
 #include "enginecallback.h"
-#include "utlvector.h"
 
 #define GROUP_OP_AND	0
 #define GROUP_OP_NAND	1
@@ -102,6 +101,16 @@
 	{\
 		GetClassPtr((DLLClassName *)pev);\
 	}
+
+#define charsmax(sz) (sizeof(sz) - 1U)
+
+#define DECLARE_DEFAULT_CONS_DESTR(ClassName)				\
+	ClassName() noexcept = default;							\
+	ClassName(const ClassName& s) = default;				\
+	ClassName(ClassName && s) = default;					\
+	ClassName& operator=(const ClassName & s) = default;	\
+	ClassName& operator=(ClassName && s) = default;			\
+	virtual ~ClassName() = default
 
 constexpr EOFFSET eoNullEntity = (EOFFSET)0;	// Testing the three types of "entity" for nullity
 
@@ -212,9 +221,6 @@ CBaseEntity *UTIL_FindEntityByString(CBaseEntity *pStartEntity, const char *szKe
 CBaseEntity *UTIL_FindEntityByClassname(CBaseEntity *pStartEntity, const char *szName);
 CBaseEntity *UTIL_FindEntityByTargetname(CBaseEntity *pStartEntity, const char *szName);
 CBaseEntity *UTIL_FindEntityGeneric(const char *szWhatever, const Vector &vecSrc, float flRadius);
-#ifndef REGAMEDLL_FIXES
-CBasePlayer *UTIL_PlayerByIndex(int playerIndex);
-#endif
 void UTIL_MakeVectors(const Vector &vecAngles);
 void UTIL_MakeAimVectors(const Vector &vecAngles);
 void UTIL_MakeInvVectors(const Vector &vec, globalvars_t *pgv);
@@ -240,13 +246,13 @@ char *UTIL_dtos1(int d);
 char *UTIL_dtos2(int d);
 char *UTIL_dtos3(int d);
 char *UTIL_dtos4(int d);
-void UTIL_ShowMessageArgs(const char *pString, CBaseEntity *pPlayer, CUtlVector<char*> *args, bool isHint = false);
+void UTIL_ShowMessageArgs(const char* pString, CBaseEntity* pPlayer, std::vector<char*>* args, bool isHint = false);
 void UTIL_ShowMessage(const char *pString, CBaseEntity *pEntity, bool isHint = false);
 void UTIL_ShowMessageAll(const char *pString, bool isHint = false);
-void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr);
-void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, IGNORE_GLASS ignoreGlass, edict_t *pentIgnore, TraceResult *ptr);
-void UTIL_TraceHull(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, int hullNumber, edict_t *pentIgnore, TraceResult *ptr);
-void UTIL_TraceModel(const Vector &vecStart, const Vector &vecEnd, int hullNumber, edict_t *pentModel, TraceResult *ptr);
+void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, ETraceIgnores igmon, edict_t *pentIgnore, TraceResult *ptr);
+void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, ETraceIgnores igmon, ETraceIgnoreGlasses ignoreGlass, edict_t *pentIgnore, TraceResult *ptr);
+void UTIL_TraceHull(const Vector &vecStart, const Vector &vecEnd, ETraceIgnores igmon, ETraceHull hullNumber, edict_t *pentIgnore, TraceResult *ptr);
+void UTIL_TraceModel(const Vector &vecStart, const Vector &vecEnd, ETraceHull hullNumber, edict_t *pentModel, TraceResult *ptr);
 TraceResult UTIL_GetGlobalTrace();
 void UTIL_SetSize(entvars_t *pev, const Vector &vecMin, const Vector &vecMax);
 float UTIL_VecToYaw(const Vector &vec);

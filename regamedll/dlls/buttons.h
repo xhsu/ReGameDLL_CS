@@ -37,7 +37,7 @@ public:
 	virtual void KeyValue(KeyValueData *pkvd);
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -91,7 +91,7 @@ public:
 
 		return (flags | FCAP_CONTINUOUS_USE);
 	}
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void EXPORT Off();
@@ -132,8 +132,8 @@ public:
 
 public:
 	void EXPORT SparkThink();
-	void EXPORT SparkStart(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
-	void EXPORT SparkStop(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT SparkStart(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	void EXPORT SparkStop(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -150,7 +150,7 @@ public:
 	virtual void Spawn();
 	virtual int ObjectCaps();
 	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 char *ButtonSound(int sound);

@@ -139,7 +139,7 @@ bool CCSBot::CanHearNearbyEnemyGunfire(float range) const
 bool CCSBot::CanSeeNoisePosition() const
 {
 	TraceResult result;
-	UTIL_TraceLine(GetEyePosition(), m_noisePosition + Vector(0, 0, HalfHumanHeight), ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(GetEyePosition(), m_noisePosition + Vector(0, 0, HalfHumanHeight), ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	if (result.flFraction == 1.0f)
 	{

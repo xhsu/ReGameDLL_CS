@@ -68,11 +68,11 @@ void RadiusFlash(Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker,
 
 		vecSpot = pPlayer->EyePosition();
 
-		UTIL_TraceLine(vecSrc, vecSpot, dont_ignore_monsters, ENT(pevInflictor), &tr);
+		UTIL_TraceLine(vecSrc, vecSpot, ETraceIgnores::None, ENT(pevInflictor), &tr);
 		if (tr.flFraction != 1.0f && tr.pHit != pPlayer->pev->pContainingEntity)
 			continue;
 
-		UTIL_TraceLine(vecSpot, vecSrc, dont_ignore_monsters, tr.pHit, &tr2);
+		UTIL_TraceLine(vecSpot, vecSrc, ETraceIgnores::None, tr.pHit, &tr2);
 		if (tr2.flFraction >= 1.0)
 		{
 			if (tr.fStartSolid)
@@ -144,7 +144,7 @@ float GetAmountOfPlayerVisible(Vector vecSrc, CBaseEntity *pEntity)
 	if (!pEntity->IsPlayer())
 	{
 		// the entity is not a player, so the damage is all or nothing.
-		UTIL_TraceLine(vecSrc, pEntity->pev->origin, ignore_monsters, nullptr, &tr);
+		UTIL_TraceLine(vecSrc, pEntity->pev->origin, ETraceIgnores::Monsters, nullptr, &tr);
 
 		if (tr.flFraction == 1.0f)
 			retval = 1.0f;
@@ -154,14 +154,14 @@ float GetAmountOfPlayerVisible(Vector vecSrc, CBaseEntity *pEntity)
 
 	// check chest
 	Vector vecChest = pEntity->pev->origin;
-	UTIL_TraceLine(vecSrc, vecChest, ignore_monsters, nullptr, &tr);
+	UTIL_TraceLine(vecSrc, vecChest, ETraceIgnores::Monsters, nullptr, &tr);
 
 	if (tr.flFraction == 1.0f)
 		retval += damagePercentageChest;
 
 	// check top of head
 	Vector vecHead = pEntity->pev->origin + Vector(0, 0, topOfHead);
-	UTIL_TraceLine(vecSrc, vecHead, ignore_monsters, nullptr, &tr);
+	UTIL_TraceLine(vecSrc, vecHead, ETraceIgnores::Monsters, nullptr, &tr);
 
 	if (tr.flFraction == 1.0f)
 		retval += damagePercentageHead;
@@ -170,7 +170,7 @@ float GetAmountOfPlayerVisible(Vector vecSrc, CBaseEntity *pEntity)
 	Vector vecFeet = pEntity->pev->origin;
 	vecFeet.z -= (pEntity->pev->flags & FL_DUCKING) ? crouchFeet : standFeet;
 
-	UTIL_TraceLine(vecSrc, vecFeet, ignore_monsters, nullptr, &tr);
+	UTIL_TraceLine(vecSrc, vecFeet, ETraceIgnores::Monsters, nullptr, &tr);
 
 	if (tr.flFraction == 1.0f)
 		retval += damagePercentageFeet;
@@ -183,13 +183,13 @@ float GetAmountOfPlayerVisible(Vector vecSrc, CBaseEntity *pEntity)
 	Vector vecLeftSide = pEntity->pev->origin - Vector(perp.x, perp.y, 0);
 
 	// check right "edge"
-	UTIL_TraceLine(vecSrc, vecRightSide, ignore_monsters, nullptr, &tr);
+	UTIL_TraceLine(vecSrc, vecRightSide, ETraceIgnores::Monsters, nullptr, &tr);
 
 	if (tr.flFraction == 1.0f)
 		retval += damagePercentageRightSide;
 
 	// check left "edge"
-	UTIL_TraceLine(vecSrc, vecLeftSide, ignore_monsters, nullptr, &tr);
+	UTIL_TraceLine(vecSrc, vecLeftSide, ETraceIgnores::Monsters, nullptr, &tr);
 
 	if (tr.flFraction == 1.0f)
 		retval += damagePercentageLeftSide;
@@ -270,7 +270,7 @@ void RadiusDamage(Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker
 				// disable grenade damage through walls?
 				if (hegrenade_penetration.string[0] == '1' && (bitsDamageType & DMG_EXPLOSION))
 				{
-					UTIL_TraceLine(vecSrc, pEntity->pev->origin, ignore_monsters, nullptr, &tr);
+					UTIL_TraceLine(vecSrc, pEntity->pev->origin, ETraceIgnores::Monsters, nullptr, &tr);
 
 					if (tr.flFraction != 1.0f)
 						flAdjustedDamage = 0.0f;
@@ -328,7 +328,7 @@ void RadiusDamage2(Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacke
 				continue;
 
 			vecSpot = pEntity->BodyTarget(vecSrc);
-			UTIL_TraceLine(vecSrc, vecSpot, dont_ignore_monsters, ENT(pevInflictor), &tr);
+			UTIL_TraceLine(vecSrc, vecSpot, ETraceIgnores::None, ENT(pevInflictor), &tr);
 
 			if (tr.flFraction == 1.0f || tr.pHit == pEntity->edict())
 			{

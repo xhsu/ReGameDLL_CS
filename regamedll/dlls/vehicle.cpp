@@ -134,11 +134,11 @@ void CFuncVehicle::Blocked(CBaseEntity *pOther)
 	}
 }
 
-void CFuncVehicle::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncVehicle::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	float delta = value;
 
-	if (useType != USE_SET)
+	if (useType != EUseType::SET)
 	{
 		if (ShouldToggle(useType, pev->speed != 0))
 		{
@@ -305,11 +305,11 @@ void CFuncVehicle::CheckTurning()
 	{
 		if (pev->speed > 0)
 		{
-			UTIL_TraceLine(m_vFrontRight, m_vFrontRight - (gpGlobals->v_right * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+			UTIL_TraceLine(m_vFrontRight, m_vFrontRight - (gpGlobals->v_right * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 		}
 		else if (pev->speed < 0)
 		{
-			UTIL_TraceLine(m_vBackLeft, m_vBackLeft + (gpGlobals->v_right * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+			UTIL_TraceLine(m_vBackLeft, m_vBackLeft + (gpGlobals->v_right * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 		}
 
 		if (tr.flFraction != 1.0f)
@@ -321,11 +321,11 @@ void CFuncVehicle::CheckTurning()
 	{
 		if (pev->speed > 0)
 		{
-			UTIL_TraceLine(m_vFrontLeft, m_vFrontLeft + (gpGlobals->v_right * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+			UTIL_TraceLine(m_vFrontLeft, m_vFrontLeft + (gpGlobals->v_right * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 		}
 		else if (pev->speed < 0)
 		{
-			UTIL_TraceLine(m_vBackRight, m_vBackRight - (gpGlobals->v_right * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+			UTIL_TraceLine(m_vBackRight, m_vBackRight - (gpGlobals->v_right * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 		}
 
 		if (tr.flFraction != 1.0f)
@@ -382,15 +382,15 @@ void CFuncVehicle::CollisionDetection()
 
 	if (pev->speed < 0)
 	{
-		UTIL_TraceLine(m_vBackLeft, m_vBackLeft + (gpGlobals->v_forward * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+		UTIL_TraceLine(m_vBackLeft, m_vBackLeft + (gpGlobals->v_forward * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 
 		if (tr.flFraction == 1.0f)
 		{
-			UTIL_TraceLine(m_vBackRight, m_vBackRight + (gpGlobals->v_forward * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+			UTIL_TraceLine(m_vBackRight, m_vBackRight + (gpGlobals->v_forward * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 
 			if (tr.flFraction == 1.0f)
 			{
-				UTIL_TraceLine(m_vBack, m_vBack + (gpGlobals->v_forward * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+				UTIL_TraceLine(m_vBack, m_vBack + (gpGlobals->v_forward * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 
 				if (tr.flFraction == 1.0f)
 				{
@@ -443,15 +443,15 @@ void CFuncVehicle::CollisionDetection()
 	}
 	else if (pev->speed > 0)
 	{
-		UTIL_TraceLine(m_vFrontLeft, m_vFrontLeft - (gpGlobals->v_forward * 16.0), dont_ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+		UTIL_TraceLine(m_vFrontLeft, m_vFrontLeft - (gpGlobals->v_forward * 16.0), ETraceIgnores::None, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 
 		if (tr.flFraction == 1.0f)
 		{
-			UTIL_TraceLine(m_vFrontRight, m_vFrontRight - (gpGlobals->v_forward * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+			UTIL_TraceLine(m_vFrontRight, m_vFrontRight - (gpGlobals->v_forward * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 
 			if (tr.flFraction == 1.0f)
 			{
-				UTIL_TraceLine(m_vFront, m_vFront - (gpGlobals->v_forward * 16.0), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+				UTIL_TraceLine(m_vFront, m_vFront - (gpGlobals->v_forward * 16.0), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 
 				if (tr.flFraction == 1.0f)
 				{
@@ -481,7 +481,7 @@ void CFuncVehicle::CollisionDetection()
 void CFuncVehicle::TerrainFollowing()
 {
 	TraceResult tr;
-	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, (m_height + 48) * -1), ignore_monsters, dont_ignore_glass, ENT(pev), &tr);
+	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, (m_height + 48) * -1), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &tr);
 
 	if (tr.flFraction != 1.0f)
 	{
@@ -691,7 +691,7 @@ void CFuncVehicle::DeadEnd()
 
 		if (!FStringNull(pTrack->pev->netname))
 		{
-			FireTargets(STRING(pTrack->pev->netname), this, this, USE_TOGGLE, 0);
+			FireTargets(STRING(pTrack->pev->netname), this, this, EUseType::TOGGLE, 0);
 		}
 	}
 	else

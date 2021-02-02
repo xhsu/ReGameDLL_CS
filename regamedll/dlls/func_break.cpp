@@ -532,7 +532,7 @@ void CBreakable::BreakTouch(CBaseEntity *pOther)
 
 // Smash the our breakable object
 // Break when triggered
-void CBreakable::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBreakable::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (IsBreakable())
 	{
@@ -603,7 +603,7 @@ BOOL CBreakable::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, flo
 	}
 	else
 	{
-		// an actual missile was involved.
+		// an actual ETraceIgnores::Missile was involved.
 		vecTemp = pevInflictor->origin - (pev->absmin + (pev->size * 0.5f));
 	}
 
@@ -826,7 +826,7 @@ void CBreakable::Die()
 	}
 
 	pev->solid = SOLID_NOT;
-	SUB_UseTargets(nullptr, USE_TOGGLE, 0);
+	SUB_UseTargets(nullptr, EUseType::TOGGLE, 0);
 	SetThink(nullptr);
 
 	pev->nextthink = pev->ltime + 0.1f;
@@ -994,7 +994,7 @@ void CPushable::KeyValue(KeyValueData *pkvd)
 }
 
 // Pull the func_pushable
-void CPushable::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CPushable::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!pActivator || !pActivator->IsPlayer())
 	{

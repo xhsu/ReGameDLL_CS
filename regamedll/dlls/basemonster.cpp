@@ -182,7 +182,7 @@ Activity CBaseMonster::GetDeathActivity()
 	if (deathActivity == ACT_DIEFORWARD)
 	{
 		// make sure there's room to fall forward
-		UTIL_TraceHull(vecSrc, vecSrc + gpGlobals->v_forward * 64, dont_ignore_monsters, head_hull, edict(), &tr);
+		UTIL_TraceHull(vecSrc, vecSrc + gpGlobals->v_forward * 64, ETraceIgnores::None, ETraceHull::DuckedPlayer, edict(), &tr);
 
 		if (tr.flFraction != 1.0f)
 		{
@@ -193,7 +193,7 @@ Activity CBaseMonster::GetDeathActivity()
 	if (deathActivity == ACT_DIEBACKWARD)
 	{
 		// make sure there's room to fall backward
-		UTIL_TraceHull(vecSrc, vecSrc - gpGlobals->v_forward * 64, dont_ignore_monsters, head_hull, edict(), &tr);
+		UTIL_TraceHull(vecSrc, vecSrc - gpGlobals->v_forward * 64, ETraceIgnores::None, ETraceHull::DuckedPlayer, edict(), &tr);
 
 		if (tr.flFraction != 1.0f)
 		{
@@ -588,7 +588,7 @@ NOXREF CBaseEntity *CBaseMonster::CheckTraceHullAttack(float flDist, int iDamage
 	vecStart.z += pev->size.z * 0.5;
 	Vector vecEnd = vecStart + (gpGlobals->v_forward * flDist);
 
-	UTIL_TraceHull(vecStart, vecEnd, dont_ignore_monsters, head_hull, ENT(pev), &tr);
+	UTIL_TraceHull(vecStart, vecEnd, ETraceIgnores::None, ETraceHull::DuckedPlayer, ENT(pev), &tr);
 
 	if (tr.pHit)
 	{
@@ -952,7 +952,7 @@ NOXREF void CBaseMonster::MakeDamageBloodDecal(int cCount, float flNoise, TraceR
 		vecTraceDir.y += RANDOM_FLOAT(-flNoise, flNoise);
 		vecTraceDir.z += RANDOM_FLOAT(-flNoise, flNoise);
 
-		UTIL_TraceLine(ptr->vecEndPos, ptr->vecEndPos + vecTraceDir * 172, ignore_monsters, ENT(pev), &Bloodtr);
+		UTIL_TraceLine(ptr->vecEndPos, ptr->vecEndPos + vecTraceDir * 172, ETraceIgnores::Monsters, ENT(pev), &Bloodtr);
 
 		if (Bloodtr.flFraction != 1.0f)
 		{

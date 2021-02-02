@@ -92,7 +92,7 @@ void CEnvExplosion::Spawn()
 	m_spriteScale = int(flSpriteScale);
 }
 
-void CEnvExplosion::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CEnvExplosion::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	TraceResult tr;
 
@@ -103,7 +103,7 @@ void CEnvExplosion::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 
 	vecSpot = pev->origin + Vector(0, 0, 8);
 
-	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ETraceIgnores::Monsters, ENT(pev), &tr);
 
 	// Pull out of the wall a bit
 	if (tr.flFraction != 1.0f)
@@ -214,5 +214,5 @@ void ExplosionCreate(const Vector &center, Vector &angles, edict_t *pOwner, int 
 	}
 
 	pExplosion->Spawn();
-	pExplosion->Use(nullptr, nullptr, USE_TOGGLE, 0);
+	pExplosion->Use(nullptr, nullptr, EUseType::TOGGLE, 0);
 }

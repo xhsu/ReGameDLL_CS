@@ -172,7 +172,7 @@ public:
 	virtual int ObjectCaps() { return m_bIsC4 ? FCAP_CONTINUOUS_USE : 0; }
 	virtual void Killed(entvars_t *pevAttacker, EEntityGib iGib);
 	virtual int BloodColor() { return DONT_BLEED; }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual void BounceSound();
 
 public:
@@ -213,7 +213,7 @@ public:
 	void EXPORT SG_Detonate();
 	void EXPORT Detonate2();
 	void EXPORT Detonate3();
-	void EXPORT DetonateUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT DetonateUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void EXPORT TumbleThink();
 	void EXPORT SG_TumbleThink();
 	void EXPORT C4Think();
@@ -808,7 +808,7 @@ public:
 	virtual void Spawn();
 	virtual void Precache();
 	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual int GetItemInfo(ItemInfo *p);
 	virtual BOOL Deploy();
 	virtual void Holster(int skiplocal);

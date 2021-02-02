@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 unsigned int glSeed;
-CUtlVector<hash_item_t> stringsHashTable;
+std::vector<hash_item_t> stringsHashTable;
 
 unsigned int seed_table[256] =
 {
@@ -87,7 +87,7 @@ NOXREF void UTIL_ParametricRocket(entvars_t *pev, Vector p_vecOrigin, Vector vec
 
 	pev->startpos = p_vecOrigin;
 	UTIL_MakeVectors(vecAngles);
-	UTIL_TraceLine(pev->startpos, gpGlobals->v_forward * 8192.0f + pev->startpos, ignore_monsters, owner, &tr);
+	UTIL_TraceLine(pev->startpos, gpGlobals->v_forward * 8192.0f + pev->startpos, ETraceIgnores::Monsters, owner, &tr);
 	pev->endpos = tr.vecEndPos;
 
 	vecTravel = pev->endpos - pev->startpos;
@@ -322,8 +322,8 @@ CBaseEntity *UTIL_FindEntityByString(CBaseEntity *pStartEntity, const char *szKe
 		hash_item_t *item;
 		int count;
 
-		hash = CaseInsensitiveHash(szValue, stringsHashTable.Count());
-		count = stringsHashTable.Count();
+		hash = CaseInsensitiveHash(szValue, stringsHashTable.size());
+		count = stringsHashTable.size();
 		item = &stringsHashTable[hash];
 
 		if (!item->pev)
@@ -798,7 +798,7 @@ NOXREF char *UTIL_dtos4(int d)
 	return buf;
 }
 
-void UTIL_ShowMessageArgs(const char *pString, CBaseEntity *pPlayer, CUtlVector<char *> *args, bool isHint)
+void UTIL_ShowMessageArgs(const char *pString, CBaseEntity *pPlayer, std::vector<char *> *args, bool isHint)
 {
 	if (!pPlayer)
 		return;
@@ -811,9 +811,9 @@ void UTIL_ShowMessageArgs(const char *pString, CBaseEntity *pPlayer, CUtlVector<
 		MESSAGE_BEGIN(MSG_ONE, gmsgHudTextArgs, nullptr, pPlayer->pev);
 			WRITE_STRING(pString);
 			WRITE_BYTE(isHint);
-			WRITE_BYTE(args->Count());
+			WRITE_BYTE(args->size());
 
-		for (int i = 0; i < args->Count(); i++)
+		for (unsigned i = 0; i < args->size(); i++)
 			WRITE_STRING((*args)[i]);
 
 		MESSAGE_END();
@@ -848,25 +848,25 @@ void UTIL_ShowMessageAll(const char *pString, bool isHint)
 	}
 }
 
-void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr)
+void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, ETraceIgnores igmon, edict_t *pentIgnore, TraceResult *ptr)
 {
-	TRACE_LINE(vecStart, vecEnd, (igmon == ignore_monsters), pentIgnore, ptr);
+	TRACE_LINE(vecStart, vecEnd, (igmon == ETraceIgnores::Monsters), pentIgnore, ptr);
 }
 
 // OVERLOAD
-void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, IGNORE_GLASS ignoreGlass, edict_t *pentIgnore, TraceResult *ptr)
+void UTIL_TraceLine(const Vector &vecStart, const Vector &vecEnd, ETraceIgnores igmon, ETraceIgnoreGlasses ignoreGlass, edict_t *pentIgnore, TraceResult *ptr)
 {
-	TRACE_LINE(vecStart, vecEnd, (igmon == ignore_monsters) | (ignoreGlass ? 0x100 : 0), pentIgnore, ptr);
+	TRACE_LINE(vecStart, vecEnd, (igmon == ETraceIgnores::Monsters) | (ignoreGlass == ETraceIgnoreGlasses::Yes ? 0x100 : 0), pentIgnore, ptr);
 }
 
-void UTIL_TraceHull(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, int hullNumber, edict_t *pentIgnore, TraceResult *ptr)
+void UTIL_TraceHull(const Vector &vecStart, const Vector &vecEnd, ETraceIgnores igmon, ETraceHull hullNumber, edict_t *pentIgnore, TraceResult *ptr)
 {
-	TRACE_HULL(vecStart, vecEnd, (igmon == ignore_monsters), hullNumber, pentIgnore, ptr);
+	TRACE_HULL(vecStart, vecEnd, (igmon == ETraceIgnores::Monsters), (int)hullNumber, pentIgnore, ptr);
 }
 
-void UTIL_TraceModel(const Vector &vecStart, const Vector &vecEnd, int hullNumber, edict_t *pentModel, TraceResult *ptr)
+void UTIL_TraceModel(const Vector &vecStart, const Vector &vecEnd, ETraceHull hullNumber, edict_t *pentModel, TraceResult *ptr)
 {
-	TRACE_MODEL(vecStart, vecEnd, hullNumber, pentModel, ptr);
+	TRACE_MODEL(vecStart, vecEnd, (int)hullNumber, pentModel, ptr);
 }
 
 NOXREF TraceResult UTIL_GetGlobalTrace()
@@ -1825,7 +1825,7 @@ int UTIL_CountPlayersInBrushVolume(bool bOnlyAlive, CBaseEntity *pBrushEntity, i
 				continue;
 
 			TraceResult trace;
-			int hullNumber = (pPlayer->pev->flags & FL_DUCKING) ? head_hull : human_hull;
+			auto hullNumber = (pPlayer->pev->flags & FL_DUCKING) ? ETraceHull::DuckedPlayer : ETraceHull::Player;
 			UTIL_TraceModel(pPlayer->pev->origin, pPlayer->pev->origin, hullNumber, pBrushEntity->edict(), &trace);
 
 			bool fInVolume = trace.fStartSolid > 0.0f;

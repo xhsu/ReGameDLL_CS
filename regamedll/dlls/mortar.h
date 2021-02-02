@@ -41,7 +41,7 @@ public:
 	virtual int ObjectCaps() { return CBaseToggle::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
 public:
-	void EXPORT FieldUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT FieldUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];

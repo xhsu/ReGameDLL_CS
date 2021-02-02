@@ -588,7 +588,7 @@ void CBasePlayerItem::DefaultTouch(CBaseEntity *pOther)
 		EMIT_SOUND(ENT(pPlayer->pev), CHAN_ITEM, "items/gunpickup2.wav", VOL_NORM, ATTN_NORM);
 	}
 
-	SUB_UseTargets(pOther, USE_TOGGLE, 0);
+	SUB_UseTargets(pOther, EUseType::TOGGLE, 0);
 }
 
 void CBasePlayerWeapon::SetPlayerShieldAnim()

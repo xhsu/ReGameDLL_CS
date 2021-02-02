@@ -97,7 +97,7 @@ void AttackState::OnEnter(CCSBot *me)
 						origin.z -= 20.0f;
 					}
 
-					UTIL_TraceLine(origin, pEnemy->EyePosition(), ignore_monsters, ignore_glass, ENT(me->pev), &result);
+					UTIL_TraceLine(origin, pEnemy->EyePosition(), ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(me->pev), &result);
 
 					if (result.flFraction == 1.0f)
 					{

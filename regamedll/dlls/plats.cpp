@@ -266,13 +266,13 @@ void CFuncPlat::Spawn()
 	if (!FStringNull(pev->targetname))
 	{
 		UTIL_SetOrigin(pev, m_vecPosition1);
-		m_toggle_state = TS_AT_TOP;
+		m_toggle_state = EToggleState::AT_TOP;
 		SetUse(&CFuncPlat::PlatUse);
 	}
 	else
 	{
 		UTIL_SetOrigin(pev, m_vecPosition2);
-		m_toggle_state = TS_AT_BOTTOM;
+		m_toggle_state = EToggleState::AT_BOTTOM;
 	}
 }
 
@@ -322,11 +322,11 @@ void CPlatTrigger::Touch(CBaseEntity *pOther)
 		return;
 
 	// Make linked platform go up/down.
-	if (m_pPlatform->m_toggle_state == TS_AT_BOTTOM)
+	if (m_pPlatform->m_toggle_state == EToggleState::AT_BOTTOM)
 	{
 		m_pPlatform->GoUp();
 	}
-	else if (m_pPlatform->m_toggle_state == TS_AT_TOP)
+	else if (m_pPlatform->m_toggle_state == EToggleState::AT_TOP)
 	{
 		// delay going down
 		m_pPlatform->pev->nextthink = m_pPlatform->pev->ltime + 1.0f;
@@ -335,21 +335,21 @@ void CPlatTrigger::Touch(CBaseEntity *pOther)
 
 // Used by SUB_UseTargets, when a platform is the target of a button.
 // Start bringing platform down.
-void CFuncPlat::PlatUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncPlat::PlatUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (IsTogglePlat())
 	{
 		// Top is off, bottom is on
-		BOOL on = (m_toggle_state == TS_AT_BOTTOM) ? TRUE : FALSE;
+		BOOL on = (m_toggle_state == EToggleState::AT_BOTTOM) ? TRUE : FALSE;
 
 		if (!ShouldToggle(useType, on))
 			return;
 
-		if (m_toggle_state == TS_AT_TOP)
+		if (m_toggle_state == EToggleState::AT_TOP)
 		{
 			GoDown();
 		}
-		else if (m_toggle_state == TS_AT_BOTTOM)
+		else if (m_toggle_state == EToggleState::AT_BOTTOM)
 		{
 			GoUp();
 		}
@@ -358,7 +358,7 @@ void CFuncPlat::PlatUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	{
 		SetUse(nullptr);
 
-		if (m_toggle_state == TS_AT_TOP)
+		if (m_toggle_state == EToggleState::AT_TOP)
 		{
 			GoDown();
 		}
@@ -373,8 +373,8 @@ void CFuncPlat::GoDown()
 		EMIT_SOUND(ENT(pev), CHAN_STATIC, (char *)STRING(pev->noiseMovement), m_volume, ATTN_NORM);
 	}
 
-	assert(m_toggle_state == TS_AT_TOP || m_toggle_state == TS_GOING_UP);
-	m_toggle_state = TS_GOING_DOWN;
+	assert(m_toggle_state == EToggleState::AT_TOP || m_toggle_state == EToggleState::GOING_UP);
+	m_toggle_state = EToggleState::GOING_DOWN;
 	SetMoveDone(&CFuncPlat::CallHitBottom);
 	LinearMove(m_vecPosition2, pev->speed);
 }
@@ -392,8 +392,8 @@ void CFuncPlat::HitBottom()
 		EMIT_SOUND(ENT(pev), CHAN_WEAPON, (char *)STRING(pev->noiseStopMoving), m_volume, ATTN_NORM);
 	}
 
-	assert(m_toggle_state == TS_GOING_DOWN);
-	m_toggle_state = TS_AT_BOTTOM;
+	assert(m_toggle_state == EToggleState::GOING_DOWN);
+	m_toggle_state = EToggleState::AT_BOTTOM;
 }
 
 // Platform is at bottom, now starts moving up
@@ -404,8 +404,8 @@ void CFuncPlat::GoUp()
 		EMIT_SOUND(ENT(pev), CHAN_STATIC, (char *)STRING(pev->noiseMovement), m_volume, ATTN_NORM);
 	}
 
-	assert(m_toggle_state == TS_AT_BOTTOM || m_toggle_state == TS_GOING_DOWN);
-	m_toggle_state = TS_GOING_UP;
+	assert(m_toggle_state == EToggleState::AT_BOTTOM || m_toggle_state == EToggleState::GOING_DOWN);
+	m_toggle_state = EToggleState::GOING_UP;
 	SetMoveDone(&CFuncPlat::CallHitTop);
 	LinearMove(m_vecPosition1, pev->speed);
 }
@@ -423,8 +423,8 @@ void CFuncPlat::HitTop()
 		EMIT_SOUND(ENT(pev), CHAN_WEAPON, (char *)STRING(pev->noiseStopMoving), m_volume, ATTN_NORM);
 	}
 
-	assert(m_toggle_state == TS_GOING_UP);
-	m_toggle_state = TS_AT_TOP;
+	assert(m_toggle_state == EToggleState::GOING_UP);
+	m_toggle_state = EToggleState::AT_TOP;
 
 	if (!IsTogglePlat())
 	{
@@ -447,13 +447,13 @@ void CFuncPlat::Blocked(CBaseEntity *pOther)
 	}
 
 	// Send the platform back where it came from
-	assert(m_toggle_state == TS_GOING_UP || m_toggle_state == TS_GOING_DOWN);
+	assert(m_toggle_state == EToggleState::GOING_UP || m_toggle_state == EToggleState::GOING_DOWN);
 
-	if (m_toggle_state == TS_GOING_UP)
+	if (m_toggle_state == EToggleState::GOING_UP)
 	{
 		GoDown();
 	}
-	else if (m_toggle_state == TS_GOING_DOWN)
+	else if (m_toggle_state == EToggleState::GOING_DOWN)
 	{
 		GoUp();
 	}
@@ -574,7 +574,7 @@ void CFuncTrain::Blocked(CBaseEntity *pOther)
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
 }
 
-void CFuncTrain::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncTrain::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (pev->spawnflags & SF_TRAIN_WAIT_RETRIGGER)
 	{
@@ -607,7 +607,7 @@ void CFuncTrain::Wait()
 		// Fire the pass target if there is one
 		if (m_pevCurrentTarget->message)
 		{
-			FireTargets(STRING(m_pevCurrentTarget->message), this, this, USE_TOGGLE, 0);
+			FireTargets(STRING(m_pevCurrentTarget->message), this, this, EUseType::TOGGLE, 0);
 			if (m_pevCurrentTarget->spawnflags & SF_CORNER_FIREONCE)
 			{
 				m_pevCurrentTarget->message = 0;
@@ -986,9 +986,9 @@ void CFuncTrackTrain::Blocked(CBaseEntity *pOther)
 #endif
 }
 
-void CFuncTrackTrain::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncTrackTrain::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
-	if (useType != USE_SET)
+	if (useType != EUseType::SET)
 	{
 		if (!ShouldToggle(useType, (pev->speed != 0)))
 			return;
@@ -1193,7 +1193,7 @@ void CFuncTrackTrain::Next()
 			// Fire the pass target if there is one
 			if (!FStringNull(pFire->pev->message))
 			{
-				FireTargets(STRING(pFire->pev->message), this, this, USE_TOGGLE, 0);
+				FireTargets(STRING(pFire->pev->message), this, this, EUseType::TOGGLE, 0);
 
 				if (pFire->pev->spawnflags & SF_PATH_FIREONCE)
 				{
@@ -1298,7 +1298,7 @@ void CFuncTrackTrain::DeadEnd()
 
 		if (!FStringNull(pTrack->pev->netname))
 		{
-			FireTargets(STRING(pTrack->pev->netname), this, this, USE_TOGGLE, 0);
+			FireTargets(STRING(pTrack->pev->netname), this, this, EUseType::TOGGLE, 0);
 		}
 	}
 	else
@@ -1606,16 +1606,16 @@ void CFuncTrackChange::Spawn()
 	if (pev->spawnflags & SF_TRACK_STARTBOTTOM)
 	{
 		UTIL_SetOrigin(pev, m_vecPosition2);
-		m_toggle_state = TS_AT_BOTTOM;
+		m_toggle_state = EToggleState::AT_BOTTOM;
 		pev->angles = m_start;
-		m_targetState = TS_AT_TOP;
+		m_targetState = EToggleState::AT_TOP;
 	}
 	else
 	{
 		UTIL_SetOrigin(pev, m_vecPosition1);
-		m_toggle_state = TS_AT_TOP;
+		m_toggle_state = EToggleState::AT_TOP;
 		pev->angles = m_end;
-		m_targetState = TS_AT_BOTTOM;
+		m_targetState = EToggleState::AT_BOTTOM;
 	}
 
 	EnableUse();
@@ -1782,13 +1782,13 @@ void CFuncTrackChange::GoDown()
 
 	// HitBottom may get called during CFuncPlat::GoDown(), so set up for that
 	// before you call GoDown()
-	UpdateAutoTargets(TS_GOING_DOWN);
+	UpdateAutoTargets(EToggleState::GOING_DOWN);
 
 	// If ROTMOVE, move & rotate
 	if (pev->spawnflags & SF_TRACK_DONT_MOVE)
 	{
 		SetMoveDone(&CFuncTrackChange::CallHitBottom);
-		m_toggle_state = TS_GOING_DOWN;
+		m_toggle_state = EToggleState::GOING_DOWN;
 		AngularMove(m_start, pev->speed);
 	}
 	else
@@ -1816,10 +1816,10 @@ void CFuncTrackChange::GoUp()
 	// HitTop may get called during CFuncPlat::GoUp(), so set up for that
 	// before you call GoUp();
 
-	UpdateAutoTargets(TS_GOING_UP);
+	UpdateAutoTargets(EToggleState::GOING_UP);
 	if (pev->spawnflags & SF_TRACK_DONT_MOVE)
 	{
-		m_toggle_state = TS_GOING_UP;
+		m_toggle_state = EToggleState::GOING_UP;
 		SetMoveDone(&CFuncTrackChange::CallHitTop);
 		AngularMove(m_end, pev->speed);
 	}
@@ -1842,34 +1842,34 @@ void CFuncTrackChange::GoUp()
 }
 
 // Normal track change
-void CFuncTrackChange::UpdateAutoTargets(int toggleState)
+void CFuncTrackChange::UpdateAutoTargets(EToggleState toggleState)
 {
 	if (!m_trackTop || !m_trackBottom)
 		return;
 
-	if (toggleState == TS_AT_TOP)
+	if (toggleState == EToggleState::AT_TOP)
 		m_trackTop->pev->spawnflags &= ~SF_PATH_DISABLED;
 	else
 		m_trackTop->pev->spawnflags |= SF_PATH_DISABLED;
 
-	if (toggleState == TS_AT_BOTTOM)
+	if (toggleState == EToggleState::AT_BOTTOM)
 		m_trackBottom->pev->spawnflags &= ~SF_PATH_DISABLED;
 	else
 		m_trackBottom->pev->spawnflags |= SF_PATH_DISABLED;
 }
 
-void CFuncTrackChange::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncTrackChange::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
-	if (m_toggle_state != TS_AT_TOP && m_toggle_state != TS_AT_BOTTOM)
+	if (m_toggle_state != EToggleState::AT_TOP && m_toggle_state != EToggleState::AT_BOTTOM)
 		return;
 
 	// If train is in "safe" area, but not on the elevator, play alarm sound
 	switch (m_toggle_state)
 	{
-	case TS_AT_TOP:
+	case EToggleState::AT_TOP:
 		m_code = EvaluateTrain(m_trackTop);
 		break;
-	case TS_AT_BOTTOM:
+	case EToggleState::AT_BOTTOM:
 		m_code = EvaluateTrain(m_trackBottom);
 		break;
 	default:
@@ -1889,7 +1889,7 @@ void CFuncTrackChange::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	// at bottom, go up
 
 	DisableUse();
-	if (m_toggle_state == TS_AT_TOP)
+	if (m_toggle_state == EToggleState::AT_TOP)
 		GoDown();
 	else
 		GoUp();
@@ -1932,14 +1932,14 @@ void CFuncTrackChange::HitTop()
 LINK_ENTITY_TO_CLASS(func_trackautochange, CFuncTrackAuto)
 
 // Auto track change
-void CFuncTrackAuto::UpdateAutoTargets(int toggleState)
+void CFuncTrackAuto::UpdateAutoTargets(EToggleState toggleState)
 {
 	CPathTrack *pTarget, *pNextTarget;
 
 	if (!m_trackTop || !m_trackBottom)
 		return;
 
-	if (m_targetState == TS_AT_TOP)
+	if (m_targetState == EToggleState::AT_TOP)
 	{
 		pTarget = m_trackTop->GetNext();
 		pNextTarget = m_trackBottom->GetNext();
@@ -1956,7 +1956,7 @@ void CFuncTrackAuto::UpdateAutoTargets(int toggleState)
 
 		if (m_code == TRAIN_FOLLOWING && m_train && m_train->pev->speed == 0)
 		{
-			m_train->Use(this, this, USE_ON, 0);
+			m_train->Use(this, this, EUseType::ON, 0);
 		}
 	}
 
@@ -1966,7 +1966,7 @@ void CFuncTrackAuto::UpdateAutoTargets(int toggleState)
 	}
 }
 
-void CFuncTrackAuto::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncTrackAuto::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	CPathTrack *pTarget;
 
@@ -1975,10 +1975,10 @@ void CFuncTrackAuto::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE
 
 	switch (m_toggle_state)
 	{
-	case TS_AT_TOP:
+	case EToggleState::AT_TOP:
 		pTarget = m_trackTop;
 		break;
-	case TS_AT_BOTTOM:
+	case EToggleState::AT_BOTTOM:
 		pTarget = m_trackBottom;
 		break;
 	default:
@@ -1995,7 +1995,7 @@ void CFuncTrackAuto::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE
 		{
 			DisableUse();
 
-			if (m_toggle_state == TS_AT_TOP)
+			if (m_toggle_state == EToggleState::AT_TOP)
 				GoDown();
 			else
 				GoUp();
@@ -2008,12 +2008,12 @@ void CFuncTrackAuto::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE
 			pTarget = pTarget->GetNext();
 		}
 
-		if (pTarget && m_train->m_ppath != pTarget && ShouldToggle(useType, m_targetState))
+		if (pTarget && m_train->m_ppath != pTarget && ShouldToggle(useType, m_targetState != EToggleState::AT_TOP))
 		{
-			if (m_targetState == TS_AT_TOP)
-				m_targetState = TS_AT_BOTTOM;
+			if (m_targetState == EToggleState::AT_TOP)
+				m_targetState = EToggleState::AT_BOTTOM;
 			else
-				m_targetState = TS_AT_TOP;
+				m_targetState = EToggleState::AT_TOP;
 		}
 
 		UpdateAutoTargets(m_targetState);
@@ -2071,7 +2071,7 @@ void CGunTarget::Activate()
 
 void CGunTarget::Start()
 {
-	Use(this, this, USE_ON, 0);
+	Use(this, this, EUseType::ON, 0);
 }
 
 void CGunTarget::Next()
@@ -2104,7 +2104,7 @@ void CGunTarget::Wait()
 	// Fire the pass target if there is one
 	if (pTarget->pev->message)
 	{
-		FireTargets(STRING(pTarget->pev->message), this, this, USE_TOGGLE, 0);
+		FireTargets(STRING(pTarget->pev->message), this, this, EUseType::TOGGLE, 0);
 
 		if (pTarget->pev->spawnflags & SF_CORNER_FIREONCE)
 		{
@@ -2148,7 +2148,7 @@ BOOL CGunTarget::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, flo
 
 			if (!FStringNull(pev->message))
 			{
-				FireTargets(STRING(pev->message), this, this, USE_TOGGLE, 0);
+				FireTargets(STRING(pev->message), this, this, EUseType::TOGGLE, 0);
 			}
 		}
 	}
@@ -2156,7 +2156,7 @@ BOOL CGunTarget::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, flo
 	return FALSE;
 }
 
-void CGunTarget::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGunTarget::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!ShouldToggle(useType, m_on))
 		return;

@@ -87,10 +87,9 @@ int CaseInsensitiveHash(const char *string, int iBounds)
 
 void EmptyEntityHashTable()
 {
-	int i;
 	hash_item_t *item, *temp, *free;
 
-	for (i = 0; i < stringsHashTable.Count(); i++)
+	for (unsigned i = 0U; i < stringsHashTable.size(); i++)
 	{
 		item = &stringsHashTable[i];
 		temp = item->next;
@@ -122,7 +121,7 @@ void AddEntityHashValue(entvars_t *pev, const char *value, hash_types_e fieldTyp
 	if (FStringNull(pev->classname))
 		return;
 
-	count = stringsHashTable.Count();
+	count = stringsHashTable.size();
 	hash = CaseInsensitiveHash(value, count);
 	pevIndex = ENTINDEX(ENT(pev));
 	item = &stringsHashTable[hash];
@@ -190,7 +189,7 @@ void RemoveEntityHashValue(entvars_t *pev, const char *value, hash_types_e field
 	int pevIndex;
 	int count;
 
-	count = stringsHashTable.Count();
+	count = stringsHashTable.size();
 	hash = CaseInsensitiveHash(value, count);
 	pevIndex = ENTINDEX(ENT(pev));
 
@@ -274,8 +273,9 @@ C_DLLEXPORT int GetEntityAPI(DLL_FUNCTIONS *pFunctionTable, int interfaceVersion
 		return 0;
 
 	Q_memcpy(pFunctionTable, &gFunctionTable, sizeof(DLL_FUNCTIONS));
-	stringsHashTable.AddMultipleToTail(2048);
-	for (int i = 0; i < stringsHashTable.Count(); i++)
+
+	stringsHashTable.reserve(2048U);
+	for (unsigned i = 0U; i < stringsHashTable.size(); i++)
 	{
 		stringsHashTable[i].next = nullptr;
 	}
@@ -403,7 +403,7 @@ void DispatchUse(edict_t *pentUsed, edict_t *pentOther)
 	CBaseEntity *pOther = GET_PRIVATE<CBaseEntity>(pentOther);
 
 	if (pEntity && !(pEntity->pev->flags & FL_KILLME))
-		pEntity->Use(pOther, pOther, USE_TOGGLE, 0);
+		pEntity->Use(pOther, pOther, EUseType::TOGGLE, 0);
 }
 
 void DispatchThink(edict_t *pent)
@@ -671,7 +671,7 @@ BOOL CBaseEntity::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 	else
 #endif
 	{
-		// an actual missile was involved.
+		// an actual ETraceIgnores::Missile was involved.
 		vecTemp = pevInflictor->origin - (VecBModelOrigin(pev));
 	}
 
@@ -878,15 +878,15 @@ BOOL CBaseEntity::IsInWorld()
 	return TRUE;
 }
 
-int CBaseEntity::ShouldToggle(USE_TYPE useType, BOOL currentState)
+bool CBaseEntity::ShouldToggle(EUseType useType, bool currentState)
 {
-	if (useType != USE_TOGGLE && useType != USE_SET)
+	if (useType != EUseType::TOGGLE && useType != EUseType::SET)
 	{
-		if ((currentState && useType == USE_ON) || (!currentState && useType == USE_OFF))
-			return 0;
+		if ((currentState && useType == EUseType::ON) || (!currentState && useType == EUseType::OFF))
+			return false;
 	}
 
-	return 1;
+	return true;
 }
 
 int CBaseEntity::DamageDecal(int bitsDamageType)
@@ -940,7 +940,7 @@ BOOL CBaseEntity::FVisible(CBaseEntity *pEntity)
 	vecLookerOrigin = pev->origin + pev->view_ofs;
 	vecTargetOrigin = pEntity->EyePosition();
 
-	UTIL_TraceLine(vecLookerOrigin, vecTargetOrigin, ignore_monsters, ignore_glass, ENT(pev), &tr);
+	UTIL_TraceLine(vecLookerOrigin, vecTargetOrigin, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pev), &tr);
 
 	if (tr.flFraction != 1.0f)
 	{
@@ -963,7 +963,7 @@ BOOL CBaseEntity::FVisible(const Vector &vecOrigin)
 	//look through the caller's 'eyes'
 	vecLookerOrigin = EyePosition();
 
-	UTIL_TraceLine(vecLookerOrigin, vecOrigin, ignore_monsters, ignore_glass, ENT(pev), &tr);
+	UTIL_TraceLine(vecLookerOrigin, vecOrigin, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pev), &tr);
 
 	if (tr.flFraction != 1.0f)
 	{
@@ -1037,7 +1037,7 @@ void CBaseEntity::FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooti
 		vecDir = vecDirShooting + x * vecSpread.x * vecRight + y * vecSpread.y * vecUp;
 		vecEnd = vecSrc + vecDir * flDistance;
 
-		UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(pev), &tr);
+		UTIL_TraceLine(vecSrc, vecEnd, ETraceIgnores::None, ENT(pev), &tr);
 		tracer = 0;
 
 		if (iTracerFreq != 0 && !(tracerCount++ % iTracerFreq))
@@ -1178,7 +1178,7 @@ void CBaseEntity::FireBuckshots(ULONG cShots, Vector& vecSrc, Vector& vecDirShoo
         vecDir = vecDirShooting + x * vecSpread.x * vecRight + y * vecSpread.y * vecUp;
         vecEnd = vecSrc + vecDir * flDistance;
 
-        UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(pev), &tr);
+        UTIL_TraceLine(vecSrc, vecEnd, ETraceIgnores::None, ENT(pev), &tr);
         tracer = 0;
 
         if (iTracerFreq != 0 && !(tracerCount++ % iTracerFreq))
@@ -1325,7 +1325,7 @@ Vector& CBaseEntity::FireBullets3(Vector& vecSrc, Vector& vecDirShooting, float 
 	while (iPenetration != 0)
 	{
 		ClearMultiDamage();
-		UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(pev), &tr);
+		UTIL_TraceLine(vecSrc, vecEnd, ETraceIgnores::None, ENT(pev), &tr);
 
 		if (TheBots && tr.flFraction != 1.0f)
 		{
@@ -1494,7 +1494,7 @@ void CBaseEntity::TraceBleed(float flDamage, Vector vecDir, TraceResult *ptr, in
 		vecTraceDir.y += RANDOM_FLOAT(-flNoise, flNoise);
 		vecTraceDir.z += RANDOM_FLOAT(-flNoise, flNoise);
 
-		UTIL_TraceLine(ptr->vecEndPos, ptr->vecEndPos + vecTraceDir * -172.0f, ignore_monsters, ENT(pev), &Bloodtr);
+		UTIL_TraceLine(ptr->vecEndPos, ptr->vecEndPos + vecTraceDir * -172.0f, ETraceIgnores::Monsters, ENT(pev), &Bloodtr);
 		if (Bloodtr.flFraction != 1.0f)
 		{
 			if (!RANDOM_LONG(0, 2))

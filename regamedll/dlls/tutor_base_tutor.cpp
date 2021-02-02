@@ -272,7 +272,7 @@ bool CBaseTutor::IsEntityInViewOfPlayer(CBaseEntity *pEntity, CBasePlayer *pPlay
 		TraceResult result;
 		Vector eye = pPlayer->pev->view_ofs + pPlayer->pev->origin;
 
-		UTIL_TraceLine(eye, pEntity->pev->origin, ignore_monsters, ignore_glass, pPlayer->pev->pContainingEntity, &result);
+		UTIL_TraceLine(eye, pEntity->pev->origin, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, pPlayer->pev->pContainingEntity, &result);
 
 		if (result.flFraction == 1.0f)
 		{
@@ -296,7 +296,7 @@ bool CBaseTutor::IsPlayerLookingAtPosition(Vector *origin, CBasePlayer *pPlayer)
 		TraceResult result;
 		Vector eye = pPlayer->pev->origin + pPlayer->pev->view_ofs;
 
-		UTIL_TraceLine(eye, *origin, ignore_monsters, ignore_glass, ENT(pPlayer->pev), &result);
+		UTIL_TraceLine(eye, *origin, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pPlayer->pev), &result);
 
 		if (result.flFraction == 1.0f)
 			return true;
@@ -316,7 +316,7 @@ bool CBaseTutor::IsPlayerLookingAtEntity(CBaseEntity *pEntity, CBasePlayer *pPla
 	Vector destVec = gpGlobals->v_forward * cv_tutor_look_distance.value + srcVec;
 
 	TraceResult result;
-	UTIL_TraceLine(srcVec, destVec, dont_ignore_monsters, ignore_glass, ENT(pPlayer->pev), &result);
+	UTIL_TraceLine(srcVec, destVec, ETraceIgnores::None, ETraceIgnoreGlasses::Yes, ENT(pPlayer->pev), &result);
 
 	if (result.pHit)
 	{
@@ -343,7 +343,7 @@ bool CBaseTutor::IsBombsiteInViewOfPlayer(CBaseEntity *pEntity, CBasePlayer *pPl
 		TraceResult result;
 		Vector eye = pPlayer->pev->origin + pPlayer->pev->view_ofs;
 
-		UTIL_TraceLine(eye, bombSiteCenter, ignore_monsters, ignore_glass, ENT(pPlayer->pev), &result);
+		UTIL_TraceLine(eye, bombSiteCenter, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pPlayer->pev), &result);
 
 		if (result.flFraction == 1.0f)
 		{

@@ -319,7 +319,7 @@ void CFuncTank::ControllerPostFrame()
 	}
 }
 
-void CFuncTank::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncTank::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// player controlled turret
 	if (pev->spawnflags & SF_TANK_CANCONTROL)
@@ -327,11 +327,11 @@ void CFuncTank::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useT
 		if (pActivator->Classify() != CLASS_PLAYER)
 			return;
 
-		if (value == 2 && useType == USE_SET)
+		if (value == 2 && useType == EUseType::SET)
 		{
 			ControllerPostFrame();
 		}
-		else if (!m_pController && useType != USE_OFF)
+		else if (!m_pController && useType != EUseType::OFF)
 		{
 			((CBasePlayer *)pActivator)->m_pTank = this;
 			StartControl((CBasePlayer*)pActivator);
@@ -428,7 +428,7 @@ void CFuncTank::TrackTarget()
 		if (!InRange(range))
 			return;
 
-		UTIL_TraceLine(barrelEnd, targetPosition, dont_ignore_monsters, edict(), &tr);
+		UTIL_TraceLine(barrelEnd, targetPosition, ETraceIgnores::None, edict(), &tr);
 
 		// No line of sight, don't track
 		if (tr.flFraction == 1.0f || tr.pHit == pTarget)
@@ -530,7 +530,7 @@ void CFuncTank::TrackTarget()
 		if (pev->spawnflags & SF_TANK_LINEOFSIGHT)
 		{
 			float length = direction.Length();
-			UTIL_TraceLine(barrelEnd, barrelEnd + forward * length, dont_ignore_monsters, edict(), &tr);
+			UTIL_TraceLine(barrelEnd, barrelEnd + forward * length, ETraceIgnores::None, edict(), &tr);
 
 			if (tr.pHit == pTarget)
 			{
@@ -602,7 +602,7 @@ void CFuncTank::Fire(const Vector &barrelEnd, const Vector &forward, entvars_t *
 			pSprite->pev->nextthink += 0.1f;
 		}
 
-		SUB_UseTargets(this, USE_TOGGLE, 0);
+		SUB_UseTargets(this, EUseType::TOGGLE, 0);
 	}
 
 	m_fireLast = gpGlobals->time;
@@ -626,7 +626,7 @@ void CFuncTank::TankTrace(const Vector &vecStart, const Vector &vecForward, cons
 	Vector vecEnd;
 
 	vecEnd = vecStart + vecDir * 4096.0f;
-	UTIL_TraceLine(vecStart, vecEnd, dont_ignore_monsters, edict(), &tr);
+	UTIL_TraceLine(vecStart, vecEnd, ETraceIgnores::None, edict(), &tr);
 }
 
 void CFuncTank::StartRotSound()
@@ -870,7 +870,7 @@ TYPEDESCRIPTION CFuncTankControls::m_SaveData[] =
 LINK_ENTITY_TO_CLASS(func_tankcontrols, CFuncTankControls)
 IMPLEMENT_SAVERESTORE(CFuncTankControls, CBaseEntity)
 
-void CFuncTankControls::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncTankControls::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// pass the Use command onto the controls
 	if (m_pTank)

@@ -51,7 +51,7 @@ public:
 public:
 	void KeyValue(KeyValueData *pkvd) override;
 	int ObjectCaps() override { return CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
-	void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value) override;
+	void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
 
 protected:
 	friend class CTriggerSetOriginManager;
@@ -72,7 +72,7 @@ private:
 	bool m_bAngleInvertZ;
 
 	int m_entityNum;
-	int m_triggerType;
+	EUseType m_triggerType;
 
 	string_t m_copyPointer;
 

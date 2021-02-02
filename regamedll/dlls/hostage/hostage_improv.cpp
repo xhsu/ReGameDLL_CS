@@ -304,7 +304,7 @@ void CHostageImprov::FaceOutwards()
 	{
 		to = GetCentroid() + corner[i];
 
-		UTIL_TraceLine(GetCentroid(), to, ignore_monsters, ignore_glass, m_hostage->edict(), &result);
+		UTIL_TraceLine(GetCentroid(), to, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, m_hostage->edict(), &result);
 
 		real_t range = (result.vecEndPos - GetCentroid()).LengthSquared();
 
@@ -526,7 +526,7 @@ bool CHostageImprov::IsVisible(const Vector &pos, bool testFOV) const
 	const Vector eye = GetEyes();
 	TraceResult result;
 
-	UTIL_TraceLine(eye, pos, ignore_monsters, ignore_glass, m_hostage->edict(), &result);
+	UTIL_TraceLine(eye, pos, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, m_hostage->edict(), &result);
 	return result.flFraction == 1.0f;
 }
 
@@ -1399,7 +1399,7 @@ void CHostageImprov::OnTouch(CBaseEntity *pOther)
 			Vector vecStart = GetFeet();
 			vecStart.z += offset;
 
-			UTIL_TraceLine(vecStart, vecStart + pos, ignore_monsters, dont_ignore_glass, m_hostage->pev->pContainingEntity, &result);
+			UTIL_TraceLine(vecStart, vecStart + pos, ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, m_hostage->pev->pContainingEntity, &result);
 
 			if (result.flFraction < 1.0f && result.vecPlaneNormal.z < MaxUnitZSlope)
 			{
@@ -1439,7 +1439,7 @@ void CHostageImprov::OnTouch(CBaseEntity *pOther)
 			Vector posBehind;
 
 			posBehind = GetEyes() - alongFloor * checkSeamRange;
-			UTIL_TraceLine(posBehind, posBehind - Vector(0, 0, 9999), ignore_monsters, dont_ignore_glass, m_hostage->pev->pContainingEntity, &result);
+			UTIL_TraceLine(posBehind, posBehind - Vector(0, 0, 9999), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, m_hostage->pev->pContainingEntity, &result);
 
 			if (result.flFraction < 1.0f && DotProduct(result.vecPlaneNormal, normal) < 1.0f)
 			{
@@ -1448,7 +1448,7 @@ void CHostageImprov::OnTouch(CBaseEntity *pOther)
 			else
 			{
 				Vector posAhead = GetEyes() + alongFloor * checkSeamRange;
-				UTIL_TraceLine(posAhead, posAhead - Vector(0, 0, 9999), ignore_monsters, dont_ignore_glass, m_hostage->pev->pContainingEntity, &result);
+				UTIL_TraceLine(posAhead, posAhead - Vector(0, 0, 9999), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, m_hostage->pev->pContainingEntity, &result);
 
 				if (result.flFraction < 1.0f && DotProduct(result.vecPlaneNormal, normal) < 1.0f)
 					isSeam = true;
@@ -1813,7 +1813,7 @@ void CHostageImprov::ClearPath()
 	UTIL_MakeVectors(m_hostage->pev->angles);
 	end = gpGlobals->v_forward * 64 + start;
 
-	UTIL_TraceLine(start, end, ignore_monsters, dont_ignore_glass, m_hostage->edict(), &result);
+	UTIL_TraceLine(start, end, ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, m_hostage->edict(), &result);
 
 	if (result.flFraction == 1.0f)
 		return;
@@ -1865,7 +1865,7 @@ void CHostageImprov::StandUp()
 		for (int x = -24; x < 36; x += 12)
 		{
 			TraceResult result;
-			UTIL_TraceLine(GetFeet() + Vector(0, 0, 3), GetFeet() + Vector(x, y, 72), ignore_monsters, ignore_glass, m_hostage->edict(), &result);
+			UTIL_TraceLine(GetFeet() + Vector(0, 0, 3), GetFeet() + Vector(x, y, 72), ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, m_hostage->edict(), &result);
 
 			if (result.flFraction < 1.0f)
 				return;

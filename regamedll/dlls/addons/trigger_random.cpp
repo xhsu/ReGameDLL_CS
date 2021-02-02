@@ -117,7 +117,7 @@ void CTriggerRandom::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CTriggerRandom::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTriggerRandom::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (pev->spawnflags & SF_RANDOM_TIMED)
 	{
@@ -220,7 +220,7 @@ void CTriggerRandom::Fire(CBaseEntity *pActivator)
 		}
 	}
 
-	FireTargets(iszSelectTarget, pActivator, this, USE_TOGGLE, 0);
+	FireTargets(iszSelectTarget, pActivator, this, EUseType::TOGGLE, 0);
 }
 
 float CTriggerRandom::RandomDelay()

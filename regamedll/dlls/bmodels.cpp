@@ -22,9 +22,9 @@ void CFuncWall::Spawn()
 	pev->flags |= FL_WORLDBRUSH;
 }
 
-void CFuncWall::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncWall::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
-	if (ShouldToggle(useType, int(pev->frame)))
+	if (ShouldToggle(useType, bool(pev->frame)))
 	{
 		pev->frame = 1.0 - pev->frame;
 	}
@@ -89,11 +89,11 @@ BOOL CFuncWallToggle::IsOn()
 	return TRUE;
 }
 
-void CFuncWallToggle::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncWallToggle::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	int status = IsOn();
 
-	if (ShouldToggle(useType, status))
+	if (ShouldToggle(useType, (bool)status))
 	{
 		if (status)
 			TurnOff();
@@ -143,7 +143,7 @@ void CFuncConveyor::UpdateSpeed(float speed)
 	pev->rendercolor.z = (speedCode & 0xFF);
 }
 
-void CFuncConveyor::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncConveyor::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	pev->speed = -pev->speed;
 	UpdateSpeed(pev->speed);
@@ -628,7 +628,7 @@ void CFuncRotating::Rotate()
 }
 
 // When a rotating brush is triggered
-void CFuncRotating::RotatingUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFuncRotating::RotatingUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// is this a brush that should accelerate and decelerate when turned on/off (fan)?
 	if (pev->spawnflags & SF_BRUSH_ACCDCC)
@@ -757,7 +757,7 @@ void CPendulum::Spawn()
 	}
 }
 
-void CPendulum::PendulumUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CPendulum::PendulumUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// Pendulum is moving, stop it and auto-return if necessary
 	if (pev->speed)

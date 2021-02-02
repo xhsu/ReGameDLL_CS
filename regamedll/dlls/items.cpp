@@ -118,7 +118,7 @@ void CItem::ItemTouch(CBaseEntity *pOther)
 
 	if (MyTouch(pPlayer))
 	{
-		SUB_UseTargets(pOther, USE_TOGGLE, 0);
+		SUB_UseTargets(pOther, EUseType::TOGGLE, 0);
 		SetTouch(nullptr);
 		g_pGameRules->PlayerGotItem(pPlayer, this);
 

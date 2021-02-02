@@ -70,7 +70,7 @@ void CGameScore::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CGameScore::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGameScore::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!pActivator || !CanFireForActivator(pActivator))
 		return;
@@ -91,7 +91,7 @@ void CGameScore::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 
 LINK_ENTITY_TO_CLASS(game_end, CGameEnd)
 
-void CGameEnd::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGameEnd::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!CanFireForActivator(pActivator))
 		return;
@@ -193,7 +193,7 @@ void CGameText::Spawn()
 #endif
 }
 
-void CGameText::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGameText::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!CanFireForActivator(pActivator))
 		return;
@@ -220,7 +220,7 @@ void CGameText::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useT
 	}
 
 #ifdef REGAMEDLL_FIXES
-	SUB_UseTargets(pActivator, USE_TOGGLE, 0);
+	SUB_UseTargets(pActivator, EUseType::TOGGLE, 0);
 #endif
 
 }
@@ -240,13 +240,13 @@ void CGameTeamMaster::KeyValue(KeyValueData *pkvd)
 		switch (type)
 		{
 		case 0:
-			m_triggerType = USE_OFF;
+			m_triggerType = EUseType::OFF;
 			break;
 		case 2:
-			m_triggerType = USE_TOGGLE;
+			m_triggerType = EUseType::TOGGLE;
 			break;
 		default:
-			m_triggerType = USE_ON;
+			m_triggerType = EUseType::ON;
 			break;
 		}
 
@@ -258,12 +258,12 @@ void CGameTeamMaster::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CGameTeamMaster::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGameTeamMaster::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!pActivator || !CanFireForActivator(pActivator))
 		return;
 
-	if (useType == USE_SET)
+	if (useType == EUseType::SET)
 	{
 		if (value < 0)
 		{
@@ -337,7 +337,7 @@ bool CGameTeamMaster::TeamMatch(CBaseEntity *pActivator)
 
 LINK_ENTITY_TO_CLASS(game_team_set, CGameTeamSet)
 
-void CGameTeamSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGameTeamSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!CanFireForActivator(pActivator))
 		return;
@@ -345,12 +345,12 @@ void CGameTeamSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE u
 	if (ShouldClearTeam())
 	{
 		// clear the team of our target
-		SUB_UseTargets(pActivator, USE_SET, -1);
+		SUB_UseTargets(pActivator, EUseType::SET, -1);
 	}
 	else
 	{
 		// set the team of our target to our activator's team
-		SUB_UseTargets(pActivator, USE_SET, 0);
+		SUB_UseTargets(pActivator, EUseType::SET, 0);
 	}
 
 	if (RemoveOnFire())
@@ -401,7 +401,7 @@ void CGamePlayerZone::KeyValue(KeyValueData *pkvd)
 class CGameZonePlayerVolumeListener: public CPlayerInVolumeAdapter
 {
 public:
-	CGameZonePlayerVolumeListener(CGamePlayerZone *pBrushEntity, CBaseEntity *pActivator, USE_TYPE useType, float value);
+	CGameZonePlayerVolumeListener(CGamePlayerZone *pBrushEntity, CBaseEntity *pActivator, EUseType useType, float value);
 
 	void PlayerDetected(const bool fInVolume, CBasePlayer *pPlayer) override
 	{
@@ -417,11 +417,11 @@ private:
 	string_t m_iszOutTarget;
 
 	EHANDLE m_hActivator;
-	USE_TYPE m_useType;
+	EUseType m_useType;
 	float m_value;
 };
 
-CGameZonePlayerVolumeListener::CGameZonePlayerVolumeListener(CGamePlayerZone *pBrushEntity, CBaseEntity *pActivator, USE_TYPE useType, float value)
+CGameZonePlayerVolumeListener::CGameZonePlayerVolumeListener(CGamePlayerZone *pBrushEntity, CBaseEntity *pActivator, EUseType useType, float value)
 {
 	m_iszInTarget  = pBrushEntity->m_iszInTarget;
 	m_iszOutTarget = pBrushEntity->m_iszOutTarget;
@@ -431,7 +431,7 @@ CGameZonePlayerVolumeListener::CGameZonePlayerVolumeListener(CGamePlayerZone *pB
 	m_value      = value;
 }
 
-void CGamePlayerZone::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGamePlayerZone::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	int playersInCount = 0;
 	int playersOutCount = 0;
@@ -444,18 +444,18 @@ void CGamePlayerZone::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 
 	if (!FStringNull(m_iszInCount))
 	{
-		FireTargets(STRING(m_iszInCount), pActivator, this, USE_SET, playersInCount);
+		FireTargets(STRING(m_iszInCount), pActivator, this, EUseType::SET, playersInCount);
 	}
 
 	if (!FStringNull(m_iszOutCount))
 	{
-		FireTargets(STRING(m_iszOutCount), pActivator, this, USE_SET, playersOutCount);
+		FireTargets(STRING(m_iszOutCount), pActivator, this, EUseType::SET, playersOutCount);
 	}
 }
 
 LINK_ENTITY_TO_CLASS(game_player_hurt, CGamePlayerHurt)
 
-void CGamePlayerHurt::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGamePlayerHurt::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!pActivator || !CanFireForActivator(pActivator))
 		return;
@@ -485,30 +485,30 @@ void CGameCounter::Spawn()
 	CRulePointEntity::Spawn();
 }
 
-void CGameCounter::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGameCounter::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!CanFireForActivator(pActivator))
 		return;
 
 	switch (useType)
 	{
-	case USE_ON:
-	case USE_TOGGLE:
+	case EUseType::ON:
+	case EUseType::TOGGLE:
 		CountUp();
 		break;
 
-	case USE_OFF:
+	case EUseType::OFF:
 		CountDown();
 		break;
 
-	case USE_SET:
+	case EUseType::SET:
 		SetCountValue(int(value));
 		break;
 	}
 
 	if (HitLimit())
 	{
-		SUB_UseTargets(pActivator, USE_TOGGLE, 0);
+		SUB_UseTargets(pActivator, EUseType::TOGGLE, 0);
 
 		if (RemoveOnFire())
 		{
@@ -524,12 +524,12 @@ void CGameCounter::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE u
 
 LINK_ENTITY_TO_CLASS(game_counter_set, CGameCounterSet)
 
-void CGameCounterSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGameCounterSet::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!CanFireForActivator(pActivator))
 		return;
 
-	SUB_UseTargets(pActivator, USE_SET, pev->frags);
+	SUB_UseTargets(pActivator, EUseType::SET, pev->frags);
 
 	if (RemoveOnFire())
 	{
@@ -598,7 +598,7 @@ void CGamePlayerEquip::EquipPlayer(CBaseEntity *pEntity)
 	}
 }
 
-void CGamePlayerEquip::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGamePlayerEquip::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	EquipPlayer(pActivator);
 }
@@ -617,7 +617,7 @@ const char *CGamePlayerTeam::TargetTeamName(const char *pszTargetName)
 	return nullptr;
 }
 
-void CGamePlayerTeam::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGamePlayerTeam::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!CanFireForActivator(pActivator))
 		return;

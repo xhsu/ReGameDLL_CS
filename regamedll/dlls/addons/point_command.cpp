@@ -23,14 +23,15 @@ void CPointBaseCommand::KeyValue(KeyValueData *pkvd)
 	// add this field to the command list
 	if (m_vecCommands.size() < MAX_POINT_CMDS)
 	{
-		if (pkvd->szValue[0] != '\0' &&
-			Q_strcmp(pkvd->szValue, "-") != 0)
+		if (pkvd->szValue[0] != '\0' && Q_strcmp(pkvd->szValue, "-") != 0)
 		{
-			m_vecCommands.push_back(command_t(pkvd->szKeyName, pkvd->szValue));
+			//m_vecCommands.push_back(command_t(pkvd->szKeyName, pkvd->szValue));
+			m_vecCommands.emplace_back(pkvd->szKeyName, pkvd->szValue);
 		}
 		else
 		{
-			m_vecCommands.push_back(command_t(pkvd->szKeyName));
+			//m_vecCommands.push_back(command_t(pkvd->szKeyName));
+			m_vecCommands.emplace_back(pkvd->szKeyName);
 		}
 
 		pkvd->fHandled = TRUE;
@@ -42,7 +43,7 @@ void CPointBaseCommand::KeyValue(KeyValueData *pkvd)
 
 LINK_ENTITY_TO_CLASS(point_clientcommand, CPointClientCommand)
 
-void CPointClientCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CPointClientCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	edict_t *pClient = nullptr;
 	if (gpGlobals->maxClients == 1)
@@ -69,7 +70,7 @@ void CPointClientCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE
 void CPointClientCommand::Execute(edict_t *pEdict, const char *pszFmt, ...)
 {
 	va_list argptr;
-	char command[128];
+	char command[128] = "\0";
 
 	va_start(argptr, pszFmt);
 	Q_vsnprintf(command, sizeof(command), pszFmt, argptr);
@@ -80,7 +81,7 @@ void CPointClientCommand::Execute(edict_t *pEdict, const char *pszFmt, ...)
 
 LINK_ENTITY_TO_CLASS(point_servercommand, CPointServerCommand)
 
-void CPointServerCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CPointServerCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 #ifdef REGAMEDLL_ADD
 	if (!allow_point_servercommand.value) {
@@ -91,7 +92,7 @@ void CPointServerCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE
 
 	for (auto &cmd : m_vecCommands)
 	{
-		cvar_t *pCVar = CVAR_GET_POINTER(cmd.name);
+		cvar_t const* pCVar = CVAR_GET_POINTER(cmd.name);
 		if (pCVar &&
 			pCVar->string &&
 			pCVar->string[0] != '\0' &&
@@ -112,11 +113,11 @@ void CPointServerCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE
 
 void CPointServerCommand::Execute(edict_t *pEdict, const char *pszFmt, ...)
 {
-	va_list argptr;
-	char command[128];
+	va_list argptr = nullptr;
+	char command[128] = "\0";
 
 	va_start(argptr, pszFmt);
-	Q_vsnprintf(command, sizeof(command), pszFmt, argptr);
+	Q_vsnprintf(command, charsmax(command), pszFmt, argptr);
 	va_end(argptr);
 
 	if (!IS_DEDICATED_SERVER())

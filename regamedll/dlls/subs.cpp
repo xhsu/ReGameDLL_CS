@@ -108,7 +108,7 @@ void CBaseDelay::KeyValue(KeyValueData *pkvd)
 //
 // Search for (string)targetname in all entities that
 // match (string)self.target and call their .use function (if they have one)
-NOINLINE void CBaseEntity::SUB_UseTargets(CBaseEntity *pActivator, USE_TYPE useType, float value)
+NOINLINE void CBaseEntity::SUB_UseTargets(CBaseEntity *pActivator, EUseType useType, float value)
 {
 	// fire targets
 	if (!FStringNull(pev->target))
@@ -119,7 +119,7 @@ NOINLINE void CBaseEntity::SUB_UseTargets(CBaseEntity *pActivator, USE_TYPE useT
 
 int g_iTargetRecursionLevel = 0;
 
-void FireTargets(const char *targetName, CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void FireTargets(const char *targetName, CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	edict_t *pentTarget = nullptr;
 	if (!targetName)
@@ -169,7 +169,7 @@ void FireTargets(const char *targetName, CBaseEntity *pActivator, CBaseEntity *p
 
 LINK_ENTITY_TO_CLASS(DelayedUse, CBaseDelay)
 
-void CBaseDelay::SUB_UseTargets(CBaseEntity *pActivator, USE_TYPE useType, float value)
+void CBaseDelay::SUB_UseTargets(CBaseEntity *pActivator, EUseType useType, float value)
 {
 	// exit immediatly if we don't have a target or kill target
 	if (FStringNull(pev->target) && !m_iszKillTarget)
@@ -268,7 +268,7 @@ void CBaseDelay::DelayThink()
 	}
 
 	// The use type is cached (and stashed) in pev->button
-	SUB_UseTargets(pActivator, (USE_TYPE)pev->button, 0);
+	SUB_UseTargets(pActivator, (EUseType)pev->button, 0);
 	REMOVE_ENTITY(ENT(pev));
 }
 
@@ -469,7 +469,7 @@ NOXREF BOOL FEntIsVisible(entvars_t *pev, entvars_t *pevTarget)
 	Vector vecSpot2 = pevTarget->origin + pevTarget->view_ofs;
 	TraceResult tr;
 
-	UTIL_TraceLine(vecSpot1, vecSpot2, ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot1, vecSpot2, ETraceIgnores::Monsters, ENT(pev), &tr);
 
 	if (tr.fInOpen && tr.fInWater)
 	{

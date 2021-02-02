@@ -3513,7 +3513,7 @@ void CHalfLifeMultiplay::ClientDisconnected(edict_t *pClient)
 
 			char *team = GetTeam(pPlayer->m_iTeam);
 
-			FireTargets("game_playerleave", pPlayer, pPlayer, USE_TOGGLE, 0);
+			FireTargets("game_playerleave", pPlayer, pPlayer, EUseType::TOGGLE, 0);
 			UTIL_LogPrintf("\"%s<%i><%s><%s>\" disconnected\n", STRING(pPlayer->pev->netname), GETPLAYERUSERID(pPlayer->edict()), GETPLAYERAUTHID(pPlayer->edict()), team);
 
 			// destroy all of the players weapons and items
@@ -3805,7 +3805,7 @@ void CHalfLifeMultiplay::PlayerKilled(CBasePlayer *pVictim, entvars_t *pKiller, 
 		}
 	}
 
-	FireTargets("game_playerdie", pVictim, pVictim, USE_TOGGLE, 0);
+	FireTargets("game_playerdie", pVictim, pVictim, EUseType::TOGGLE, 0);
 
 	// Did the player kill himself?
 	if (pVictim->pev == pKiller)
@@ -3889,7 +3889,7 @@ void CHalfLifeMultiplay::PlayerKilled(CBasePlayer *pVictim, entvars_t *pKiller, 
 			}
 		}
 
-		FireTargets("game_playerkill", peKiller, peKiller, USE_TOGGLE, 0);
+		FireTargets("game_playerkill", peKiller, peKiller, EUseType::TOGGLE, 0);
 	}
 	else
 	{
@@ -4203,7 +4203,7 @@ edict_t *CHalfLifeMultiplay::GetPlayerSpawnSpot(CBasePlayer *pPlayer)
 	{
 		if (pentSpawnSpot->v.target)
 		{
-			FireTargets(STRING(pentSpawnSpot->v.target), pPlayer, pPlayer, USE_TOGGLE, 0);
+			FireTargets(STRING(pentSpawnSpot->v.target), pPlayer, pPlayer, EUseType::TOGGLE, 0);
 		}
 	}
 

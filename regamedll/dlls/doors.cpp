@@ -225,7 +225,7 @@ void CBaseDoor::Spawn()
 		m_vecPosition1 = pev->origin;
 	}
 
-	m_toggle_state = TS_AT_BOTTOM;
+	m_toggle_state = EToggleState::AT_BOTTOM;
 
 	// if the door is flagged for USE button activation only, use NULL touch function
 	if (pev->spawnflags & SF_DOOR_USE_ONLY)
@@ -244,7 +244,7 @@ void CBaseDoor::Spawn()
 void CBaseDoor::Restart()
 {
 	SetMovedir(pev);
-	m_toggle_state = TS_AT_BOTTOM;
+	m_toggle_state = EToggleState::AT_BOTTOM;
 	DoorGoDown();
 
 	if (pev->spawnflags & SF_DOOR_USE_ONLY)
@@ -253,9 +253,9 @@ void CBaseDoor::Restart()
 		SetTouch(&CBaseDoor::DoorTouch);
 }
 
-void CBaseDoor::SetToggleState(int state)
+void CBaseDoor::SetToggleState(EToggleState state)
 {
-	if (state == TS_AT_TOP)
+	if (state == EToggleState::AT_TOP)
 		UTIL_SetOrigin(pev, m_vecPosition2);
 	else
 		UTIL_SetOrigin(pev, m_vecPosition1);
@@ -447,12 +447,12 @@ void CBaseDoor::DoorTouch(CBaseEntity *pOther)
 }
 
 // Used by SUB_UseTargets, when a door is the target of a button.
-void CBaseDoor::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBaseDoor::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	m_hActivator = pActivator;
 
 	// if not ready to be used, ignore "use" command.
-	if (m_toggle_state == TS_AT_BOTTOM || ((pev->spawnflags & SF_DOOR_NO_AUTO_RETURN) && m_toggle_state == TS_AT_TOP))
+	if (m_toggle_state == EToggleState::AT_BOTTOM || ((pev->spawnflags & SF_DOOR_NO_AUTO_RETURN) && m_toggle_state == EToggleState::AT_TOP))
 	{
 		DoorActivate();
 	}
@@ -465,7 +465,7 @@ int CBaseDoor::DoorActivate()
 		return 0;
 
 	// door should close
-	if ((pev->spawnflags & SF_DOOR_NO_AUTO_RETURN) && m_toggle_state == TS_AT_TOP)
+	if ((pev->spawnflags & SF_DOOR_NO_AUTO_RETURN) && m_toggle_state == EToggleState::AT_TOP)
 	{
 		DoorGoDown();
 	}
@@ -491,10 +491,10 @@ int CBaseDoor::DoorActivate()
 void CBaseDoor::DoorGoUp()
 {
 	entvars_t *pevActivator;
-	bool isReversing = (m_toggle_state == TS_GOING_DOWN);
+	bool isReversing = (m_toggle_state == EToggleState::GOING_DOWN);
 
 	// It could be going-down, if blocked.
-	assert(m_toggle_state == TS_AT_BOTTOM || m_toggle_state == TS_GOING_DOWN);
+	assert(m_toggle_state == EToggleState::AT_BOTTOM || m_toggle_state == EToggleState::GOING_DOWN);
 
 	// emit door moving and stop sounds on CHAN_STATIC so that the multicast doesn't
 	// filter them out and leave a client stuck with looping door sounds!
@@ -503,7 +503,7 @@ void CBaseDoor::DoorGoUp()
 		// water is silent
 		if (!(pev->spawnflags & SF_DOOR_ACTUALLY_WATER))
 		{
-			if (m_toggle_state != TS_GOING_UP && m_toggle_state != TS_GOING_DOWN)
+			if (m_toggle_state != EToggleState::GOING_UP && m_toggle_state != EToggleState::GOING_DOWN)
 			{
 				EMIT_SOUND(ENT(pev), CHAN_STATIC, (char *)STRING(pev->noiseMoving), VOL_NORM, ATTN_NORM);
 			}
@@ -520,7 +520,7 @@ void CBaseDoor::DoorGoUp()
 		}
 	}
 
-	m_toggle_state = TS_GOING_UP;
+	m_toggle_state = EToggleState::GOING_UP;
 
 	SetMoveDone(&CBaseDoor::DoorHitTop);
 
@@ -634,8 +634,8 @@ void CBaseDoor::DoorHitTop()
 		EMIT_SOUND(ENT(pev), CHAN_STATIC, (char *)STRING(pev->noiseArrived), VOL_NORM, ATTN_NORM);
 	}
 
-	assert(m_toggle_state == TS_GOING_UP);
-	m_toggle_state = TS_AT_TOP;
+	assert(m_toggle_state == EToggleState::GOING_UP);
+	m_toggle_state = EToggleState::AT_TOP;
 
 	// toggle-doors don't come down automatically, they wait for refire.
 	if (pev->spawnflags & SF_DOOR_NO_AUTO_RETURN)
@@ -661,24 +661,24 @@ void CBaseDoor::DoorHitTop()
 	// Fire the close target (if startopen is set, then "top" is closed) - netname is the close target
 	if (!FStringNull(pev->netname) && (pev->spawnflags & SF_DOOR_START_OPEN))
 	{
-		FireTargets(STRING(pev->netname), m_hActivator, this, USE_TOGGLE, 0);
+		FireTargets(STRING(pev->netname), m_hActivator, this, EUseType::TOGGLE, 0);
 	}
 
 	// this isn't finished
-	SUB_UseTargets(m_hActivator, USE_TOGGLE, 0);
+	SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
 }
 
 // Starts the door going to its "down" position (simply ToggleData->vecPosition1).
 void CBaseDoor::DoorGoDown()
 {
-	bool isReversing = (m_toggle_state == TS_GOING_UP);
+	bool isReversing = (m_toggle_state == EToggleState::GOING_UP);
 
 	if (!isReversing)
 	{
 		// water is silent
 		if (!(pev->spawnflags & SF_DOOR_ACTUALLY_WATER))
 		{
-			if (m_toggle_state != TS_GOING_UP && m_toggle_state != TS_GOING_DOWN)
+			if (m_toggle_state != EToggleState::GOING_UP && m_toggle_state != EToggleState::GOING_DOWN)
 			{
 				EMIT_SOUND(ENT(pev), CHAN_STATIC, (char *)STRING(pev->noiseMoving), VOL_NORM, ATTN_NORM);
 			}
@@ -696,10 +696,10 @@ void CBaseDoor::DoorGoDown()
 	}
 
 #ifdef DOOR_ASSERT
-	assert(m_toggle_state == TS_AT_TOP);
+	assert(m_toggle_state == EToggleState::AT_TOP);
 #endif
 
-	m_toggle_state = TS_GOING_DOWN;
+	m_toggle_state = EToggleState::GOING_DOWN;
 
 	SetMoveDone(&CBaseDoor::DoorHitBottom);
 
@@ -724,8 +724,8 @@ void CBaseDoor::DoorHitBottom()
 		EMIT_SOUND(ENT(pev), CHAN_STATIC, (char *)STRING(pev->noiseArrived), VOL_NORM, ATTN_NORM);
 	}
 
-	assert(m_toggle_state == TS_GOING_DOWN);
-	m_toggle_state = TS_AT_BOTTOM;
+	assert(m_toggle_state == EToggleState::GOING_DOWN);
+	m_toggle_state = EToggleState::AT_BOTTOM;
 
 	// Re-instate touch method, cycle is complete
 	if (pev->spawnflags & SF_DOOR_USE_ONLY)
@@ -740,12 +740,12 @@ void CBaseDoor::DoorHitBottom()
 	}
 
 	// this isn't finished
-	SUB_UseTargets(m_hActivator, USE_TOGGLE, 0);
+	SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
 
 	// Fire the close target (if startopen is set, then "top" is closed) - netname is the close target
 	if (!FStringNull(pev->netname) && !(pev->spawnflags & SF_DOOR_START_OPEN))
 	{
-		FireTargets(STRING(pev->netname), m_hActivator, this, USE_TOGGLE, 0);
+		FireTargets(STRING(pev->netname), m_hActivator, this, EUseType::TOGGLE, 0);
 	}
 }
 
@@ -772,7 +772,7 @@ void CBaseDoor::Blocked(CBaseEntity *pOther)
 	// so let it just squash the object to death real fast
 	if (m_flWait >= 0)
 	{
-		if (m_toggle_state == TS_GOING_DOWN)
+		if (m_toggle_state == EToggleState::GOING_DOWN)
 		{
 			DoorGoUp();
 		}
@@ -824,7 +824,7 @@ void CBaseDoor::Blocked(CBaseEntity *pOther)
 							STOP_SOUND(ENT(pev), CHAN_STATIC, (char *)STRING(pev->noiseMoving));
 						}
 
-						if (pDoor->m_toggle_state == TS_GOING_DOWN)
+						if (pDoor->m_toggle_state == EToggleState::GOING_DOWN)
 							pDoor->DoorGoUp();
 						else
 							pDoor->DoorGoDown();
@@ -906,7 +906,7 @@ void CRotDoor::Restart()
 	}
 #endif
 
-	m_toggle_state = TS_AT_BOTTOM;
+	m_toggle_state = EToggleState::AT_BOTTOM;
 	DoorGoDown();
 }
 
@@ -960,7 +960,7 @@ void CRotDoor::Spawn()
 		pev->movedir = pev->movedir * -1;
 	}
 
-	m_toggle_state = TS_AT_BOTTOM;
+	m_toggle_state = EToggleState::AT_BOTTOM;
 
 	if (pev->spawnflags & SF_DOOR_USE_ONLY)
 	{
@@ -973,9 +973,9 @@ void CRotDoor::Spawn()
 	}
 }
 
-void CRotDoor::SetToggleState(int state)
+void CRotDoor::SetToggleState(EToggleState state)
 {
-	if (state == TS_AT_TOP)
+	if (state == EToggleState::AT_TOP)
 		pev->angles = m_vecAngle2;
 	else
 		pev->angles = m_vecAngle1;
@@ -1093,10 +1093,10 @@ void CMomentaryDoor::KeyValue(KeyValueData *pkvd)
 		CBaseToggle::KeyValue(pkvd);
 }
 
-void CMomentaryDoor::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CMomentaryDoor::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// Momentary buttons will pass down a float in here
-	if (useType != USE_SET)
+	if (useType != EUseType::SET)
 	{
 		return;
 	}

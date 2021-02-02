@@ -79,7 +79,7 @@ void CRecharge::Precache()
 	PRECACHE_SOUND("items/suitchargeok1.wav");
 }
 
-void CRecharge::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CRecharge::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 #ifdef REGAMEDLL_FIXES
 	// Make sure that we have a caller

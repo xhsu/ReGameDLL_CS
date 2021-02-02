@@ -51,7 +51,7 @@ void CPathTrack::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CPathTrack::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CPathTrack::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	int on;
 

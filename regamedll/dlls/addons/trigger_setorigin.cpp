@@ -28,13 +28,13 @@ void CTriggerSetOrigin::KeyValue(KeyValueData *pkvd)
 		switch (type)
 		{
 		case 0:
-			m_triggerType = USE_OFF;
+			m_triggerType = EUseType::OFF;
 			break;
 		case 2:
-			m_triggerType = USE_TOGGLE;
+			m_triggerType = EUseType::TOGGLE;
 			break;
 		default:
-			m_triggerType = USE_ON;
+			m_triggerType = EUseType::ON;
 			break;
 		}
 
@@ -80,7 +80,7 @@ void CTriggerSetOrigin::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CTriggerSetOrigin::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTriggerSetOrigin::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!(pev->spawnflags & SF_SETORIGIN_CONST_UPDATE))
 	{
@@ -90,15 +90,15 @@ void CTriggerSetOrigin::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_T
 
 	switch (useType)
 	{
-	case USE_OFF:
+	case EUseType::OFF:
 		m_bUpdateEntities = false;
 		break;
 
-	case USE_ON:
+	case EUseType::ON:
 		m_bUpdateEntities = true;
 		break;
 
-	case USE_TOGGLE:
+	case EUseType::TOGGLE:
 		m_bUpdateEntities = !m_bUpdateEntities;
 		break;
 	}

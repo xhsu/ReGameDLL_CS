@@ -625,7 +625,7 @@ bool CCSBot::FindGrenadeTossPathTarget(Vector *pos)
 
 	// check +X
 	check = visibleSpot + Vector(999.9f, 0, 0);
-	UTIL_TraceLine(visibleSpot, check, dont_ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(visibleSpot, check, ETraceIgnores::None, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	if (result.flFraction < 1.0f)
 	{
@@ -638,7 +638,7 @@ bool CCSBot::FindGrenadeTossPathTarget(Vector *pos)
 
 	// check -X
 	check = visibleSpot + Vector(-999.9f, 0, 0);
-	UTIL_TraceLine(visibleSpot, check, dont_ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(visibleSpot, check, ETraceIgnores::None, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	if (result.flFraction < 1.0f)
 	{
@@ -651,7 +651,7 @@ bool CCSBot::FindGrenadeTossPathTarget(Vector *pos)
 
 	// check +Y
 	check = visibleSpot + Vector(0, 999.9f, 0);
-	UTIL_TraceLine(visibleSpot, check, dont_ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(visibleSpot, check, ETraceIgnores::None, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	if (result.flFraction < 1.0f)
 	{
@@ -664,7 +664,7 @@ bool CCSBot::FindGrenadeTossPathTarget(Vector *pos)
 
 	// check -Y
 	check = visibleSpot + Vector(0, -999.9f, 0);
-	UTIL_TraceLine(visibleSpot, check, dont_ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(visibleSpot, check, ETraceIgnores::None, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	if (result.flFraction < 1.0f)
 	{
@@ -854,7 +854,7 @@ bool CCSBot::IsFriendInLineOfFire()
 
 	// trace the bullet's path
 	TraceResult result;
-	UTIL_TraceLine(GetGunPosition(), target + 10000.0f * aimDir, dont_ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(GetGunPosition(), target + 10000.0f * aimDir, ETraceIgnores::None, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	if (result.pHit)
 	{
@@ -881,7 +881,7 @@ float CCSBot::ComputeWeaponSightRange()
 
 	// trace the bullet's path
 	TraceResult result;
-	UTIL_TraceLine(GetGunPosition(), target + 10000.0f * aimDir, dont_ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(GetGunPosition(), target + 10000.0f * aimDir, ETraceIgnores::None, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	return (GetGunPosition() - result.vecEndPos).Length();
 }

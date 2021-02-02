@@ -60,7 +60,7 @@ inline CNavNode *LadderEndSearch(CBaseEntity *pEntity, const Vector *pos, NavDir
 		// make sure this point is not on the other side of a wall
 		const float fudge = 2.0f;
 		TraceResult result;
-		UTIL_TraceLine(center + Vector(0, 0, fudge), tryPos + Vector(0, 0, fudge), ignore_monsters, dont_ignore_glass, ENT(pEntity->pev), &result);
+		UTIL_TraceLine(center + Vector(0, 0, fudge), tryPos + Vector(0, 0, fudge), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pEntity->pev), &result);
 
 		if (result.flFraction != 1.0f
 #ifdef REGAMEDLL_FIXES
@@ -123,7 +123,7 @@ CNavNode *CCSBot::AddNode(const Vector *destPos, const Vector *normal, NavDirTyp
 			floor = *destPos + Vector(x, y, 5.0f);
 			ceiling = *destPos + Vector(x, y, 72.0f - epsilon);
 
-			UTIL_TraceLine(floor, ceiling, ignore_monsters, dont_ignore_glass, ENT(pev), &result);
+			UTIL_TraceLine(floor, ceiling, ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &result);
 
 			if (result.flFraction != 1.0f)
 			{
@@ -273,7 +273,7 @@ bool CCSBot::LearnStep()
 				Vector toOrigin = to + Vector(0, 0, feetOffset);
 
 				UTIL_SetOrigin(pev, toOrigin);
-				UTIL_TraceLine(fromOrigin, toOrigin, ignore_monsters, dont_ignore_glass, ENT(pev), &result);
+				UTIL_TraceLine(fromOrigin, toOrigin, ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pev), &result);
 
 				bool walkable;
 

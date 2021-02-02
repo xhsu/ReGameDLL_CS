@@ -130,7 +130,7 @@ void HostageIdleState::OnUpdate(CHostageImprov *improv)
 				else
 				{
 					TraceResult result;
-					UTIL_TraceLine(pRescuer->pev->origin, pCaptor->pev->origin, ignore_monsters, ignore_glass, pCaptor->edict(), &result);
+					UTIL_TraceLine(pRescuer->pev->origin, pCaptor->pev->origin, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, pCaptor->edict(), &result);
 
 					if (result.flFraction != 1.0f && m_disagreeTimer.IsElapsed())
 					{

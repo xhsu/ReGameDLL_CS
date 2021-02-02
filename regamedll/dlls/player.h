@@ -305,7 +305,7 @@ enum class EProtectionState : BYTE
 
 class CStripWeapons: public CPointEntity {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 // Dead HEV suit prop

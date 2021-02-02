@@ -113,7 +113,7 @@ public:
 	void EXPORT CorpseFallThink();
 	CBaseEntity *CheckTraceHullAttack(float flDist, int iDamage, int iDmgType);
 	void MakeDamageBloodDecal(int cCount, float flNoise, TraceResult *ptr, Vector &vecDir);
-	void MonsterUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value) { m_IdealMonsterState = MONSTERSTATE_ALERT; }
+	void MonsterUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) { m_IdealMonsterState = MONSTERSTATE_ALERT; }
 	void BloodSplat(const Vector &vecSrc, const Vector &vecDir, int HitLocation, int iVelocity);
 
 public:

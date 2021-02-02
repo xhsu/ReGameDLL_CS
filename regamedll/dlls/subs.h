@@ -41,6 +41,6 @@ public:
 	virtual BOOL IsTriggered(CBaseEntity *pEntity);
 };
 
-void FireTargets(const char *targetName, CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+void FireTargets(const char *targetName, CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 void SetMovedir(entvars_t *pev);
 BOOL FEntIsVisible(entvars_t *pev, entvars_t *pevTarget);

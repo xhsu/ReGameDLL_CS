@@ -65,7 +65,7 @@ void CRevertSaved::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CRevertSaved::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CRevertSaved::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	UTIL_ScreenFadeAll(pev->rendercolor, Duration(), HoldTime(), int(pev->renderamt), FFADE_OUT);
 	pev->nextthink = gpGlobals->time + MessageTime();

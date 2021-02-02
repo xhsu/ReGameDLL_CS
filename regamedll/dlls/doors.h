@@ -42,22 +42,22 @@ const float BUTTON_SOUNDWAIT    = 0.5f;
 class CBaseDoor: public CBaseToggle
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void Restart();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual int ObjectCaps()
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void Restart() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual int ObjectCaps() override
 	{
 		if (pev->spawnflags & SF_DOOR_USE_ONLY)
 			return (CBaseToggle::ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | FCAP_IMPULSE_USE;
 		else
 			return (CBaseToggle::ObjectCaps() & ~FCAP_ACROSS_TRANSITION);
 	}
-	virtual void SetToggleState(int state);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
-	virtual void Blocked(CBaseEntity *pOther);
+	virtual void SetToggleState(EToggleState state) override;
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
+	virtual void Blocked(CBaseEntity *pOther) override;
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -93,9 +93,9 @@ public:
 class CRotDoor: public CBaseDoor
 {
 public:
-	virtual void Spawn();
-	virtual void Restart();
-	virtual void SetToggleState(int state);
+	virtual void Spawn() final;
+	virtual void Restart() final;
+	virtual void SetToggleState(EToggleState state) final;
 };
 
 class CMomentaryDoor: public CBaseToggle
@@ -107,7 +107,7 @@ public:
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return (CBaseToggle::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];

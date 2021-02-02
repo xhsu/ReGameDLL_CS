@@ -24,7 +24,7 @@ LINK_ENTITY_TO_CLASS(grenade, CGrenade)
 void CGrenade::Explode(Vector vecSrc, Vector vecAim)
 {
 	TraceResult tr;
-	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -32), ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -32), ETraceIgnores::Monsters, ENT(pev), &tr);
 	Explode(&tr, DMG_BLAST);
 }
 
@@ -227,7 +227,7 @@ void CGrenade::Explode2(TraceResult *pTrace, int bitsDamageType)
 		auto pBombTarget = CBaseEntity::Instance(m_pentCurBombTarget);
 		if (pBombTarget)
 		{
-			pBombTarget->Use(CBaseEntity::Instance(pevOwner), this, USE_TOGGLE, 0);
+			pBombTarget->Use(CBaseEntity::Instance(pevOwner), this, EUseType::TOGGLE, 0);
 		}
 	}
 #endif
@@ -528,7 +528,7 @@ void CGrenade::Killed(entvars_t *pevAttacker, EEntityGib iGib)
 }
 
 // Timed grenade, this think is called when time runs out.
-void CGrenade::DetonateUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGrenade::DetonateUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	SetThink(&CGrenade::Detonate);
 	pev->nextthink = gpGlobals->time;
@@ -550,7 +550,7 @@ void CGrenade::Detonate()
 	Vector vecSpot; // trace starts here!
 
 	vecSpot = pev->origin + Vector(0, 0, 8);
-	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ETraceIgnores::Monsters, ENT(pev), &tr);
 	Explode(&tr, DMG_BLAST);
 }
 
@@ -562,7 +562,7 @@ void CGrenade::SG_Detonate()
 
 	vecSpot = pev->origin + Vector(0, 0, 8);
 
-	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ETraceIgnores::Monsters, ENT(pev), &tr);
 
 	if (TheBots)
 	{
@@ -610,7 +610,7 @@ void CGrenade::Detonate2()
 
 	vecSpot = pev->origin + Vector(0, 0, 8);
 
-	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ETraceIgnores::Monsters, ENT(pev), &tr);
 	Explode2(&tr, DMG_BLAST);
 }
 
@@ -620,7 +620,7 @@ void CGrenade::Detonate3()
 	Vector vecSpot;// trace starts here!
 
 	vecSpot = pev->origin + Vector(0, 0, 8);
-	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ETraceIgnores::Monsters, ENT(pev), &tr);
 	Explode3(&tr, DMG_EXPLOSION);
 }
 
@@ -633,7 +633,7 @@ void CGrenade::ExplodeTouch(CBaseEntity *pOther)
 	pev->enemy = pOther->edict();
 
 	vecSpot = pev->origin - pev->velocity.Normalize() * 32.0f;
-	UTIL_TraceLine(vecSpot, vecSpot + pev->velocity.Normalize() * 64, ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot, vecSpot + pev->velocity.Normalize() * 64, ETraceIgnores::Monsters, ENT(pev), &tr);
 	Explode(&tr, DMG_BLAST);
 }
 
@@ -1097,7 +1097,7 @@ void CGrenade::DefuseBombEnd(CBasePlayer *pPlayer, bool bDefused)
 	}
 }
 
-void CGrenade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGrenade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!m_bIsC4)
 		return;
@@ -1169,7 +1169,7 @@ CGrenade *CGrenade::ShootSatchelCharge(entvars_t *pevOwner, Vector& vecStart, Ve
 
 #ifdef REGAMEDLL_FIXES
 	TraceResult tr;
-	UTIL_TraceLine(vecStart,  vecStart + Vector(0, 0, -8192), ignore_monsters, pGrenade->pev->owner, &tr);
+	UTIL_TraceLine(vecStart,  vecStart + Vector(0, 0, -8192), ETraceIgnores::Monsters, pGrenade->pev->owner, &tr);
 	pGrenade->pev->oldorigin = (tr.flFraction == 1.0) ? vecStart : tr.vecEndPos;
 
 	pGrenade->pev->nextthink = gpGlobals->time + 0.01f;
@@ -1379,7 +1379,7 @@ void CGrenade::C4Think()
 			auto pBombTarget = CBaseEntity::Instance(m_pentCurBombTarget);
 			if (pBombTarget)
 			{
-				pBombTarget->Use(CBaseEntity::Instance(pev->owner), this, USE_TOGGLE, 0);
+				pBombTarget->Use(CBaseEntity::Instance(pev->owner), this, EUseType::TOGGLE, 0);
 			}
 		}
 #endif // #ifndef REGAMEDLL_FIXES
@@ -1452,7 +1452,7 @@ NOXREF void CGrenade::UseSatchelCharges(entvars_t *pevOwner, SATCHELCODE code)
 			if ((pEnt->pev->spawnflags & SF_DETONATE) && pEnt->pev->owner == pOwner->edict())
 			{
 				if (code == SATCHEL_DETONATE)
-					pEnt->Use(pOwner, pOwner, USE_ON, 0);
+					pEnt->Use(pOwner, pOwner, EUseType::ON, 0);
 				else
 				{
 					// SATCHEL_RELEASE

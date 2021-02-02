@@ -187,7 +187,7 @@ void CCSBot::SetupLadderMovement()
 			Vector from = m_pathLadder->m_top;
 			Vector to = m_goalPosition;
 
-			UTIL_TraceLine(from, to, ignore_monsters, ENT(m_pathLadder->m_entity->pev), &result);
+			UTIL_TraceLine(from, to, ETraceIgnores::Monsters, ENT(m_pathLadder->m_entity->pev), &result);
 
 			if (result.flFraction == 1.0f)
 			{
@@ -233,7 +233,7 @@ void CCSBot::ComputeLadderEndpoint(bool isAscending)
 		to = m_pathLadder->m_bottom;
 	}
 
-	UTIL_TraceLine(from, to, ignore_monsters, ENT(m_pathLadder->m_entity->pev), &result);
+	UTIL_TraceLine(from, to, ETraceIgnores::Monsters, ENT(m_pathLadder->m_entity->pev), &result);
 
 	if (result.flFraction == 1.0f)
 		m_pathLadderEnd = to.z;

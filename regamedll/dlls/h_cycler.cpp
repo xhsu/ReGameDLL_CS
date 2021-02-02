@@ -104,7 +104,7 @@ void CCycler::Think()
 }
 
 // CyclerUse - starts a rotation trend
-void CCycler::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CCycler::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	m_animate = !m_animate;
 
@@ -204,7 +204,7 @@ void CCyclerSprite::Think()
 	m_lastTime = gpGlobals->time;
 }
 
-void CCyclerSprite::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CCyclerSprite::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	m_animate = !m_animate;
 	ALERT(at_console, "Sprite: %s\n", STRING(pev->model));

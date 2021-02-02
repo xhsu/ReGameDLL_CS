@@ -77,7 +77,7 @@ void CLight::Restart()
 	}
 }
 
-void CLight::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CLight::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (m_iStyle >= 32)
 	{

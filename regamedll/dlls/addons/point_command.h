@@ -18,26 +18,31 @@
 
 #pragma once
 
-#include <utlvector.h>
-
-const int MAX_POINT_CMDS = 16; // maximum number of commands a single point_[server/client]command entity may be assigned
+constexpr int MAX_POINT_CMDS = 16; // maximum number of commands a single point_[server/client]command entity may be assigned
 
 #define SF_POINT_CMD_NORESET BIT(0) // it is not allowed to be resetting to initial value on remove an entity or change level
 
 class CPointBaseCommand: public CPointEntity {
 public:
+	CPointBaseCommand() noexcept = default;
+	CPointBaseCommand(const CPointBaseCommand& s) = default;
+	CPointBaseCommand(CPointBaseCommand&& s) = default;
+	CPointBaseCommand& operator=(const CPointBaseCommand& s) = default;
+	CPointBaseCommand& operator=(CPointBaseCommand&& s) = default;
 	virtual ~CPointBaseCommand() override;
 
 public:
 	virtual void KeyValue(KeyValueData *pkvd) override;
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value) = 0;
-	virtual void Execute(edict_t *pEdict, const char *pszFmt, ...) = 0;
+	virtual void Use(CBaseEntity* pActivator, CBaseEntity* pCaller, EUseType useType, float value) override{}
+	virtual void Execute(edict_t* pEdict, const char* pszFmt, ...) {}
 
 protected:
 
 	class command_t
 	{
 	public:
+		DECLARE_DEFAULT_CONS_DESTR(command_t);
+
 		command_t(const char *_name, const char *_value = nullptr)
 		{
 			value[0] = '\0';
@@ -51,7 +56,7 @@ protected:
 			}
 		}
 
-		char name[64U], value[64U], valueInitial[64U];
+		char name[64U]{ "\0" }, value[64U]{ "\0" }, valueInitial[64U]{ "\0" };
 	};
 
 	std::vector<command_t> m_vecCommands;
@@ -60,17 +65,17 @@ protected:
 // It issues commands to the client console
 class CPointClientCommand: public CPointBaseCommand {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) final;
 
 private:
-	void Execute(edict_t *pEdict, const char *pszFmt, ...);
+	void Execute(edict_t *pEdict, const char *pszFmt, ...) final;
 };
 
 // It issues commands to the server console
 class CPointServerCommand: public CPointBaseCommand {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) final;
 
 private:
-	void Execute(edict_t *pEdict, const char *pszFmt, ...);
+	void Execute(edict_t *pEdict, const char *pszFmt, ...) final;
 };

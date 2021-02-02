@@ -4,7 +4,7 @@ TYPEDESCRIPTION CBubbling::m_SaveData[] =
 {
 	DEFINE_FIELD(CBubbling, m_density, FIELD_INTEGER),
 	DEFINE_FIELD(CBubbling, m_frequency, FIELD_INTEGER),
-	DEFINE_FIELD(CBubbling, m_state, FIELD_INTEGER),
+	DEFINE_FIELD(CBubbling, m_state, FIELD_CHARACTER),
 };
 
 LINK_ENTITY_TO_CLASS(env_bubbles, CBubbling)
@@ -46,7 +46,7 @@ void CBubbling::Precache()
 	m_bubbleModel = PRECACHE_MODEL("sprites/bubble.spr");
 }
 
-void CBubbling::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBubbling::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (ShouldToggle(useType, m_state))
 		m_state = !m_state;
@@ -258,7 +258,7 @@ void CBeam::TriggerTouch(CBaseEntity *pOther)
 		if (pev->owner)
 		{
 			CBaseEntity *pOwner = CBaseEntity::Instance(pev->owner);
-			pOwner->Use(pOther, this, USE_TOGGLE, 0);
+			pOwner->Use(pOther, this, EUseType::TOGGLE, 0);
 		}
 		ALERT(at_console, "Firing targets!!!\n");
 	}
@@ -507,7 +507,7 @@ void CLightning::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CLightning::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CLightning::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!ShouldToggle(useType, m_active))
 		return;
@@ -532,7 +532,7 @@ void CLightning::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	}
 }
 
-void CLightning::StrikeUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CLightning::StrikeUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (!ShouldToggle(useType, m_active))
 		return;
@@ -671,7 +671,7 @@ void CLightning::StrikeThink()
 		if (pev->dmg > 0)
 		{
 			TraceResult tr;
-			UTIL_TraceLine(pStart->pev->origin, pEnd->pev->origin, dont_ignore_monsters, nullptr, &tr);
+			UTIL_TraceLine(pStart->pev->origin, pEnd->pev->origin, ETraceIgnores::None, nullptr, &tr);
 			BeamDamageInstant(&tr, pev->dmg);
 		}
 	}
@@ -709,7 +709,7 @@ void CLightning::DamageThink()
 	pev->nextthink = gpGlobals->time + 0.1f;
 
 	TraceResult tr;
-	UTIL_TraceLine(GetStartPos(), GetEndPos(), dont_ignore_monsters, nullptr, &tr);
+	UTIL_TraceLine(GetStartPos(), GetEndPos(), ETraceIgnores::None, nullptr, &tr);
 	BeamDamage(&tr);
 }
 
@@ -748,7 +748,7 @@ void CLightning::RandomArea()
 		vecDir1 = vecDir1.Normalize();
 
 		TraceResult tr1;
-		UTIL_TraceLine(vecSrc, vecSrc + vecDir1 * m_radius, ignore_monsters, ENT(pev), &tr1);
+		UTIL_TraceLine(vecSrc, vecSrc + vecDir1 * m_radius, ETraceIgnores::Monsters, ENT(pev), &tr1);
 
 		if (tr1.flFraction == 1.0f)
 			continue;
@@ -763,7 +763,7 @@ void CLightning::RandomArea()
 		vecDir2 = vecDir2.Normalize();
 
 		TraceResult tr2;
-		UTIL_TraceLine(vecSrc, vecSrc + vecDir2 * m_radius, ignore_monsters, ENT(pev), &tr2);
+		UTIL_TraceLine(vecSrc, vecSrc + vecDir2 * m_radius, ETraceIgnores::Monsters, ENT(pev), &tr2);
 
 		if (tr2.flFraction == 1.0f)
 			continue;
@@ -771,7 +771,7 @@ void CLightning::RandomArea()
 		if ((tr1.vecEndPos - tr2.vecEndPos).Length() < m_radius * 0.1f)
 			continue;
 
-		UTIL_TraceLine(tr1.vecEndPos, tr2.vecEndPos, ignore_monsters, ENT(pev), &tr2);
+		UTIL_TraceLine(tr1.vecEndPos, tr2.vecEndPos, ETraceIgnores::Monsters, ENT(pev), &tr2);
 
 		if (tr2.flFraction != 1.0f)
 			continue;
@@ -789,7 +789,7 @@ void CLightning::RandomPoint(Vector &vecSrc)
 		vecDir1 = vecDir1.Normalize();
 
 		TraceResult tr1;
-		UTIL_TraceLine(vecSrc, vecSrc + vecDir1 * m_radius, ignore_monsters, ENT(pev), &tr1);
+		UTIL_TraceLine(vecSrc, vecSrc + vecDir1 * m_radius, ETraceIgnores::Monsters, ENT(pev), &tr1);
 
 		if ((tr1.vecEndPos - vecSrc).Length() < m_radius * 0.1f)
 			continue;
@@ -1037,7 +1037,7 @@ void CLaser::TurnOn()
 	pev->nextthink = gpGlobals->time;
 }
 
-void CLaser::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CLaser::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	int active = IsOn();
 
@@ -1069,7 +1069,7 @@ void CLaser::StrikeThink()
 		m_firePosition = pEnd->pev->origin;
 
 	TraceResult tr;
-	UTIL_TraceLine(pev->origin, m_firePosition, dont_ignore_monsters, nullptr, &tr);
+	UTIL_TraceLine(pev->origin, m_firePosition, ETraceIgnores::None, nullptr, &tr);
 	FireAtPoint(tr);
 	pev->nextthink = gpGlobals->time + 0.1f;
 }
@@ -1340,7 +1340,7 @@ void CSprite::TurnOn()
 	pev->frame = 0;
 }
 
-void CSprite::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CSprite::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	int on = pev->effects != EF_NODRAW;
 
@@ -1407,7 +1407,7 @@ void CGibShooter::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CGibShooter::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CGibShooter::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	SetThink(&CGibShooter::ShootThink);
 	pev->nextthink = gpGlobals->time;
@@ -1625,7 +1625,7 @@ void CTestEffect::TestThink()
 
 		vecDir = vecDir.Normalize();
 
-		UTIL_TraceLine(vecSrc, vecSrc + vecDir * 128, ignore_monsters, ENT(pev), &tr);
+		UTIL_TraceLine(vecSrc, vecSrc + vecDir * 128, ETraceIgnores::Monsters, ENT(pev), &tr);
 
 		pbeam->PointsInit(vecSrc, tr.vecEndPos);
 		pbeam->SetColor(255, 180, 100);
@@ -1659,7 +1659,7 @@ void CTestEffect::TestThink()
 	}
 }
 
-void CTestEffect::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CTestEffect::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	SetThink(&CTestEffect::TestThink);
 
@@ -1735,7 +1735,7 @@ Vector CBlood::BloodPosition(CBaseEntity *pActivator)
 	return pev->origin;
 }
 
-void CBlood::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CBlood::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (pev->spawnflags & SF_BLOOD_STREAM)
 		UTIL_BloodStream(BloodPosition(pActivator), Direction(), (Color() == BLOOD_COLOR_RED) ? 70 : Color(), int(BloodAmount()));
@@ -1748,7 +1748,7 @@ void CBlood::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType
 		Vector start = BloodPosition(pActivator);
 
 		TraceResult tr;
-		UTIL_TraceLine(start, start + forward * BloodAmount() * 2, ignore_monsters, nullptr, &tr);
+		UTIL_TraceLine(start, start + forward * BloodAmount() * 2, ETraceIgnores::Monsters, nullptr, &tr);
 
 		if (tr.flFraction != 1.0f)
 		{
@@ -1798,7 +1798,7 @@ void CShake::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CShake::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CShake::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	UTIL_ScreenShake(pev->origin, Amplitude(), Frequency(), Duration(), Radius());
 }
@@ -1831,7 +1831,7 @@ void CFade::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CFade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CFade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	int fadeFlags = 0;
 
@@ -1851,7 +1851,7 @@ void CFade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType,
 	else
 		UTIL_ScreenFadeAll(pev->rendercolor, Duration(), HoldTime(), int(pev->renderamt), fadeFlags);
 
-	SUB_UseTargets(this, USE_TOGGLE, 0);
+	SUB_UseTargets(this, EUseType::TOGGLE, 0);
 }
 
 LINK_ENTITY_TO_CLASS(env_message, CMessage)
@@ -1920,7 +1920,7 @@ void CMessage::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-void CMessage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CMessage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	CBaseEntity *pPlayer = nullptr;
 
@@ -1946,7 +1946,7 @@ void CMessage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useTy
 	if (pev->spawnflags & SF_MESSAGE_ONCE)
 		UTIL_Remove(this);
 
-	SUB_UseTargets(this, USE_TOGGLE, 0);
+	SUB_UseTargets(this, EUseType::TOGGLE, 0);
 }
 
 LINK_ENTITY_TO_CLASS(env_funnel, CEnvFunnel)
@@ -1956,7 +1956,7 @@ void CEnvFunnel::Precache()
 	m_iSprite = PRECACHE_MODEL("sprites/flare6.spr");
 }
 
-void CEnvFunnel::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CEnvFunnel::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 		WRITE_BYTE(TE_LARGEFUNNEL);
@@ -1997,7 +1997,7 @@ void CEnvBeverage::Precache()
 
 LINK_ENTITY_TO_CLASS(env_beverage, CEnvBeverage)
 
-void CEnvBeverage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CEnvBeverage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	if (pev->frags != 0.0f || pev->health <= 0.0f)
 	{

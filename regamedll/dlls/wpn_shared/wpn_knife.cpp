@@ -121,7 +121,7 @@ void FindHullIntersection(const Vector &vecSrc, TraceResult &tr, float *mins, fl
 	distance = 1e6f;
 
 	vecHullEnd = vecSrc + ((vecHullEnd - vecSrc) * 2);
-	UTIL_TraceLine(vecSrc, vecHullEnd, dont_ignore_monsters, pEntity, &tmpTrace);
+	UTIL_TraceLine(vecSrc, vecHullEnd, ETraceIgnores::None, pEntity, &tmpTrace);
 
 	if (tmpTrace.flFraction < 1.0f)
 	{
@@ -139,7 +139,7 @@ void FindHullIntersection(const Vector &vecSrc, TraceResult &tr, float *mins, fl
 				vecEnd.y = vecHullEnd.y + minmaxs[j][1];
 				vecEnd.z = vecHullEnd.z + minmaxs[k][2];
 
-				UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, pEntity, &tmpTrace);
+				UTIL_TraceLine(vecSrc, vecEnd, ETraceIgnores::None, pEntity, &tmpTrace);
 
 				if (tmpTrace.flFraction < 1.0f)
 				{
@@ -273,11 +273,11 @@ BOOL CKnife::Swing(BOOL fFirst)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecEnd = vecSrc + gpGlobals->v_forward * m_flSwingDistance;
 
-	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+	UTIL_TraceLine(vecSrc, vecEnd, ETraceIgnores::None, m_pPlayer->edict(), &tr);
 
 	if (tr.flFraction >= 1.0f)
 	{
-		UTIL_TraceHull(vecSrc, vecEnd, dont_ignore_monsters, head_hull, m_pPlayer->edict(), &tr);
+		UTIL_TraceHull(vecSrc, vecEnd, ETraceIgnores::None, ETraceHull::DuckedPlayer, m_pPlayer->edict(), &tr);
 
 		if (tr.flFraction < 1.0f)
 		{
@@ -451,11 +451,11 @@ BOOL CKnife::Stab(BOOL fFirst)
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecEnd = vecSrc + gpGlobals->v_forward * m_flStabDistance;
 
-	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+	UTIL_TraceLine(vecSrc, vecEnd, ETraceIgnores::None, m_pPlayer->edict(), &tr);
 
 	if (tr.flFraction >= 1.0f)
 	{
-		UTIL_TraceHull(vecSrc, vecEnd, dont_ignore_monsters, head_hull, m_pPlayer->edict(), &tr);
+		UTIL_TraceHull(vecSrc, vecEnd, ETraceIgnores::None, ETraceHull::DuckedPlayer, m_pPlayer->edict(), &tr);
 
 		if (tr.flFraction < 1.0f)
 		{

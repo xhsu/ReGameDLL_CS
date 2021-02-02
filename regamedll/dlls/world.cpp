@@ -61,7 +61,7 @@ public:
 
 public:
 	void EXPORT StaticDecal();
-	void EXPORT TriggerDecal(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT TriggerDecal(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 LINK_ENTITY_TO_CLASS(infodecal, CDecal)
@@ -89,14 +89,14 @@ void CDecal::Spawn()
 	}
 }
 
-void CDecal::TriggerDecal(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CDecal::TriggerDecal(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// this is set up as a USE function for infodecals that have targetnames, so that the
 	// decal doesn't get applied until it is fired. (usually by a scripted sequence)
 	TraceResult trace;
 	int entityIndex;
 
-	UTIL_TraceLine(pev->origin - Vector(5, 5, 5), pev->origin + Vector(5, 5, 5), ignore_monsters, ENT(pev), &trace);
+	UTIL_TraceLine(pev->origin - Vector(5, 5, 5), pev->origin + Vector(5, 5, 5), ETraceIgnores::Monsters, ENT(pev), &trace);
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 		WRITE_BYTE(TE_BSPDECAL);
@@ -121,7 +121,7 @@ void CDecal::StaticDecal()
 	TraceResult trace;
 	int entityIndex, modelIndex;
 
-	UTIL_TraceLine(pev->origin - Vector(5, 5, 5), pev->origin + Vector(5, 5, 5), ignore_monsters, ENT(pev), &trace);
+	UTIL_TraceLine(pev->origin - Vector(5, 5, 5), pev->origin + Vector(5, 5, 5), ETraceIgnores::Monsters, ENT(pev), &trace);
 
 	entityIndex = (short)ENTINDEX(trace.pHit);
 

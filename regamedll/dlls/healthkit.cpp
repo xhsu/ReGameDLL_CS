@@ -127,7 +127,7 @@ void CWallHealth::Precache()
 	PRECACHE_SOUND("items/medcharge4.wav");
 }
 
-void CWallHealth::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CWallHealth::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	// Make sure that we have a caller
 	if (!pActivator)

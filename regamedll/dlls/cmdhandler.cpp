@@ -174,7 +174,7 @@ void SV_LoopPerformance_f()
 
 void SV_PrintEntities_f()
 {
-	for (int i = 0; i < stringsHashTable.Count(); i++)
+	for (unsigned i = 0; i < stringsHashTable.size(); i++)
 	{
 		hash_item_t *item = &stringsHashTable[i];
 

@@ -83,7 +83,7 @@ public:
 	virtual BOOL IsTriggered(CBaseEntity *pActivator) { return TRUE; }
 	virtual CBaseMonster *MyMonsterPointer() { return nullptr; }
 	virtual CSquadMonster *MySquadMonsterPointer() { return nullptr; }
-	virtual int GetToggleState() { return TS_AT_TOP; }
+	virtual EToggleState GetToggleState() { return EToggleState::AT_TOP; }
 	virtual void AddPoints(int score, BOOL bAllowNegativeScore) {}
 	virtual void AddPointsToTeam(int score, BOOL bAllowNegativeScore) {}
 	virtual BOOL AddPlayerItem(CBasePlayerItem *pItem) { return FALSE; }
@@ -95,7 +95,7 @@ public:
 	virtual int DamageDecal(int bitsDamageType);
 
 	// This is ONLY used by the node graph to test movement through a door
-	virtual void SetToggleState(int state) {}
+	virtual void SetToggleState(EToggleState state) {}
 
 	virtual BOOL OnControls(entvars_t *onpev) { return FALSE; }
 	virtual BOOL IsSneaking() { return FALSE; }
@@ -110,7 +110,7 @@ public:
 	virtual CBaseEntity *GetNextTarget();
 	virtual void Think() { if (m_pfnThink) (this->*m_pfnThink)(); }
 	virtual void Touch(CBaseEntity *pOther) { if (m_pfnTouch) (this->*m_pfnTouch)(pOther); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType = USE_OFF, float value = 0.0f) { if (m_pfnUse) (this->*m_pfnUse)(pActivator, pCaller, useType, value); }
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType = EUseType::OFF, float value = 0.0f) { if (m_pfnUse) (this->*m_pfnUse)(pActivator, pCaller, useType, value); }
 	virtual void Blocked(CBaseEntity *pOther) { if (m_pfnBlocked) (this->*m_pfnBlocked)(pOther); }
 	virtual CBaseEntity *Respawn() { return nullptr; }
 
@@ -148,14 +148,14 @@ public:
 	void EXPORT SUB_DoNothing();
 	void EXPORT SUB_StartFadeOut();
 	void EXPORT SUB_FadeOut();
-	void EXPORT SUB_CallUseToggle() { Use(this, this, USE_TOGGLE, 0); }
-	int ShouldToggle(USE_TYPE useType, BOOL currentState);
+	void EXPORT SUB_CallUseToggle() { Use(this, this, EUseType::TOGGLE, 0); }
+	bool ShouldToggle(EUseType useType, bool currentState);
 
 	void FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
 	void FireBuckshots(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
 	Vector& FireBullets3(Vector& vecSrc, Vector& vecDirShooting, float vecSpread, float flDistance, int iPenetration, int iBulletType, int iDamage, float flRangeModifier, entvars_t *pevAttacker, bool bPistol, int shared_rand = 0);
 
-	void SUB_UseTargets(CBaseEntity *pActivator, USE_TYPE useType, float value);
+	void SUB_UseTargets(CBaseEntity *pActivator, EUseType useType, float value);
 	bool Intersects(CBaseEntity *pOther);
 	bool Intersects(const Vector &mins, const Vector &maxs);
 	bool CanTakeHealth(float flHealth = 0.0f) const;
@@ -217,7 +217,7 @@ public:
 	// fundamental callbacks
 	void (CBaseEntity::*m_pfnThink)();
 	void (CBaseEntity::*m_pfnTouch)(CBaseEntity *pOther);
-	void (CBaseEntity::*m_pfnUse)(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void (CBaseEntity::*m_pfnUse)(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void (CBaseEntity::*m_pfnBlocked)(CBaseEntity *pOther);
 
 	using thinkfn_t = decltype(m_pfnThink);
@@ -232,7 +232,7 @@ public:
 
 	using usefn_t = decltype(m_pfnUse);
 	template <typename T>
-	void SetUse(void (T::*pfn)(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value));
+	void SetUse(void (T::*pfn)(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value));
 	void SetUse(std::nullptr_t);
 
 	using blockedfn_t = decltype(m_pfnBlocked);
@@ -305,7 +305,7 @@ inline void CBaseEntity::SetTouch(std::nullptr_t)
 }
 
 template <typename T>
-inline void CBaseEntity::SetUse(void (T::*pfn)(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value))
+inline void CBaseEntity::SetUse(void (T::*pfn)(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value))
 {
 	m_pfnUse = static_cast<usefn_t>(pfn);
 }
@@ -340,7 +340,7 @@ public:
 	virtual int Restore(CRestore &restore);
 
 public:
-	void SUB_UseTargets(CBaseEntity *pActivator, USE_TYPE useType, float value);
+	void SUB_UseTargets(CBaseEntity *pActivator, EUseType useType, float value);
 	void EXPORT DelayThink();
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -396,11 +396,11 @@ public:
 // generic Toggle entity.
 class CBaseToggle: public CBaseAnimating {
 public:
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual int GetToggleState() { return m_toggle_state; }
-	virtual float GetDelay() { return m_flWait; }
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual EToggleState GetToggleState() override { return m_toggle_state; }
+	virtual float GetDelay() override { return m_flWait; }
 
 public:
 	void LinearMove(Vector vecDest, float flSpeed);
@@ -417,7 +417,7 @@ public:
 public:
 	static TYPEDESCRIPTION m_SaveData[];
 
-	TOGGLE_STATE m_toggle_state;
+	EToggleState m_toggle_state;
 	float m_flActivateFinished;	// like attack_finished, but for doors
 	float m_flMoveDistance;		// how far a door should slide or rotate
 	float m_flWait;
@@ -508,7 +508,7 @@ public:
 	void EXPORT TriggerAndWait();
 	void EXPORT ButtonReturn();
 	void EXPORT ButtonBackHome();
-	void EXPORT ButtonUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT ButtonUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 	enum BUTTON_CODE { BUTTON_NOTHING, BUTTON_ACTIVATE, BUTTON_RETURN };
 	BUTTON_CODE ButtonResponseToTouch();
@@ -544,7 +544,7 @@ public:
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return (CPointEntity::ObjectCaps() | FCAP_MASTER); }
 	virtual BOOL IsTriggered(CBaseEntity *pActivator);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 #ifdef REGAMEDLL_FIXES
 	virtual void Restart();
@@ -586,7 +586,7 @@ T *GetClassPtr(T *a)
 	return a;
 }
 
-extern CUtlVector<hash_item_t> stringsHashTable;
+extern std::vector<hash_item_t> stringsHashTable;
 
 C_DLLEXPORT int GetEntityAPI(DLL_FUNCTIONS *pFunctionTable, int interfaceVersion);
 C_DLLEXPORT int GetNewDLLFunctions(NEW_DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion);

@@ -237,7 +237,7 @@ bool CCSBot::IsVisible(const Vector *pos, bool testFOV) const
 	// check line of sight
 	// Must include CONTENTS_MONSTER to pick up all non-brush objects like barrels
 	TraceResult result;
-	UTIL_TraceLine(GetEyePosition(), *pos, ignore_monsters, ignore_glass, ENT(pev), &result);
+	UTIL_TraceLine(GetEyePosition(), *pos, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, ENT(pev), &result);
 
 	if (result.flFraction != 1.0f)
 		return false;
@@ -586,7 +586,7 @@ bool CCSBot::BendLineOfSight(const Vector *eye, const Vector *point, Vector *ben
 {
 	// if we can directly see the point, use it
 	TraceResult result;
-	UTIL_TraceLine(*eye, *point + Vector(0, 0, HalfHumanHeight), ignore_monsters, ENT(pev), &result);
+	UTIL_TraceLine(*eye, *point + Vector(0, 0, HalfHumanHeight), ETraceIgnores::Monsters, ENT(pev), &result);
 
 	if (result.flFraction == 1.0f && !result.fStartSolid)
 	{
@@ -616,7 +616,7 @@ bool CCSBot::BendLineOfSight(const Vector *eye, const Vector *point, Vector *ben
 			Vector rotPoint(eye->x + length * dx, eye->y + length * dy, point->z);
 
 			TraceResult result;
-			UTIL_TraceLine(*eye, rotPoint + Vector(0, 0, HalfHumanHeight), ignore_monsters, ENT(pev), &result);
+			UTIL_TraceLine(*eye, rotPoint + Vector(0, 0, HalfHumanHeight), ETraceIgnores::Monsters, ENT(pev), &result);
 
 			// if this ray started in an obstacle, skip it
 			if (result.fStartSolid)
@@ -636,7 +636,7 @@ bool CCSBot::BendLineOfSight(const Vector *eye, const Vector *point, Vector *ben
 				Vector rayPoint = *eye + bendLength * ray;
 
 				// check if we can see approach point from this bend point
-				UTIL_TraceLine(rayPoint, *point + Vector(0, 0, HalfHumanHeight), ignore_monsters, ENT(pev), &result);
+				UTIL_TraceLine(rayPoint, *point + Vector(0, 0, HalfHumanHeight), ETraceIgnores::Monsters, ENT(pev), &result);
 
 				if (result.flFraction == 1.0f && !result.fStartSolid)
 				{
@@ -727,7 +727,7 @@ CBasePlayer *CCSBot::FindMostDangerousThreat()
 			if (BotRelationship(pPlayer) == BOT_TEAMMATE)
 			{
 				TraceResult result;
-				UTIL_TraceLine(GetEyePosition(), pPlayer->pev->origin, ignore_monsters, ignore_glass, edict(), &result);
+				UTIL_TraceLine(GetEyePosition(), pPlayer->pev->origin, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, edict(), &result);
 				if (result.flFraction == 1.0f)
 				{
 					// update watch timestamp

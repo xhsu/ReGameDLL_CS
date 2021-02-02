@@ -68,7 +68,7 @@ const int MAX_MAPNAME_LENGHT = 32;
 enum hash_types_e { CLASSNAME };
 
 // Things that toggle (buttons/triggers/doors) need this
-enum TOGGLE_STATE { TS_AT_TOP, TS_AT_BOTTOM, TS_GOING_UP, TS_GOING_DOWN };
+enum class EToggleState : unsigned { AT_TOP, AT_BOTTOM, GOING_UP, GOING_DOWN };
 
 typedef struct hash_item_s
 {
@@ -109,7 +109,7 @@ typedef struct hudtextparms_s
 
 } hudtextparms_t;
 
-enum USE_TYPE { USE_OFF, USE_ON, USE_SET, USE_TOGGLE };
-enum IGNORE_MONSTERS { ignore_monsters = 1, dont_ignore_monsters = 0, missile = 2 };
-enum IGNORE_GLASS { ignore_glass = 1, dont_ignore_glass = 0 };
-enum { point_hull = 0, human_hull = 1, large_hull = 2, head_hull = 3 };
+enum class EUseType : unsigned { OFF, ON, SET, TOGGLE };
+enum class ETraceIgnores : unsigned { Monsters = 1, None = 0, Missile = 2 };
+enum class ETraceIgnoreGlasses : unsigned { Yes = 1, No = 0 };
+enum class ETraceHull : unsigned { Point = 0, Player = 1, Large = 2, DuckedPlayer = 3 };

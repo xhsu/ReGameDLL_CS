@@ -543,20 +543,20 @@ void CAmbientGeneric::InitModulationParms()
 // ambient is a looping sound, mark sound as active (m_fActive)
 // if it's playing, innactive if not.  If the sound is not
 // a looping sound, never mark it as active.
-void CAmbientGeneric::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CAmbientGeneric::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	char *szSoundFile = (char *)STRING(pev->message);
 	float fraction;
 
-	if (useType != USE_TOGGLE)
+	if (useType != EUseType::TOGGLE)
 	{
-		if ((m_fActive && useType == USE_ON) || (!m_fActive && useType == USE_OFF))
+		if ((m_fActive && useType == EUseType::ON) || (!m_fActive && useType == EUseType::OFF))
 			return;
 	}
 
 	// Directly change pitch if arg passed. Only works if sound is already playing.
 	// Momentary buttons will pass down a float in here
-	if (useType == USE_SET && m_fActive)
+	if (useType == EUseType::SET && m_fActive)
 	{
 		fraction = value;
 
@@ -875,7 +875,7 @@ BOOL FEnvSoundInRange(entvars_t *pev, entvars_t *pevTarget, float *pflRange)
 	real_t flRange;
 	TraceResult tr;
 
-	UTIL_TraceLine(vecSpot1, vecSpot2, ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(vecSpot1, vecSpot2, ETraceIgnores::Monsters, ENT(pev), &tr);
 
 	// check if line of sight crosses water boundary, or is blocked
 	if ((tr.fInOpen && tr.fInWater) || tr.flFraction != 1.0f)
@@ -1930,29 +1930,29 @@ void CSpeaker::SpeakerThink()
 }
 
 // ToggleUse - if an announcement is pending, cancel it.  If no announcement is pending, start one.
-void CSpeaker::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CSpeaker::ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	bool bActive = (pev->nextthink > 0.0f);
 
 	// bActive is TRUE only if an announcement is pending
-	if (useType != USE_TOGGLE)
+	if (useType != EUseType::TOGGLE)
 	{
 		// ignore if we're just turning something on that's already on, or
 		// turning something off that's already off.
-		if ((bActive && useType == USE_ON) || (!bActive && useType == USE_OFF))
+		if ((bActive && useType == EUseType::ON) || (!bActive && useType == EUseType::OFF))
 		{
 			return;
 		}
 	}
 
-	if (useType == USE_ON)
+	if (useType == EUseType::ON)
 	{
 		// turn on announcements
 		pev->nextthink = gpGlobals->time + 0.1f;
 		return;
 	}
 
-	if (useType == USE_OFF)
+	if (useType == EUseType::OFF)
 	{
 		// turn off announcements
 		pev->nextthink = 0.0f;

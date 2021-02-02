@@ -48,7 +48,7 @@ public:
 
 		return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | flags;
 	}
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void EXPORT AnimateThink();
@@ -200,7 +200,7 @@ public:
 	virtual void KeyValue(KeyValueData *pkvd);
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 #ifdef REGAMEDLL_FIXES
 	virtual void Restart();
@@ -233,7 +233,7 @@ public:
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void EXPORT FizzThink();
@@ -244,7 +244,7 @@ public:
 	int m_density;
 	int m_frequency;
 	int m_bubbleModel;
-	int m_state;
+	bool m_state{ false };
 };
 
 class CLightning: public CBeam
@@ -267,8 +267,8 @@ public:
 	void RandomArea();
 	void RandomPoint(Vector &vecSrc);
 	void Zap(const Vector &vecSrc, const Vector &vecDest);
-	void EXPORT StrikeUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
-	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT StrikeUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	void EXPORT ToggleUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 	inline BOOL ServerSide() const
 	{
@@ -336,7 +336,7 @@ public:
 	virtual void KeyValue(KeyValueData *pkvd);
 	virtual int Save(CSave &save);
 	virtual int Restore(CRestore &restore);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual CGib *CreateGib();
 
 public:
@@ -370,7 +370,7 @@ class CTestEffect: public CBaseDelay
 public:
 	virtual void Spawn();
 	virtual void Precache();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	void EXPORT TestThink();
@@ -395,7 +395,7 @@ class CBlood: public CPointEntity
 public:
 	virtual void Spawn();
 	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	int Color() const { return pev->impulse; }
@@ -418,7 +418,7 @@ class CShake: public CPointEntity
 public:
 	virtual void Spawn();
 	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	float Amplitude() const { return pev->scale; }
@@ -441,7 +441,7 @@ class CFade: public CPointEntity
 public:
 	virtual void Spawn();
 	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	float Duration() const { return pev->dmg_take; }
@@ -460,7 +460,7 @@ public:
 	virtual void Spawn();
 	virtual void Precache();
 	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 #define SF_FUNNEL_REVERSE BIT(0) // Funnel effect repels particles instead of attracting them
@@ -470,7 +470,7 @@ class CEnvFunnel: public CBaseDelay
 public:
 	virtual void Spawn();
 	virtual void Precache();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 
 public:
 	int m_iSprite;
@@ -481,7 +481,7 @@ class CEnvBeverage: public CBaseDelay
 public:
 	virtual void Spawn();
 	virtual void Precache();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
 
 class CItemSoda: public CBaseEntity

@@ -1566,7 +1566,7 @@ void CBasePlayer::RemoveAllItems(BOOL removeSuit)
 #ifdef REGAMEDLL_FIXES
 	if (m_pTank)
 	{
-		m_pTank->Use(this, this, USE_OFF, 0);
+		m_pTank->Use(this, this, EUseType::OFF, 0);
 		m_pTank = nullptr;
 	}
 #endif
@@ -2052,7 +2052,7 @@ void CBasePlayer::Killed(entvars_t *pevAttacker, EEntityGib iGib)
 
 	if (m_pTank)
 	{
-		m_pTank->Use(this, this, USE_OFF, 0);
+		m_pTank->Use(this, this, EUseType::OFF, 0);
 		m_pTank = nullptr;
 	}
 
@@ -3543,7 +3543,7 @@ void CBasePlayer::Disappear()
 {
 	if (m_pTank)
 	{
-		m_pTank->Use(this, this, USE_OFF, 0);
+		m_pTank->Use(this, this, EUseType::OFF, 0);
 		m_pTank = nullptr;
 	}
 
@@ -3809,7 +3809,7 @@ void CBasePlayer::StartObserver(Vector &vecPosition, Vector &vecViewAngle)
 
 	if (m_pTank)
 	{
-		m_pTank->Use(this, this, USE_OFF, 0);
+		m_pTank->Use(this, this, EUseType::OFF, 0);
 		m_pTank = nullptr;
 	}
 
@@ -3885,13 +3885,13 @@ bool CanSeeUseable(CBasePlayer *me, CBaseEntity *pEntity)
 		Vector head  = pEntity->pev->origin + Vector(0, 0, HumanHeight * 0.9);
 		Vector knees = pEntity->pev->origin + Vector(0, 0, StepHeight);
 
-		UTIL_TraceLine(eye, chest, ignore_monsters, ignore_glass, me->edict(), &result);
+		UTIL_TraceLine(eye, chest, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, me->edict(), &result);
 		if (result.flFraction < 1.0f)
 		{
-			UTIL_TraceLine(eye, head, ignore_monsters, ignore_glass, pEntity->edict(), &result);
+			UTIL_TraceLine(eye, head, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, pEntity->edict(), &result);
 			if (result.flFraction < 1.0f)
 			{
-				UTIL_TraceLine(eye, knees, ignore_monsters, ignore_glass, pEntity->edict(), &result);
+				UTIL_TraceLine(eye, knees, ETraceIgnores::Monsters, ETraceIgnoreGlasses::Yes, pEntity->edict(), &result);
 				if (result.flFraction < 1.0f)
 				{
 					return false;
@@ -3916,7 +3916,7 @@ void CBasePlayer::PlayerUse()
 		{
 			// Stop controlling the tank
 			// TODO: Send HUD Update
-			m_pTank->Use(this, this, USE_OFF, 0);
+			m_pTank->Use(this, this, EUseType::OFF, 0);
 			m_pTank = nullptr;
 			return;
 		}
@@ -3976,7 +3976,7 @@ void CBasePlayer::PlayerUse()
 		Vector vecStart = pev->origin + pev->view_ofs;
 		Vector vecEnd = vecStart + gpGlobals->v_forward * useHostageRange;
 
-		UTIL_TraceLine(vecStart, vecEnd, dont_ignore_monsters, edict(), &result);
+		UTIL_TraceLine(vecStart, vecEnd, ETraceIgnores::None, edict(), &result);
 
 		if (result.flFraction < 1.0f)
 		{
@@ -4049,13 +4049,13 @@ void CBasePlayer::PlayerUse()
 				if (caps & FCAP_CONTINUOUS_USE)
 					m_afPhysicsFlags |= PFLAG_USING;
 
-				pObject->Use(this, this, USE_SET, 1);
+				pObject->Use(this, this, EUseType::SET, 1);
 			}
 			// UNDONE: Send different USE codes for ON/OFF.  Cache last ONOFF_USE object to send 'off' if you turn away
 			// BUGBUG This is an "off" use
 			else if ((m_afButtonReleased & IN_USE) && (pObject->ObjectCaps() & FCAP_ONOFF_USE))
 			{
-				pObject->Use(this, this, USE_SET, 0);
+				pObject->Use(this, this, EUseType::SET, 0);
 			}
 		}
 	}
@@ -4145,7 +4145,7 @@ NOXREF void FixPlayerCrouchStuck(edict_t *pPlayer)
 	// Move up as many as 18 pixels if the player is stuck.
 	for (int i = 0; i < 18; i++)
 	{
-		UTIL_TraceHull(pPlayer->v.origin, pPlayer->v.origin, dont_ignore_monsters, head_hull, pPlayer, &trace);
+		UTIL_TraceHull(pPlayer->v.origin, pPlayer->v.origin, ETraceIgnores::None, ETraceHull::DuckedPlayer, pPlayer, &trace);
 
 		if (trace.fStartSolid)
 			pPlayer->v.origin.z++;
@@ -4427,7 +4427,7 @@ void CBasePlayer::PreThink()
 		{
 			TraceResult trainTrace;
 			// Maybe this is on the other side of a level transition
-			UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -38), ignore_monsters, ENT(pev), &trainTrace);
+			UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -38), ETraceIgnores::Monsters, ENT(pev), &trainTrace);
 
 			// HACKHACK - Just look for the func_tracktrain classname
 			if (trainTrace.flFraction != 1.0f && trainTrace.pHit)
@@ -4458,24 +4458,24 @@ void CBasePlayer::PreThink()
 			if (pev->button & IN_FORWARD)
 			{
 				vel = 1;
-				pTrain->Use(this, this, USE_SET, vel);
+				pTrain->Use(this, this, EUseType::SET, vel);
 			}
 
 			if (pev->button & IN_BACK)
 			{
 				vel = -1;
-				pTrain->Use(this, this, USE_SET, vel);
+				pTrain->Use(this, this, EUseType::SET, vel);
 			}
 
 			if (pev->button & IN_MOVELEFT)
 			{
 				vel = 20;
-				pTrain->Use(this, this, USE_SET, vel);
+				pTrain->Use(this, this, EUseType::SET, vel);
 			}
 			if (pev->button & IN_MOVERIGHT)
 			{
 				vel = 30;
-				pTrain->Use(this, this, USE_SET, vel);
+				pTrain->Use(this, this, EUseType::SET, vel);
 			}
 		}
 		else
@@ -4483,12 +4483,12 @@ void CBasePlayer::PreThink()
 			if (m_afButtonPressed & IN_FORWARD)
 			{
 				vel = 1;
-				pTrain->Use(this, this, USE_SET, vel);
+				pTrain->Use(this, this, EUseType::SET, vel);
 			}
 			else if (m_afButtonPressed & IN_BACK)
 			{
 				vel = -1;
-				pTrain->Use(this, this, USE_SET, vel);
+				pTrain->Use(this, this, EUseType::SET, vel);
 			}
 		}
 
@@ -4896,12 +4896,12 @@ void CBasePlayer::PostThink()
 		if (m_pTank->OnControls(pev) && !pev->weaponmodel)
 		{
 			// try fire the gun
-			m_pTank->Use(this, this, USE_SET, 2);
+			m_pTank->Use(this, this, EUseType::SET, 2);
 		}
 		else
 		{
 			// they've moved off the platform
-			m_pTank->Use(this, this, USE_OFF, 0);
+			m_pTank->Use(this, this, EUseType::OFF, 0);
 			m_pTank = nullptr;
 		}
 	}
@@ -5615,7 +5615,7 @@ void CBasePlayer::Spawn()
 	if (m_bJustConnected)
 		return;
 
-	FireTargets("game_playerspawn", this, this, USE_TOGGLE, 0);
+	FireTargets("game_playerspawn", this, this, EUseType::TOGGLE, 0);
 #endif
 }
 
@@ -5970,7 +5970,7 @@ void CSprayCan::Think()
 	int playernum = ENTINDEX(pev->owner);
 
 	UTIL_MakeVectors(pev->angles);
-	UTIL_TraceLine(pev->origin, pev->origin + gpGlobals->v_forward * 128, ignore_monsters, pev->owner, &tr);
+	UTIL_TraceLine(pev->origin, pev->origin + gpGlobals->v_forward * 128, ETraceIgnores::Monsters, pev->owner, &tr);
 
 	// No customization present.
 	if (nFrames == -1)
@@ -6006,7 +6006,7 @@ void CBloodSplat::Spray()
 	if (g_Language != LANGUAGE_GERMAN)
 	{
 		UTIL_MakeVectors(pev->angles);
-		UTIL_TraceLine(pev->origin, pev->origin + gpGlobals->v_forward * 128, ignore_monsters, pev->owner, &tr);
+		UTIL_TraceLine(pev->origin, pev->origin + gpGlobals->v_forward * 128, ETraceIgnores::Monsters, pev->owner, &tr);
 		UTIL_BloodDecalTrace(&tr, BLOOD_COLOR_RED);
 	}
 
@@ -6073,7 +6073,7 @@ CBaseEntity *FindEntityForward(CBaseEntity *pEntity)
 	Vector vecStart(pEntity->pev->origin + pEntity->pev->view_ofs);
 
 	UTIL_MakeVectors(pEntity->pev->v_angle);
-	UTIL_TraceLine(vecStart, vecStart + gpGlobals->v_forward * 8192, dont_ignore_monsters, pEntity->edict(), &tr);
+	UTIL_TraceLine(vecStart, vecStart + gpGlobals->v_forward * 8192, ETraceIgnores::None, pEntity->edict(), &tr);
 
 	if (tr.flFraction != 1.0f && !FNullEnt(tr.pHit))
 	{
@@ -6197,7 +6197,7 @@ void CBasePlayer::ImpulseCommands()
 			}
 
 			UTIL_MakeVectors(pev->v_angle);
-			UTIL_TraceLine(pev->origin + pev->view_ofs, pev->origin + pev->view_ofs + gpGlobals->v_forward * 128, ignore_monsters, edict(), &tr);
+			UTIL_TraceLine(pev->origin + pev->view_ofs, pev->origin + pev->view_ofs + gpGlobals->v_forward * 128, ETraceIgnores::Monsters, edict(), &tr);
 
 			if (tr.flFraction != 1.0f)
 			{
@@ -6303,7 +6303,7 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 
 			Vector start = pev->origin + pev->view_ofs;
 			Vector end = start + gpGlobals->v_forward * 1024;
-			UTIL_TraceLine(start, end, ignore_monsters, edict(), &tr);
+			UTIL_TraceLine(start, end, ETraceIgnores::Monsters, edict(), &tr);
 
 			if (tr.pHit)
 				pWorld = tr.pHit;
@@ -6319,7 +6319,7 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 		{
 			// Random blood splatter
 			UTIL_MakeVectors(pev->v_angle);
-			UTIL_TraceLine(pev->origin + pev->view_ofs, pev->origin + pev->view_ofs + gpGlobals->v_forward * 128, ignore_monsters, edict(), &tr);
+			UTIL_TraceLine(pev->origin + pev->view_ofs, pev->origin + pev->view_ofs + gpGlobals->v_forward * 128, ETraceIgnores::Monsters, edict(), &tr);
 
 			if (tr.flFraction != 1.0f)
 			{
@@ -6361,7 +6361,7 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 					else
 						dir.z = -1.0f;
 
-					UTIL_TraceLine(EyePosition(), EyePosition() + dir * bloodRange, ignore_monsters, pev->pContainingEntity, &tr);
+					UTIL_TraceLine(EyePosition(), EyePosition() + dir * bloodRange, ETraceIgnores::Monsters, pev->pContainingEntity, &tr);
 
 					if (tr.flFraction < 1.0f)
 						UTIL_BloodDecalTrace(&tr, BLOOD_COLOR_RED);
@@ -6939,7 +6939,7 @@ void CBasePlayer::UpdateClientData()
 
 			if (g_pGameRules->IsMultiplayer())
 			{
-				FireTargets("game_playerjoin", this, this, USE_TOGGLE, 0);
+				FireTargets("game_playerjoin", this, this, EUseType::TOGGLE, 0);
 			}
 
 			m_iObserverLastMode = OBS_ROAMING;
@@ -6949,7 +6949,7 @@ void CBasePlayer::UpdateClientData()
 		}
 
 #ifndef REGAMEDLL_FIXES
-		FireTargets("game_playerspawn", this, this, USE_TOGGLE, 0);
+		FireTargets("game_playerspawn", this, this, EUseType::TOGGLE, 0);
 #endif
 		MESSAGE_BEGIN(MSG_ONE, gmsgMoney, nullptr, pev);
 			WRITE_LONG(m_iAccount);
@@ -7566,7 +7566,7 @@ void CBasePlayer::UpdateStatusBar()
 	Vector vecSrc = EyePosition();
 	Vector vecEnd = vecSrc + (gpGlobals->v_forward * ((pev->flags & FL_SPECTATOR) != 0 ? MAX_SPEC_ID_RANGE : MAX_ID_RANGE));
 
-	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, edict(), &tr);
+	UTIL_TraceLine(vecSrc, vecEnd, ETraceIgnores::None, edict(), &tr);
 
 	if (tr.flFraction != 1.0f)
 	{
@@ -8136,7 +8136,7 @@ void CDeadHEV::KeyValue(KeyValueData *pkvd)
 
 LINK_ENTITY_TO_CLASS(player_weaponstrip, CStripWeapons)
 
-void CStripWeapons::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value)
+void CStripWeapons::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
 	CBasePlayer *pPlayer = nullptr;
 	if (pActivator && pActivator->IsPlayer())

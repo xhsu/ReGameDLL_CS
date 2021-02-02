@@ -64,7 +64,7 @@ public:
 
 public:
 	void Setup();
-	void EXPORT PlatUse(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	void EXPORT PlatUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	void EXPORT CallGoDown();
 	void EXPORT CallHitTop();
 	void EXPORT CallHitBottom();
@@ -120,7 +120,7 @@ public:
 	virtual int Restore(CRestore &restore);
 	virtual void Activate();
 	virtual void OverrideReset();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual void Blocked(CBaseEntity *pOther);
 
 public:
@@ -169,7 +169,7 @@ public:
 	virtual int Restore(CRestore &restore);
 	virtual void OverrideReset();
 	virtual void Touch(CBaseEntity *pOther);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual BOOL IsTogglePlat() { return TRUE; };
 
 	virtual void EXPORT GoUp();
@@ -177,7 +177,7 @@ public:
 
 	virtual void HitTop();
 	virtual void HitBottom();
-	virtual void UpdateAutoTargets(int toggleState);
+	virtual void UpdateAutoTargets(EToggleState toggleState);
 
 public:
 	void EXPORT Find();
@@ -201,15 +201,15 @@ public:
 	int m_trainName;
 
 	TRAIN_CODE m_code;
-	int m_targetState;
+	EToggleState m_targetState{ EToggleState::AT_TOP };
 	int m_use;
 };
 
 class CFuncTrackAuto: public CFuncTrackChange
 {
 public:
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
-	virtual void UpdateAutoTargets(int toggleState);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
+	virtual void UpdateAutoTargets(EToggleState toggleState) override;
 };
 
 // pev->speed is the travel speed
@@ -229,7 +229,7 @@ public:
 	virtual int Classify() { return CLASS_MACHINE; }
 	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
 	virtual int BloodColor() { return DONT_BLEED; }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value);
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 	virtual Vector BodyTarget(const Vector &posSrc) { return pev->origin; }
 
 public:
