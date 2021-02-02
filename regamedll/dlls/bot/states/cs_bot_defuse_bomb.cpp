@@ -75,13 +75,11 @@ void DefuseBombState::OnUpdate(CCSBot *me)
 	// if bomb has been defused, give up
 	if (!TheCSBots()->IsBombPlanted())
 	{
-#ifdef REGAMEDLL_ADD
 		if (HasRoundInfinite(SCENARIO_BLOCK_BOMB)) {
 			me->GetGameState()->Reset();
 			me->Hunt();
 			return;
 		}
-#endif
 
 		me->Idle();
 		return;

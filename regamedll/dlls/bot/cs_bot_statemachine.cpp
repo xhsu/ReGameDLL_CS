@@ -31,10 +31,8 @@
 // This method is the ONLY legal way to change a bot's current state
 void CCSBot::SetState(BotState *state)
 {
-#ifdef REGAMEDLL_ADD
 	if (cv_bot_freeze.value && state != &m_idleState)
 		return;
-#endif
 
 	PrintIfWatched("SetState: %s -> %s\n", m_state ? m_state->GetName() : "NULL", state->GetName());
 
@@ -68,10 +66,8 @@ void CCSBot::Follow(CBasePlayer *pPlayer)
 	if (!pPlayer)
 		return;
 
-#ifdef REGAMEDLL_ADD
 	if (cv_bot_freeze.value)
 		return;
-#endif
 
 	// note when we began following
 	if (!m_isFollowing || m_leader != pPlayer)
@@ -280,10 +276,8 @@ bool CCSBot::TryToRetreat()
 
 void CCSBot::Hunt()
 {
-#ifdef REGAMEDLL_ADD
 	if (cv_bot_freeze.value)
 		return;
-#endif
 
 	SetState(&m_huntState);
 }

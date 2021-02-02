@@ -94,15 +94,9 @@ cvar_t sk_scientist_heal1    = { "sk_scientist_heal1", "0", 0, 0.0f, nullptr };
 cvar_t sk_scientist_heal2    = { "sk_scientist_heal2", "0", 0, 0.0f, nullptr };
 cvar_t sk_scientist_heal3    = { "sk_scientist_heal3", "0", 0, 0.0f, nullptr };
 
-#ifdef BUILD_LATEST
-
 cvar_t scoreboard_showmoney  = { "mp_scoreboard_showmoney", "3", FCVAR_SERVER, 0.0f, nullptr };
 cvar_t scoreboard_showhealth = { "mp_scoreboard_showhealth", "3", FCVAR_SERVER, 0.0f, nullptr };
 cvar_t scoreboard_showdefkit = { "mp_scoreboard_showdefkit", "1", FCVAR_SERVER, 0.0f, nullptr };
-
-#endif
-
-#ifdef REGAMEDLL_ADD
 
 cvar_t game_version          = { "game_version", APP_VERSION, FCVAR_SERVER, 0.0f, nullptr };
 cvar_t maxmoney              = { "mp_maxmoney", "16000", FCVAR_SERVER, 0.0f, nullptr };
@@ -196,8 +190,6 @@ void GameDLL_SwapTeams_f()
 	CVAR_SET_FLOAT("sv_restartround", 1.0);
 }
 
-#endif // REGAMEDLL_ADD
-
 void GameDLLInit()
 {
 	g_pskill          = CVAR_GET_POINTER("skill");
@@ -214,26 +206,16 @@ void GameDLLInit()
 	CVAR_REGISTER(&timelimit);
 	CVAR_REGISTER(&friendlyfire);
 
-#ifdef BUILD_LATEST
 	CVAR_REGISTER(&infiniteAmmo);
 	CVAR_REGISTER(&infiniteGrenades);
-#endif
 
 	CVAR_REGISTER(&flashlight);
 	CVAR_REGISTER(&decalfrequency);
-
-#ifndef REGAMEDLL_FIXES
-	CVAR_REGISTER(&allowmonsters);
-#endif
 
 	CVAR_REGISTER(&roundtime);
 	CVAR_REGISTER(&buytime);
 	CVAR_REGISTER(&freezetime);
 	CVAR_REGISTER(&c4timer);
-
-#ifndef REGAMEDLL_FIXES
-	CVAR_REGISTER(&ghostfrequency);
-#endif
 
 	CVAR_REGISTER(&autokick);
 	CVAR_REGISTER(&autokick_timeout);
@@ -262,61 +244,9 @@ void GameDLLInit()
 	CVAR_REGISTER(&timeleft);
 	CVAR_REGISTER(&humans_join_team);
 
-#ifdef BUILD_LATEST
 	CVAR_REGISTER(&scoreboard_showhealth);
 	CVAR_REGISTER(&scoreboard_showmoney);
 	CVAR_REGISTER(&scoreboard_showdefkit);
-#endif
-
-// Remove unused cvars
-#ifndef REGAMEDLL_FIXES
-
-	CVAR_REGISTER(&sk_plr_9mm_bullet1);
-	CVAR_REGISTER(&sk_plr_9mm_bullet2);
-	CVAR_REGISTER(&sk_plr_9mm_bullet3);
-	CVAR_REGISTER(&sk_plr_357_bullet1);
-	CVAR_REGISTER(&sk_plr_357_bullet2);
-	CVAR_REGISTER(&sk_plr_357_bullet3);
-	CVAR_REGISTER(&sk_plr_9mmAR_bullet1);
-	CVAR_REGISTER(&sk_plr_9mmAR_bullet2);
-	CVAR_REGISTER(&sk_plr_9mmAR_bullet3);
-	CVAR_REGISTER(&sk_plr_9mmAR_grenade1);
-	CVAR_REGISTER(&sk_plr_9mmAR_grenade2);
-	CVAR_REGISTER(&sk_plr_9mmAR_grenade3);
-	CVAR_REGISTER(&sk_plr_buckshot1);
-	CVAR_REGISTER(&sk_plr_buckshot2);
-	CVAR_REGISTER(&sk_plr_buckshot3);
-	CVAR_REGISTER(&sk_plr_rpg1);
-	CVAR_REGISTER(&sk_plr_rpg2);
-	CVAR_REGISTER(&sk_plr_rpg3);
-	CVAR_REGISTER(&sk_12mm_bullet1);
-	CVAR_REGISTER(&sk_12mm_bullet2);
-	CVAR_REGISTER(&sk_12mm_bullet3);
-	CVAR_REGISTER(&sk_9mmAR_bullet1);
-	CVAR_REGISTER(&sk_9mmAR_bullet2);
-	CVAR_REGISTER(&sk_9mmAR_bullet3);
-	CVAR_REGISTER(&sk_9mm_bullet1);
-	CVAR_REGISTER(&sk_9mm_bullet2);
-	CVAR_REGISTER(&sk_9mm_bullet3);
-	CVAR_REGISTER(&sk_suitcharger1);
-	CVAR_REGISTER(&sk_suitcharger2);
-	CVAR_REGISTER(&sk_suitcharger3);
-	CVAR_REGISTER(&sk_battery1);
-	CVAR_REGISTER(&sk_battery2);
-	CVAR_REGISTER(&sk_battery3);
-	CVAR_REGISTER(&sk_healthcharger1);
-	CVAR_REGISTER(&sk_healthcharger2);
-	CVAR_REGISTER(&sk_healthcharger3);
-	CVAR_REGISTER(&sk_healthkit1);
-	CVAR_REGISTER(&sk_healthkit2);
-	CVAR_REGISTER(&sk_healthkit3);
-	CVAR_REGISTER(&sk_scientist_heal1);
-	CVAR_REGISTER(&sk_scientist_heal2);
-	CVAR_REGISTER(&sk_scientist_heal3);
-
-#endif // REGAMEDLL_FIXES
-
-#ifdef REGAMEDLL_ADD
 
 	ADD_SERVER_COMMAND("game", GameDLL_Version_f);
 	ADD_SERVER_COMMAND("endround", GameDLL_EndRound_f);
@@ -383,20 +313,12 @@ void GameDLLInit()
 	// print version
 	CONSOLE_ECHO("ReGameDLL version: " APP_VERSION "\n");
 
-#endif // REGAMEDLL_ADD
-
 	Bot_RegisterCVars();
 	Tutor_RegisterCVars();
 	Hostage_RegisterCVars();
-
-#ifdef REGAMEDLL_FIXES
 	VoiceGameMgr_RegisterCVars();
-#endif
 
-#ifdef REGAMEDLL_ADD
 	// execute initial pre-configurations
 	SERVER_COMMAND("exec game_init.cfg\n");
 	SERVER_EXECUTE();
-#endif
-
 }

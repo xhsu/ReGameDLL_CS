@@ -587,14 +587,8 @@ void ProcessKickVote(CBasePlayer *pVotingPlayer, CBasePlayer *pKickPlayer)
 void CheckStartMoney()
 {
 	int money = int(startmoney.value);
-
-#ifndef REGAMEDLL_ADD
-	if (money > 16000)
-		CVAR_SET_FLOAT("mp_startmoney", 16000);
-	else if (money < 800)
-		CVAR_SET_FLOAT("mp_startmoney", 800);
-#else
 	int max_money = int(maxmoney.value);
+
 	if (max_money > MAX_MONEY_THRESHOLD)
 	{
 		max_money = MAX_MONEY_THRESHOLD;
@@ -605,8 +599,6 @@ void CheckStartMoney()
 		CVAR_SET_FLOAT("mp_startmoney", max_money);
 	else if (money < 0)
 		CVAR_SET_FLOAT("mp_startmoney", 0);
-#endif
-
 }
 
 void ClientPutInServer(edict_t *pEntity)
@@ -633,11 +625,7 @@ void ClientPutInServer(edict_t *pEntity)
 
 	CheckStartMoney();
 
-#ifdef REGAMEDLL_ADD
 	pPlayer->AddAccount(startmoney.value, RT_PLAYER_JOIN);
-#else
-	pPlayer->m_iAccount = int(startmoney.value);
-#endif
 
 	pPlayer->m_fGameHUDInitialized = FALSE;
 	pPlayer->m_flDisplayHistory &= ~DHF_ROUND_STARTED;
@@ -1217,10 +1205,9 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 	{
 		case MENU_SLOT_ITEM_VEST:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_KEVLAR, ITEM_TYPE_BUYING))
 				return;
-#endif
+
 			if (bFullArmor)
 			{
 				if (g_bClientPrintEnable)
@@ -1246,10 +1233,9 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 		}
 		case MENU_SLOT_ITEM_VESTHELM:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_ASSAULT, ITEM_TYPE_BUYING))
 				return;
-#endif
+
 			if (bFullArmor)
 			{
 				if (bHasHelmet)
@@ -1305,10 +1291,9 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 		}
 		case MENU_SLOT_ITEM_FLASHGREN:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_FLASHBANG, ITEM_TYPE_BUYING))
 				return;
-#endif
+
 			if (pPlayer->AmmoInventory(AMMO_FLASHBANG) >= MaxAmmoCarry(WEAPON_FLASHBANG))
 			{
 				if (g_bClientPrintEnable)
@@ -1330,10 +1315,9 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 		}
 		case MENU_SLOT_ITEM_HEGREN:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_HEGRENADE, ITEM_TYPE_BUYING))
 				return;
-#endif
+
 			if (pPlayer->AmmoInventory(AMMO_HEGRENADE) >= MaxAmmoCarry(WEAPON_HEGRENADE))
 			{
 				if (g_bClientPrintEnable)

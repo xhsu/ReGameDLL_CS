@@ -83,12 +83,10 @@ LINK_ENTITY_TO_CLASS(point_servercommand, CPointServerCommand)
 
 void CPointServerCommand::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
-#ifdef REGAMEDLL_ADD
 	if (!allow_point_servercommand.value) {
 		ALERT(at_warning, "point_servercommand usage blocked by mp_allow_point_servercommand setting\n");
 		return;
 	}
-#endif
 
 	for (auto &cmd : m_vecCommands)
 	{

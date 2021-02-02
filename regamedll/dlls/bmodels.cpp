@@ -41,13 +41,10 @@ void CFuncWallToggle::Spawn()
 		TurnOff();
 	}
 
-#ifdef REGAMEDLL_ADD
 	if (pev->spawnflags & SF_WALL_TOOGLE_NOTSOLID)
 	{
 		pev->solid = SOLID_NOT;
 	}
-#endif
-
 }
 
 #ifdef REGAMEDLL_FIXES

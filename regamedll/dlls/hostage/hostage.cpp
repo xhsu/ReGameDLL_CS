@@ -587,7 +587,6 @@ bool CHostage::CanTakeDamage(entvars_t *pevAttacker)
 {
 	bool bCanTakeDmg = true; // default behaviour
 
-#ifdef REGAMEDLL_ADD
 	CBasePlayer *pAttacker = CBasePlayer::Instance(pevAttacker);
 	switch ((int)hostagehurtable.value)
 	{
@@ -603,7 +602,6 @@ bool CHostage::CanTakeDamage(entvars_t *pevAttacker)
 	default:
 		break;
 	}
-#endif
 
 	return bCanTakeDmg;
 }
@@ -618,10 +616,8 @@ void CHostage::TraceAttack(entvars_t *pevAttacker, float flDamage, Vector vecDir
 
 BOOL CHostage::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType)
 {
-#ifdef REGAMEDLL_ADD
 	if (!CanTakeDamage(pevAttacker))
 		return FALSE;
-#endif
 
 	float flActualDamage = GetModifiedDamage(flDamage, m_LastHitGroup);
 
@@ -1434,15 +1430,11 @@ void CHostageManager::ServerActivate()
 
 	if (AreImprovAllowed())
 	{
-		for (auto& snd : hostageSoundStruct) {
+		for (auto& snd : hostageSoundStruct)
 			m_chatter.AddSound(snd.type, snd.fileName);
-		}
 
-#ifdef REGAMEDLL_ADD
-		if (!AreRunningCZero()) {
+		if (!AreRunningCZero())
 			LoadNavigationMap();
-		}
-#endif
 	}
 }
 

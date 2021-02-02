@@ -2072,19 +2072,13 @@ void CItemSoda::CanTouch(CBaseEntity *pOther)
 
 	CBasePlayer *pPlayer = static_cast<CBasePlayer *>(pOther);
 
-#ifdef REGAMEDLL_ADD
 	if (pPlayer->HasRestrictItem(ITEM_SODACAN, ITEM_TYPE_TOUCHED))
 		return;
-#endif
 
-#ifdef REGAMEDLL_FIXES
 	// spoit sound here
 	// if we can't take hp, go out
 	if (!pPlayer->TakeHealth(1, DMG_GENERIC))	// a bit of health.
 		return;
-#else
-	pPlayer->TakeHealth(1, DMG_GENERIC);
-#endif
 
 	if (!FNullEnt(pev->owner))
 	{

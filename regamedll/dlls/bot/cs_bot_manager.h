@@ -90,11 +90,9 @@ public:
 
 	GameScenarioType GetScenario() const
 	{
-#ifdef REGAMEDLL_ADD
 		// if we have included deathmatch mode, so set the game type like SCENARIO_DEATHMATCH
 		if (cv_bot_deathmatch.value > 0)
 			return SCENARIO_DEATHMATCH;
-#endif
 
 		return m_gameScenario;
 	}

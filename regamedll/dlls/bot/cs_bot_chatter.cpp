@@ -426,9 +426,7 @@ bool BotPhraseManager::Initialize(const char *filename, int bankIndex)
 	char baseDir[RadioPathLen] = "";
 	char compositeFilename[RadioPathLen];
 
-#ifdef REGAMEDLL_ADD
 	char filePath[MAX_PATH];
-#endif
 
 	// Parse the BotChatter.db into BotPhrase collections
 	while (true)
@@ -603,12 +601,10 @@ bool BotPhraseManager::Initialize(const char *filename, int bankIndex)
 				if (!Q_stricmp(token, "End"))
 					break;
 
-#ifdef REGAMEDLL_ADD
 				Q_snprintf(filePath, sizeof(filePath), "sound\\%s%s", baseDir, token);
 
 				if (!g_pFileSystem->FileExists(filePath))
 					continue;
-#endif
 
 				// found a phrase - add it to the collection
 				BotSpeakable *speak = new BotSpeakable;

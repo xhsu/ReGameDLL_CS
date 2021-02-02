@@ -865,7 +865,6 @@ void CCSBotManager::MaintainBotQuota()
 							 !TheCSBots()->IsRoundOver() &&
 							 (CSGameRules()->GetRoundElapsedTime() >= CSGameRules()->GetRoundRespawnTime());
 
-#ifdef REGAMEDLL_ADD
 	if (FStrEq(cv_bot_quota_mode.string, "fill"))
 	{
 		// If bot_quota_mode is 'fill', we want the number of bots and humans together to equal bot_quota
@@ -892,12 +891,6 @@ void CCSBotManager::MaintainBotQuota()
 			desiredBotCount = occupiedBotSlots;
 		}
 	}
-#else // #ifdef REGAMEDLL_ADD
-	if (cv_bot_quota_match.value > 0.0)
-	{
-		desiredBotCount = int(humanPlayersInGame * cv_bot_quota_match.value);
-	}
-#endif // #ifdef REGAMEDLL_ADD
 
 	// wait for a player to join, if necessary
 	if (cv_bot_join_after_player.value > 0.0)
@@ -906,14 +899,12 @@ void CCSBotManager::MaintainBotQuota()
 			desiredBotCount = 0;
 	}
 
-#ifdef REGAMEDLL_ADD
 	// wait until the map has been loaded for a bit, to allow players to transition across
 	// the transition without missing the pistol round
 	if (static_cast<int>(cv_bot_join_delay.value) > CSGameRules()->GetMapElapsedTime())
 	{
 		desiredBotCount = 0;
 	}
-#endif
 
 	// if bots will auto-vacate, we need to keep one slot open to allow players to join
 	if (cv_bot_auto_vacate.value > 0.0)

@@ -249,10 +249,8 @@ bool CCSBot::IsVisible(const Vector *pos, bool testFOV) const
 // Check parts in order of importance. Return the first part seen in "visParts" if it is non-NULL.
 bool CCSBot::IsVisible(CBasePlayer *pPlayer, bool testFOV, unsigned char *visParts) const
 {
-#ifdef REGAMEDLL_ADD // REGAMEDLL_FIXES ?
 	if ((pPlayer->pev->flags & FL_NOTARGET) || (pPlayer->pev->effects & EF_NODRAW))
 		return false;
-#endif
 	
 	Vector spot = pPlayer->pev->origin;
 	unsigned char testVisParts = NONE;
@@ -664,11 +662,7 @@ bool CCSBot::BendLineOfSight(const Vector *eye, const Vector *point, Vector *ben
 CBasePlayer *CCSBot::FindMostDangerousThreat()
 {
 	// maximum number of simulataneously attendable threats
-#ifdef REGAMEDLL_FIXES
-	const int MAX_THREATS = MAX_CLIENTS;
-#else
-	const int MAX_THREATS = 16;
-#endif
+	constexpr int MAX_THREATS = MAX_CLIENTS;
 
 	struct CloseInfo
 	{
@@ -679,13 +673,11 @@ CBasePlayer *CCSBot::FindMostDangerousThreat()
 	CloseInfo threat[MAX_THREATS];
 	int threatCount = 0;
 
-#ifdef REGAMEDLL_ADD
 	int prevIndex = m_enemyQueueIndex - 1;
 	if (prevIndex < 0)
 		prevIndex = MAX_ENEMY_QUEUE - 1;
 
 	CBasePlayer *currentThreat = m_enemyQueue[prevIndex].player;
-#endif
 
 	m_bomber = nullptr;
 	m_closestVisibleFriend = nullptr;
@@ -719,10 +711,9 @@ CBasePlayer *CCSBot::FindMostDangerousThreat()
 			if (!pPlayer->IsAlive())
 				continue;
 
-#ifdef REGAMEDLL_ADD // REGAMEDLL_FIXES ?
 			if ((pPlayer->pev->flags & FL_NOTARGET) || (pPlayer->pev->effects & EF_NODRAW))
 				continue;
-#endif
+
 			// is it an enemy?
 			if (BotRelationship(pPlayer) == BOT_TEAMMATE)
 			{
@@ -760,7 +751,6 @@ CBasePlayer *CCSBot::FindMostDangerousThreat()
 			if (!IsVisible(pPlayer, CHECK_FOV, &visParts))
 				continue;
 
-#ifdef REGAMEDLL_ADD
 			// do we notice this enemy? (always notice current enemy)
 			if (pPlayer != currentThreat)
 			{
@@ -769,7 +759,6 @@ CBasePlayer *CCSBot::FindMostDangerousThreat()
 					continue;
 				}
 			}
-#endif
 
 			// update watch timestamp
 			int idx = pPlayer->entindex() - 1;
@@ -926,12 +915,9 @@ CBasePlayer *CCSBot::FindMostDangerousThreat()
 		if (threatCount == 0)
 			return nullptr;
 
-		int t;
-
-#ifdef REGAMEDLL_ADD
 		bool sawCloserThreat = false;
 		bool sawCurrentThreat = false;
-		for (t = 0; t < threatCount; t++)
+		for (auto t = 0; t < threatCount; t++)
 		{
 			if (threat[t].enemy == currentThreat)
 			{
@@ -947,10 +933,9 @@ CBasePlayer *CCSBot::FindMostDangerousThreat()
 		{
 			return currentThreat;
 		}
-#endif
 
 		// otherwise, find the closest threat that without using shield
-		for (t = 0; t < threatCount; t++)
+		for (auto t = 0; t < threatCount; t++)
 		{
 			if (!threat[t].enemy->IsProtectedByShield())
 			{
@@ -975,10 +960,8 @@ void CCSBot::UpdateReactionQueue()
 
 	int now = m_enemyQueueIndex;
 
-#ifdef REGAMEDLL_ADD
 	// reset timer
 	m_attentionInterval.Start();
-#endif
 
 	// store a snapshot of its state at the end of the reaction time queue
 	if (threat)
@@ -1080,52 +1063,51 @@ void CCSBot::Blind(float duration, float holdTime, float fadeTime, int alpha)
 	AdjustSafeTime();
 }
 
-#ifdef REGAMEDLL_ADD
 bool CCSBot::IsNoticable(const CBasePlayer *pPlayer, unsigned char visibleParts) const
 {
 	float deltaT = m_attentionInterval.GetElapsedTime();
 
 	// all chances are specified in terms of a standard "quantum" of time
 	// in which a normal person would notice something
-	const float noticeQuantum = 0.25f;
+	constexpr float noticeQuantum = 0.25f;
 
 	// determine percentage of player that is visible
 	float coverRatio = 0.0f;
 
 	if (visibleParts & CHEST)
 	{
-		const float chance = 40.0f;
+		constexpr float chance = 40.0f;
 		coverRatio += chance;
 	}
 
 	if (visibleParts & HEAD)
 	{
-		const float chance = 10.0f;
+		constexpr float chance = 10.0f;
 		coverRatio += chance;
 	}
 
 	if (visibleParts & LEFT_SIDE)
 	{
-		const float chance = 20.0f;
+		constexpr float chance = 20.0f;
 		coverRatio += chance;
 	}
 
 	if (visibleParts & RIGHT_SIDE)
 	{
-		const float chance = 20.0f;
+		constexpr float chance = 20.0f;
 		coverRatio += chance;
 	}
 
 	if (visibleParts & FEET)
 	{
-		const float chance = 10.0f;
+		constexpr float chance = 10.0f;
 		coverRatio += chance;
 	}
 
 	// compute range modifier - farther away players are harder to notice, depeding on what they are doing
 	float range = (pPlayer->pev->origin - pev->origin).Length();
-	const float closeRange = 300.0f;
-	const float farRange = 1000.0f;
+	constexpr float closeRange = 300.0f;
+	constexpr float farRange = 1000.0f;
 
 	float rangeModifier;
 	if (range < closeRange)
@@ -1145,8 +1127,8 @@ bool CCSBot::IsNoticable(const CBasePlayer *pPlayer, unsigned char visibleParts)
 	bool isCrouching = (pPlayer->pev->flags & FL_DUCKING) == FL_DUCKING;
 	// moving players are easier to spot
 	float playerSpeedSq = pPlayer->pev->velocity.LengthSquared();
-	const float runSpeed = 200.0f;
-	const float walkSpeed = 30.0f;
+	constexpr float runSpeed = 200.0f;
+	constexpr float walkSpeed = 30.0f;
 	float farChance, closeChance;
 	if (playerSpeedSq > runSpeed * runSpeed)
 	{
@@ -1205,7 +1187,7 @@ bool CCSBot::IsNoticable(const CBasePlayer *pPlayer, unsigned char visibleParts)
 	noticeChance *= deltaT / noticeQuantum;
 
 	// there must always be a chance of detecting the enemy
-	const float minChance = 0.1f;
+	constexpr float minChance = 0.1f;
 	if (noticeChance < minChance)
 	{
 		noticeChance = minChance;
@@ -1214,4 +1196,3 @@ bool CCSBot::IsNoticable(const CBasePlayer *pPlayer, unsigned char visibleParts)
 	//PrintIfWatched("Notice chance = %3.2f\n", noticeChance);
 	return (RANDOM_FLOAT(0.0f, 100.0f) < noticeChance);
 }
-#endif

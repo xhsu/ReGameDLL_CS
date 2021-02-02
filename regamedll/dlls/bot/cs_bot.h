@@ -902,9 +902,7 @@ private:
 	mutable EntityHandle<CBasePlayer> m_closestVisibleFriend;		// the closest friend we can see
 	mutable EntityHandle<CBasePlayer> m_closestVisibleHumanFriend;	// the closest human friend we can see
 
-#ifdef REGAMEDLL_ADD
 	IntervalTimer m_attentionInterval;								// time between attention checks
-#endif
 
 	CBasePlayer *m_attacker;				// last enemy that hurt us (may not be same as m_enemy)
 	float m_attackedTimestamp;				// when we were hurt by the m_attacker
@@ -998,10 +996,7 @@ private:
 	void StartSaveProcess();
 	void UpdateSaveProcess();
 	void StartNormalProcess();
-
-#ifdef REGAMEDLL_ADD
 	bool IsNoticable(const CBasePlayer *pPlayer, unsigned char visibleParts) const;	// return true if we "notice" given player
-#endif
 };
 
 // Inlines

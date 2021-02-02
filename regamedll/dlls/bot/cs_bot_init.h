@@ -57,11 +57,7 @@ extern cvar_t cv_bot_defer_to_human;
 extern cvar_t cv_bot_chatter;
 extern cvar_t cv_bot_profile_db;
 
-#ifdef REGAMEDLL_ADD
 extern cvar_t cv_bot_deathmatch;
 extern cvar_t cv_bot_quota_mode;
 extern cvar_t cv_bot_join_delay;
 extern cvar_t cv_bot_freeze;
-#else
-extern cvar_t cv_bot_quota_match;
-#endif
