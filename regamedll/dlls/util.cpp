@@ -318,13 +318,9 @@ CBaseEntity *UTIL_FindEntityByString(CBaseEntity *pStartEntity, const char *szKe
 	// it best each entity list
 	if (*szKeyword == 'c')
 	{
-		int hash;
-		hash_item_t *item;
-		int count;
-
-		hash = CaseInsensitiveHash(szValue, stringsHashTable.size());
-		count = stringsHashTable.size();
-		item = &stringsHashTable[hash];
+		auto hash = CaseInsensitiveHash(szValue, stringsHashTable.capacity());
+		auto count = stringsHashTable.capacity();
+		auto item = &stringsHashTable[hash];
 
 		if (!item->pev)
 		{

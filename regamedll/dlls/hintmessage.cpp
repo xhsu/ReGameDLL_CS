@@ -48,7 +48,7 @@ void CHintMessageQueue::Reset()
 	while (iter != m_messages.end())
 	{
 		// LunaTheReborn: free memorys allocated by CloneString().
-		delete[] (*iter);
+		delete (*iter);
 
 		iter = m_messages.erase(iter);
 	}

@@ -121,7 +121,7 @@ void AddEntityHashValue(entvars_t *pev, const char *value, hash_types_e fieldTyp
 	if (FStringNull(pev->classname))
 		return;
 
-	count = stringsHashTable.size();
+	count = stringsHashTable.capacity();
 	hash = CaseInsensitiveHash(value, count);
 	pevIndex = ENTINDEX(ENT(pev));
 	item = &stringsHashTable[hash];
@@ -189,7 +189,7 @@ void RemoveEntityHashValue(entvars_t *pev, const char *value, hash_types_e field
 	int pevIndex;
 	int count;
 
-	count = stringsHashTable.size();
+	count = stringsHashTable.capacity();
 	hash = CaseInsensitiveHash(value, count);
 	pevIndex = ENTINDEX(ENT(pev));
 
@@ -274,11 +274,8 @@ C_DLLEXPORT int GetEntityAPI(DLL_FUNCTIONS *pFunctionTable, int interfaceVersion
 
 	Q_memcpy(pFunctionTable, &gFunctionTable, sizeof(DLL_FUNCTIONS));
 
-	stringsHashTable.reserve(2048U);
-	for (unsigned i = 0U; i < stringsHashTable.size(); i++)
-	{
-		stringsHashTable[i].next = nullptr;
-	}
+	hash_item_t emptyDummy = { nullptr, nullptr, nullptr, 0 };
+	stringsHashTable.resize(2048U, emptyDummy);
 
 	EmptyEntityHashTable();
 	return 1;

@@ -1304,10 +1304,9 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 		}
 		case MENU_SLOT_ITEM_SMOKEGREN:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_SMOKEGRENADE, ITEM_TYPE_BUYING))
 				return;
-#endif
+
 			if (pPlayer->AmmoInventory(AMMO_SMOKEGRENADE) >= MaxAmmoCarry(WEAPON_SMOKEGRENADE))
 			{
 				if (g_bClientPrintEnable)
