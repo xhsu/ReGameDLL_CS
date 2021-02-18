@@ -457,10 +457,6 @@ void CHostage::IdleThink()
 						GETPLAYERUSERID(pPlayer->edict()), GETPLAYERAUTHID(pPlayer->edict()));
 				}
 
-#ifndef REGAMEDLL_FIXES
-				SendHostageEventMsg();
-#endif
-
 				MESSAGE_BEGIN(MSG_SPEC, SVC_DIRECTOR);
 					WRITE_BYTE(9);
 					WRITE_BYTE(DRC_CMD_EVENT);
@@ -472,9 +468,7 @@ void CHostage::IdleThink()
 				pev->effects |= EF_NODRAW;
 				Remove();
 
-#ifdef REGAMEDLL_FIXES
 				SendHostageEventMsg();
-#endif
 
 				CSGameRules()->m_iHostagesRescued++;
 				CSGameRules()->CheckWinConditions();
@@ -535,10 +529,7 @@ void CHostage::Remove()
 	pev->movetype = MOVETYPE_NONE;
 	pev->solid = SOLID_NOT;
 	pev->takedamage = DAMAGE_NO;
-
-#ifdef REGAMEDLL_FIXES
 	pev->deadflag = DEAD_DEAD;
-#endif
 
 	UTIL_SetSize(pev, Vector(0, 0, 0), Vector(0, 0, 0));
 	pev->nextthink = -1;
@@ -855,11 +846,7 @@ void CHostage::ApplyHostagePenalty(CBasePlayer *pAttacker)
 		}
 		else if (pAttacker->m_iHostagesKilled >= iHostagePenalty)
 		{
-#ifdef REGAMEDLL_FIXES
 			SERVER_COMMAND(UTIL_VarArgs("kick #%d \"For killing too many hostages\"\n", GETPLAYERUSERID(pAttacker->edict())));
-#else
-			CLIENT_COMMAND(pAttacker->edict(), "disconnect\n");
-#endif
 		}
 	}
 }
@@ -869,13 +856,8 @@ void CHostage::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useTy
 	if (!pActivator->IsPlayer())
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	if (!IsAlive())
 		return;
-#else
-	if (pev->takedamage == DAMAGE_NO)
-		return;
-#endif
 
 	CBasePlayer *pPlayer = (CBasePlayer *)pActivator;
 	if (pPlayer->m_iTeam != CT)
@@ -1391,11 +1373,9 @@ void CHostage::PreThink()
 
 void Hostage_RegisterCVars()
 {
-// These cvars are only used in czero
-#ifdef REGAMEDLL_FIXES
+	// These cvars are only used in czero
 	if (!AreImprovAllowed())
 		return;
-#endif
 
 	CVAR_REGISTER(&cv_hostage_debug);
 	CVAR_REGISTER(&cv_hostage_stop);

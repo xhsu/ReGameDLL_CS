@@ -62,11 +62,7 @@ inline CNavNode *LadderEndSearch(CBaseEntity *pEntity, const Vector *pos, NavDir
 		TraceResult result;
 		UTIL_TraceLine(center + Vector(0, 0, fudge), tryPos + Vector(0, 0, fudge), ETraceIgnores::Monsters, ETraceIgnoreGlasses::No, ENT(pEntity->pev), &result);
 
-		if (result.flFraction != 1.0f
-#ifdef REGAMEDLL_FIXES
-			|| result.fStartSolid
-#endif
-		)
+		if (result.flFraction != 1.0f || result.fStartSolid)
 			continue;
 
 		// if no node exists here, create one and continue the search
@@ -346,14 +342,13 @@ bool CCSBot::LearnStep()
 						walkable = false;
 					}
 				}
-#ifdef REGAMEDLL_FIXES
 				// if we're incrementally generating, don't overlap existing nav areas
 				CNavArea *overlap = TheNavAreaGrid.GetNavArea(&to, HumanHeight);
 				if (overlap)
 				{
 					walkable = false;
 				}
-#endif
+
 				if (walkable)
 				{
 					// we can move here
@@ -495,11 +490,7 @@ void CCSBot::UpdateSaveProcess()
 	hideProgressMeter();
 	StartNormalProcess();
 
-#ifndef REGAMEDLL_FIXES
-	Q_sprintf(cmd, "map %s\n", STRING(gpGlobals->mapname));
-#else
 	Q_snprintf(cmd, sizeof(cmd), "changelevel %s\n", STRING(gpGlobals->mapname));
-#endif
 
 	SERVER_COMMAND(cmd);
 }

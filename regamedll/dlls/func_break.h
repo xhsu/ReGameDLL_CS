@@ -121,19 +121,16 @@ public:
 class CPushable: public CBreakable
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | FCAP_CONTINUOUS_USE | FCAP_MUST_RESET; }
-	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
-	virtual void Touch(CBaseEntity *pOther);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual int ObjectCaps() override { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | FCAP_CONTINUOUS_USE | FCAP_MUST_RESET; }
+	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType) override;
+	virtual void Touch(CBaseEntity *pOther) override;
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
+	virtual void Restart() override;
 
 public:
 	void Move(CBaseEntity *pMover, int push);

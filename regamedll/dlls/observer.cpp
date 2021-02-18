@@ -485,12 +485,6 @@ void CBasePlayer::Observer_SetMode(int iMode)
 		UTIL_SetOrigin(pev, m_hObserverTarget->pev->origin);
 	}
 
-#ifndef REGAMEDLL_FIXES
-	MESSAGE_BEGIN(MSG_ONE, gmsgCrosshair, nullptr, pev);
-		WRITE_BYTE((iMode == OBS_ROAMING) != 0);
-	MESSAGE_END();
-#endif
-
 	UpdateClientEffects(this, oldMode);
 
 	// print spepctaor mode on client screen

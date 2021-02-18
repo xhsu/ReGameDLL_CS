@@ -12,7 +12,6 @@ void CUSP::Spawn()
 	m_iWeaponState &= ~WPNSTATE_SHIELD_DRAWN;
 	m_iDefaultAmmo = USP_DEFAULT_GIVE;
 	m_flAccuracy = 0.92f;
-	m_flBaseDamageSil = USP_DAMAGE_SIL;
 
 	// Get ready to fall down
 	FallInit();
@@ -44,11 +43,7 @@ void CUSP::Precache()
 int CUSP::GetItemInfo(ItemInfo *p)
 {
 	p->pszName = STRING(pev->classname);
-#ifdef REGAMEDLL_FIXES
 	p->pszAmmo1 = "45acp";
-#else
-	p->pszAmmo1 = "45ACP";
-#endif // REGAMEDLL_FIXES
 	p->iMaxAmmo1 = MAX_AMMO_45ACP;
 	p->pszAmmo2 = nullptr;
 	p->iMaxAmmo2 = -1;

@@ -64,10 +64,6 @@ bool CVoiceGameMgr::Init(IVoiceGameMgrHelper *pHelper, int maxClients)
 	m_msgPlayerVoiceMask = REG_USER_MSG("VoiceMask", VOICE_MAX_PLAYERS_DW * 4 * 2);
 	m_msgRequestState = REG_USER_MSG("ReqState", 0);
 
-#ifndef REGAMEDLL_FIXES
-	VoiceGameMgr_RegisterCVars();
-#endif
-
 	return true;
 }
 
@@ -169,11 +165,7 @@ void CVoiceGameMgr::UpdateMasks()
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(iClient + 1);
 
-		if (!pPlayer
-#ifndef REGAMEDLL_FIXES
-			|| !pPlayer->IsPlayer()
-#endif
-		)
+		if (!pPlayer)
 			continue;
 
 		CPlayerBitVec gameRulesMask;

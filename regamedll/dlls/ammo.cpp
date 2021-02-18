@@ -76,9 +76,7 @@ void CBasePlayerAmmo::DefaultTouch(CBaseEntity *pOther)
 			SetTouch(nullptr);
 			SetThink(&CBaseEntity::SUB_Remove);
 			pev->nextthink = gpGlobals->time + 0.1f;
-#ifdef REGAMEDLL_FIXES
 			pev->owner = ENT(pOther->pev);
-#endif
 		}
 	}
 }

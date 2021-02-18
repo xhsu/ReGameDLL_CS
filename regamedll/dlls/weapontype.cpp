@@ -224,11 +224,7 @@ WeaponInfoStruct g_weaponInfo_default[] =
 	{ WEAPON_P228,      P228_PRICE,         AMMO_357SIG_PRICE,                           AMMO_357SIG_BUY,       P228_MAX_CLIP,      MAX_AMMO_357SIG,        AMMO_357SIG,        "weapon_p228",         "ammo_357sig",     "357SIG"       },
 
 // fix collision with glock18
-#ifdef REGAMEDLL_FIXES
 	{ WEAPON_GLOCK,     GLOCK18_PRICE,      AMMO_9MM_PRICE,                              AMMO_9MM_BUY,          GLOCK18_MAX_CLIP,   MAX_AMMO_9MM,           AMMO_9MM,           "weapon_glock",        "ammo_9mm",        "9mm"          },
-#else
-	{ WEAPON_GLOCK,     GLOCK18_PRICE,      AMMO_9MM_PRICE,                              AMMO_9MM_BUY,          GLOCK18_MAX_CLIP,   MAX_AMMO_9MM,           AMMO_9MM,           "weapon_glock18",      "ammo_9mm",        "9mm"          },
-#endif
 
 	{ WEAPON_GLOCK18,   GLOCK18_PRICE,      AMMO_9MM_PRICE,                              AMMO_9MM_BUY,          GLOCK18_MAX_CLIP,   MAX_AMMO_9MM,           AMMO_9MM,           "weapon_glock18",      "ammo_9mm",        "9mm"          },
 	{ WEAPON_SCOUT,     SCOUT_PRICE,        AMMO_762MM_PRICE,                            AMMO_762NATO_BUY,      SCOUT_MAX_CLIP,     MAX_AMMO_762NATO,       AMMO_762NATO,       "weapon_scout",        "ammo_762nato",    "762Nato"      },
@@ -254,18 +250,13 @@ WeaponInfoStruct g_weaponInfo_default[] =
 	{ WEAPON_AK47,      AK47_PRICE,         AMMO_762MM_PRICE,                            AMMO_762NATO_BUY,      AK47_MAX_CLIP,      MAX_AMMO_762NATO,       AMMO_762NATO,       "weapon_ak47",         "ammo_762nato",    "762Nato"      },
 	{ WEAPON_P90,       P90_PRICE,          AMMO_57MM_PRICE,                             AMMO_57MM_BUY,         P90_MAX_CLIP,       MAX_AMMO_57MM,          AMMO_57MM,          "weapon_p90",          "ammo_57mm",       "57mm"         },
 
-#ifdef REGAMEDLL_FIXES
 	{ WEAPON_C4,            0,                                  0,                       0,                     0,                  MAX_AMMO_C4,            AMMO_C4,            "weapon_c4",           nullptr,           "C4"           },
 	{ WEAPON_KNIFE,         0,                                  0,                       0,                     0,                  0,                      AMMO_NONE,          "weapon_knife",        nullptr,           nullptr        },
 	{ WEAPON_HEGRENADE,     (WeaponCostType)HEGRENADE_PRICE,    AMMO_HEGRENADE_PRICE,    AMMO_HEGRENADE_BUY,    0,                  MAX_AMMO_HEGRENADE,     AMMO_HEGRENADE,     "weapon_hegrenade",    nullptr,           "HEGrenade"    },
 	{ WEAPON_SMOKEGRENADE,  (WeaponCostType)SMOKEGRENADE_PRICE, AMMO_SMOKEGRENADE_PRICE, AMMO_SMOKEGRENADE_BUY, 0,                  MAX_AMMO_SMOKEGRENADE,  AMMO_SMOKEGRENADE,  "weapon_smokegrenade", nullptr,           "SmokeGrenade" },
 	{ WEAPON_FLASHBANG,     (WeaponCostType)FLASHBANG_PRICE,    AMMO_FLASHBANG_PRICE,    AMMO_FLASHBANG_BUY,    0,                  MAX_AMMO_FLASHBANG,     AMMO_FLASHBANG,     "weapon_flashbang",    nullptr,           "Flashbang"    },
-#endif
 
 	{ WEAPON_SHIELDGUN,      SHIELDGUN_PRICE,                   0,                       0,                     0,                  0,                      AMMO_NONE,          "weapon_shield",       nullptr,           nullptr        },
-#ifndef REGAMEDLL_FIXES
-	{ 0,                     0,                                 0,                       0,                     0,                  0,                      AMMO_NONE,          nullptr,               nullptr,           nullptr        },
-#endif
 };
 
 WeaponInfoStruct g_weaponInfo[ARRAYSIZE(g_weaponInfo_default)];

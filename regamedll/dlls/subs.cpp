@@ -53,10 +53,6 @@ void CBaseEntity::UpdateOnRemove()
 // Convenient way to delay removing oneself
 void CBaseEntity::SUB_Remove()
 {
-#ifndef REGAMEDLL_FIXES
-	UpdateOnRemove();
-#endif
-
 	if (pev->health > 0)
 	{
 		// this situation can screw up monsters who can't tell their entity pointers are invalid.
@@ -125,11 +121,10 @@ void FireTargets(const char *targetName, CBaseEntity *pActivator, CBaseEntity *p
 	if (!targetName)
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	if (targetName[0] == '\0')
 		return;
 
-	const int MAX_TARGET_RECURSION_LEVEL = 128;
+	constexpr int MAX_TARGET_RECURSION_LEVEL = 128;
 	if (pCaller)
 	{
 		if (FStrEq(pCaller->pev->targetname, targetName))
@@ -146,7 +141,6 @@ void FireTargets(const char *targetName, CBaseEntity *pActivator, CBaseEntity *p
 	{
 		g_iTargetRecursionLevel = 0;
 	}
-#endif
 
 	ALERT(at_aiconsole, "Firing: (%s)\n", targetName);
 	while (true)

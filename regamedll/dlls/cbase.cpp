@@ -663,13 +663,6 @@ BOOL CBaseEntity::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 	// UNDONE: some entity types may be immune or resistant to some bitsDamageType
 	// if Attacker == Inflictor, the attack was a melee or other instant-hit attack.
 	// (that is, no actual entity projectile was involved in the attack so use the shooter's origin).
-#ifndef REGAMEDLL_FIXES
-	if (pevAttacker == pevInflictor)
-	{
-		vecTemp = pevInflictor->origin - (VecBModelOrigin(pev));
-	}
-	else
-#endif
 	{
 		// an actual ETraceIgnores::Missile was involved.
 		vecTemp = pevInflictor->origin - (VecBModelOrigin(pev));
@@ -996,7 +989,7 @@ void CBaseEntity::TraceAttack(entvars_t *pevAttacker, float flDamage, Vector vec
 }
 
 
-void CBaseEntity::FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker)
+void CBaseEntity::FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, const Vector& vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker)
 {
 	static int tracerCount;
 	int tracer;
@@ -1140,7 +1133,7 @@ void CBaseEntity::FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooti
 	ApplyMultiDamage(pev, pevAttacker);
 }
 
-void CBaseEntity::FireBuckshots(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker)
+void CBaseEntity::FireBuckshots(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, const Vector& vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker)
 {
     static int tracerCount;
     int tracer;

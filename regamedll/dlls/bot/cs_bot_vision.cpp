@@ -510,14 +510,9 @@ void CCSBot::UpdateLookAround(bool updateNow)
 			Vector delta = m_spotEncounter->path.to - m_spotEncounter->path.from;
 			real_t length = delta.Length();
 
-#ifdef REGAMEDLL_FIXES
 			float adx = Q_abs(delta.x);
 			float ady = Q_abs(delta.y);
-#else
-			float adx = float(Q_abs(int64(delta.x)));
-			float ady = float(Q_abs(int64(delta.y)));
-#endif
-			real_t t;
+			real_t t = 0;
 
 			if (adx > ady)
 				t = (pev->origin.x - m_spotEncounter->path.from.x) / delta.x;

@@ -764,10 +764,8 @@ void CCSBot::SilencerCheck()
 	if (!DoesActiveWeaponHaveSilencer())
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	if (GetTimeSinceLastSawEnemy() < safeSilencerWaitTime)
 		return;
-#endif
 
 	// don't touch the silencer if there are enemies nearby
 	if (GetNearbyEnemyCount() == 0)
@@ -778,16 +776,11 @@ void CCSBot::SilencerCheck()
 
 		bool isSilencerOn = (pCurrentWeapon->m_iWeaponState & (WPNSTATE_M4A1_SILENCED | WPNSTATE_USP_SILENCED)) != 0;
 
-#ifndef REGAMEDLL_FIXES
-		if (isSilencerOn != GetProfile()->PrefersSilencer() && !HasShield())
-#else
-
 		if (pCurrentWeapon->m_flNextSecondaryAttack >= gpGlobals->time)
 			return;
 
 		// equip silencer if we want to and we don't have a shield.
 		if (isSilencerOn != (GetProfile()->PrefersSilencer() || GetProfile()->GetSkill() > 0.7f) && !HasShield())
-#endif
 		{
 			PrintIfWatched("%s silencer!\n", (isSilencerOn) ? "Unequipping" : "Equipping");
 			pCurrentWeapon->SecondaryAttack();

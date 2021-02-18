@@ -740,10 +740,8 @@ void CFuncTrain::Activate()
 
 		// keep track of this since path corners change our target for us.
 		m_pevCurrentTarget = pevTarg;
-
-#ifdef REGAMEDLL_FIXES
 		m_pevFirstTarget = m_pevCurrentTarget;
-#endif
+
 		UTIL_SetOrigin(pev, pevTarg->origin - (pev->mins + pev->maxs) * 0.5f);
 
 		if (FStringNull(pev->targetname))
@@ -778,13 +776,8 @@ void CFuncTrain::Spawn()
 		ALERT(at_console, "FuncTrain with no target");
 	}
 
-#ifndef REGAMEDLL_FIXES
-	// NOTE: useless, m_pevCurrentTarget always is NULL
-	m_pevFirstTarget = m_pevCurrentTarget;
-#else
 	// keep track of this since path corners change our target for us.
 	m_pevFirstTarget = VARS(FIND_ENTITY_BY_TARGETNAME(nullptr, STRING(pev->target)));
-#endif
 
 	// TODO: brush-entity is always zero origin, use (mins+max)*0.5f
 	m_vStartPosition = pev->origin;
@@ -827,8 +820,6 @@ void CFuncTrain::Restart()
 	if (m_volume == 0.0f)
 		m_volume = 0.85f;
 
-#ifdef REGAMEDLL_FIXES
-
 	SetThink(nullptr);
 	pev->velocity = g_vecZero;
 
@@ -848,7 +839,6 @@ void CFuncTrain::Restart()
 	}
 
 	Activate();
-#endif
 }
 
 void CFuncTrain::Precache()
@@ -977,13 +967,11 @@ void CFuncTrackTrain::Blocked(CBaseEntity *pOther)
 
 	ALERT(at_aiconsole, "TRAIN(%s): Blocked by %s (dmg:%.2f)\n", STRING(pev->targetname), STRING(pOther->pev->classname), pev->dmg);
 
-#ifdef REGAMEDLL_FIXES
 	if (pev->dmg <= 0)
 		return;
 
 	// we can't hurt this thing, so we're not concerned with it
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
-#endif
 }
 
 void CFuncTrackTrain::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
@@ -1051,11 +1039,7 @@ void CFuncTrackTrain::UpdateSound()
 	if (!pev->noise)
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	float flpitch = TRAIN_STARTPITCH + (Q_abs(pev->speed) * (TRAIN_MAXPITCH - TRAIN_STARTPITCH) / TRAIN_MAXSPEED);
-#else
-	float flpitch = TRAIN_STARTPITCH + (Q_abs(int(pev->speed)) * (TRAIN_MAXPITCH - TRAIN_STARTPITCH) / TRAIN_MAXSPEED);
-#endif
 
 	if (!m_soundPlaying)
 	{

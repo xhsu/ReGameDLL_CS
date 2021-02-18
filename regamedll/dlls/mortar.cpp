@@ -137,12 +137,6 @@ void CFuncMortarField::FieldUse(CBaseEntity *pActivator, CBaseEntity *pCaller, E
 		CBaseEntity *pMortar = Create("monster_mortar", tr.vecEndPos, Vector(0, 0, 0), pentOwner);
 		pMortar->pev->nextthink = gpGlobals->time + t;
 		t += RANDOM_FLOAT(0.2, 0.5);
-#ifndef REGAMEDLL_FIXES
-		if (i == 0)
-		{
-			CSoundEnt::InsertSound(bits_SOUND_DANGER, tr.vecEndPos, 400, 0.3);
-		}
-#endif
 	}
 }
 
@@ -191,11 +185,7 @@ void CMortar::MortarExplode()
 	TraceResult tr;
 	UTIL_TraceLine(pev->origin + Vector(0, 0, 1024), pev->origin - Vector(0, 0, 1024), ETraceIgnores::None, ENT(pev), &tr);
 
-#ifdef REGAMEDLL_FIXES
 	Explode3(&tr, (DMG_BLAST | DMG_MORTAR));
-#else
-	Explode(&tr, (DMG_BLAST | DMG_MORTAR));
-#endif
 
 	UTIL_ScreenShake(tr.vecEndPos, 25.0, 150.0, 1.0, 750);
 }

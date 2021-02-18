@@ -256,20 +256,16 @@ void BuyState::OnUpdate(CCSBot *me)
 	{
 		if (CSGameRules()->IsMultiplayer() && CSGameRules()->IsFreezePeriod())
 		{
-#ifdef REGAMEDLL_FIXES
 			// make sure we're locked and loaded
 			me->EquipBestWeapon(MUST_EQUIP);
 			me->Reload();
 			me->ResetStuckMonitor();
-#endif
+
 			return;
 		}
 
 		me->Idle();
-
-#ifdef REGAMEDLL_FIXES
 		return;
-#endif
 	}
 
 	// is the bot spawned outside of a buy zone?

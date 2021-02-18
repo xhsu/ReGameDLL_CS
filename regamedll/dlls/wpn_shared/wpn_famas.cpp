@@ -12,7 +12,6 @@ void CFamas::Spawn()
 	m_iDefaultAmmo = FAMAS_DEFAULT_GIVE;
 	m_iFamasShotsFired = 0;
 	m_flFamasShoot = 0;
-	m_flBaseDamageBurst = FAMAS_DAMAGE_BURST;
 
 	// Get ready to fall down
 	FallInit();

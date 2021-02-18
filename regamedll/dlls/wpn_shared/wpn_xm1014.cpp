@@ -120,14 +120,7 @@ void CXM1014::PrimaryAttack()
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecAiming = gpGlobals->v_forward;
 
-	float flBaseDamage = XM1014_DAMAGE;
-	Vector vecCone(XM1014_CONE_VECTOR);
-
-#ifdef REGAMEDLL_FIXES
-	m_pPlayer->FireBuckshots(6, vecSrc, vecAiming, vecCone, 3048.0f, 0, flBaseDamage, m_pPlayer->pev);
-#else
-	m_pPlayer->FireBullets(6, vecSrc, vecAiming, vecCone, 3048, BULLET_PLAYER_BUCKSHOT, 0, 0, NULL);
-#endif
+	m_pPlayer->FireBuckshots(6, vecSrc, vecAiming, XM1014_CONE_VECTOR, 3048.0f, 0, XM1014_DAMAGE, m_pPlayer->pev);
 
 #ifdef CLIENT_WEAPONS
 	flag = FEV_NOTHOST;
@@ -143,11 +136,6 @@ void CXM1014::PrimaryAttack()
 		// HEV suit - indicate out of ammo condition
 		m_pPlayer->SetSuitUpdate("!HEV_AMO0", SUIT_SENTENCE, SUIT_REPEAT_OK);
 	}
-
-#ifndef REGAMEDLL_FIXES
-	if (m_iClip != 0)
-		m_flPumpTime = UTIL_WeaponTimeBase() + 0.125f;
-#endif
 
 	m_flNextPrimaryAttack = GetNextAttackDelay(0.25);
 	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.25f;
@@ -177,13 +165,6 @@ void CXM1014::WeaponIdle()
 {
 	ResetEmptySound();
 	m_pPlayer->GetAutoaimVector(AUTOAIM_5DEGREES);
-
-#ifndef REGAMEDLL_FIXES
-	if (m_flPumpTime && m_flPumpTime < UTIL_WeaponTimeBase())
-	{
-		m_flPumpTime = 0;
-	}
-#endif
 
 	if (m_flTimeWeaponIdle < UTIL_WeaponTimeBase())
 	{

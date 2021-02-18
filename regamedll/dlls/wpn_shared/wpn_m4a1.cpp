@@ -13,7 +13,6 @@ void CM4A1::Spawn()
 	m_flAccuracy = 0.2f;
 	m_iShotsFired = 0;
 	m_bDelayFire = true;
-	m_flBaseDamageSil = M4A1_DAMAGE_SIL;
 
 	// Get ready to fall down
 	FallInit();
@@ -183,10 +182,6 @@ void CM4A1::M4A1Fire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 	flag = FEV_NOTHOST;
 #else
 	flag = 0;
-#endif
-
-#ifndef REGAMEDLL_FIXES
-	m_pPlayer->ammo_556nato--;
 #endif
 
 	PLAYBACK_EVENT_FULL(flag, m_pPlayer->edict(), m_usFireM4A1, 0, (float *)&g_vecZero, (float *)&g_vecZero, vecDir.x, vecDir.y,

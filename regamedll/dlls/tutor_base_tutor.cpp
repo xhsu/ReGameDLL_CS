@@ -101,11 +101,9 @@ char *TutorMessageEvent::GetNextParameter(char *buf, int buflen)
 	m_numParameters--;
 	m_paramList = param->m_next;
 
-	Q_strncpy(buf, param->m_data, buflen);
+	Q_strncpy(buf, param->m_data, buflen - 1);
 
-#ifdef REGAMEDLL_FIXES
-	buf[buflen] = '\0';
-#endif
+	buf[buflen - 1] = '\0';
 
 	delete param;
 	return buf;

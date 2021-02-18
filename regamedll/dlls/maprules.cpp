@@ -183,14 +183,12 @@ void CGameText::KeyValue(KeyValueData *pkvd)
 
 void CGameText::Spawn()
 {
-#ifdef REGAMEDLL_FIXES
 	// Don't allow entity triggering itself
 	if (FStrEq(pev->target, pev->targetname))
 	{
 		ALERT(at_warning, "%s \"%s\" the target applies to itself.\n", STRING(pev->classname), STRING(pev->targetname));
 		pev->target = iStringNull;
 	}
-#endif
 }
 
 void CGameText::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
@@ -205,24 +203,18 @@ void CGameText::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useT
 	}
 	else
 	{
-#ifdef REGAMEDLL_FIXES
 		if (FNullEnt(pActivator))
 		{
 			ALERT(at_console, "Game_text \"%s\" got no activator for activator-only message.\n", STRING(pev->targetname));
 		}
-		else
-#endif
-		if (pActivator->IsNetClient())
+		else if (pActivator->IsNetClient())
 		{
 			UTIL_HudMessage(pActivator, m_textParms, MessageGet());
 			ALERT(at_aiconsole, "HUD-MSG to \"%s\": \"%s\"\n", STRING(pActivator->pev->netname), MessageGet());
 		}
 	}
 
-#ifdef REGAMEDLL_FIXES
 	SUB_UseTargets(pActivator, EUseType::TOGGLE, 0);
-#endif
-
 }
 
 LINK_ENTITY_TO_CLASS(game_team_master, CGameTeamMaster)
@@ -271,14 +263,10 @@ void CGameTeamMaster::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseTyp
 		}
 		else
 		{
-#ifdef REGAMEDLL_FIXES
 			if (pActivator->IsPlayer())
 				m_teamIndex = ((CBasePlayer *)pActivator)->m_iTeam;
 			else
 				m_teamIndex = -1;
-#else
-			m_teamIndex = g_pGameRules->GetTeamIndex(pActivator->TeamID());
-#endif
 		}
 
 		return;
@@ -309,11 +297,7 @@ const char *CGameTeamMaster::TeamID()
 	}
 
 	// UNDONE: Fill this in with the team from the "teamlist"
-#ifdef REGAMEDLL_FIXES
 	return GetTeamName(m_teamIndex);
-#else
-	return g_pGameRules->GetIndexedTeamName(m_teamIndex);
-#endif
 }
 
 bool CGameTeamMaster::TeamMatch(CBaseEntity *pActivator)
@@ -324,15 +308,11 @@ bool CGameTeamMaster::TeamMatch(CBaseEntity *pActivator)
 	if (!pActivator)
 		return false;
 
-#ifdef REGAMEDLL_FIXES
 	CBasePlayer *pPlayer = static_cast<CBasePlayer *>(pActivator);
 	if (!pPlayer->IsPlayer())
 		return false;
 
 	return pPlayer->m_iTeam == m_teamIndex;
-#else
-	return UTIL_TeamsMatch(pActivator->TeamID(), TeamID());
-#endif
 }
 
 LINK_ENTITY_TO_CLASS(game_team_set, CGameTeamSet)

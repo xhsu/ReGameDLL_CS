@@ -416,21 +416,6 @@ CBaseEntity *UTIL_FindEntityGeneric(const char *szWhatever, const Vector &vecSrc
 	return pEntity;
 }
 
-#ifndef REGAMEDLL_FIXES
-CBasePlayer *UTIL_PlayerByIndex(int playerIndex)
-{
-	CBasePlayer *pPlayer = nullptr;
-	if (playerIndex > 0 && playerIndex <= gpGlobals->maxClients)
-	{
-		edict_t *pPlayerEdict = INDEXENT(playerIndex);
-		if (pPlayerEdict && !pPlayerEdict->free)
-			pPlayer = CBasePlayer::Instance(pPlayerEdict);
-	}
-
-	return pPlayer;
-}
-#endif
-
 void UTIL_MakeVectors(const Vector &vecAngles)
 {
 	MAKE_VECTORS(vecAngles);
@@ -927,12 +912,7 @@ float UTIL_Approach(float target, float value, float speed)
 real_t UTIL_ApproachAngle(float target, float value, float speed)
 {
 	target = UTIL_AngleMod(target);
-
-#ifdef REGAMEDLL_FIXES
 	value = UTIL_AngleMod(value);
-#else
-	value = UTIL_AngleMod(target);
-#endif
 
 	float delta = target - value;
 	if (speed < 0.0f)
@@ -1453,10 +1433,8 @@ void UTIL_Remove(CBaseEntity *pEntity)
 	if (!pEntity)
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	if (pEntity->pev == VARS(eoNullEntity) || pEntity->IsPlayer() || (pEntity->pev->flags & FL_KILLME) == FL_KILLME)
 		return;
-#endif
 
 	pEntity->UpdateOnRemove();
 
@@ -1531,11 +1509,6 @@ void UTIL_RemoveOther(const char *szClassname, int nRemoveCount)
 	CBaseEntity *pEntity = nullptr;
 	while ((pEntity = UTIL_FindEntityByClassname(pEntity, szClassname)))
 	{
-#ifndef REGAMEDLL_FIXES
-		if (nRemoveCount > 0 && num++ >= nRemoveCount)
-			break;
-#endif
-
 		UTIL_Remove(pEntity);
 	}
 }
@@ -1568,11 +1541,7 @@ char UTIL_TextureHit(TraceResult *ptr, Vector vecSrc, Vector vecEnd)
 	char szbuffer[64];
 	CBaseEntity *pEntity = CBaseEntity::Instance(ptr->pHit);
 
-#ifdef REGAMEDLL_FIXES
 	if (pEntity && pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE && pEntity->Classify() != CLASS_VEHICLE)
-#else
-	if (pEntity && pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE)
-#endif
 		return CHAR_TEX_FLESH;
 
 	vecSrc.CopyToArray(rgfl1);

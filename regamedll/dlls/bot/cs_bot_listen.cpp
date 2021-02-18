@@ -50,18 +50,15 @@ bool CCSBot::ShouldInvestigateNoise(float *retNoiseDist)
 		Vector toNoise = m_noisePosition - pev->origin;
 		float noiseDist = toNoise.Length();
 
-		float const oneStoreyHeight = 120.0f;
-#ifdef REGAMEDLL_FIXES
+		constexpr float oneStoreyHeight = 120.0f;
+
 		if (Q_abs(toNoise.z) > oneStoreyHeight)
-#else
-		if (Q_abs(int64(toNoise.z)) > oneStoreyHeight)
-#endif
 		{
 			PathCost pc(this);
 			float travelDistToNoise = NavAreaTravelDistance(m_lastKnownArea, m_noiseArea, pc);
 			m_isNoiseTravelRangeChecked = true;
 
-			const float tooFar = 1500.0f;
+			constexpr float tooFar = 1500.0f;
 			if (travelDistToNoise < 0.0f || travelDistToNoise > tooFar)
 				return false;
 
@@ -74,7 +71,7 @@ bool CCSBot::ShouldInvestigateNoise(float *retNoiseDist)
 			return false;
 
 		// chance of investigating is inversely proportional to distance
-		const float maxNoiseDist = 2000.0f;
+		constexpr float maxNoiseDist = 2000.0f;
 		float chance = (1.0f - (noiseDist / maxNoiseDist));
 
 		// modify chance by number of friends remaining

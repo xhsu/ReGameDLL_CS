@@ -201,23 +201,19 @@ void CItemBattery::Precache()
 
 BOOL CItemBattery::MyTouch(CBasePlayer *pPlayer)
 {
-#ifdef REGAMEDLL_ADD
 	if (pPlayer->HasRestrictItem(ITEM_BATTERY, ITEM_TYPE_TOUCHED))
 		return FALSE;
-#endif
 
 	if (pPlayer->pev->armorvalue < MAX_NORMAL_BATTERY && (pPlayer->pev->weapons & (1 << WEAPON_SUIT)))
 	{
 		auto armorValue = gSkillData.batteryCapacity;
 
-#ifdef REGAMEDLL_FIXES
 		if (pev->armorvalue != 0.0f) {
 			armorValue = pev->armorvalue;
 		}
 
 		if (pPlayer->m_iKevlar == ARMOR_NONE)
 			pPlayer->m_iKevlar = ARMOR_KEVLAR;
-#endif
 
 		pPlayer->pev->armorvalue += armorValue;
 		pPlayer->pev->armorvalue = Q_min(pPlayer->pev->armorvalue, MAX_NORMAL_BATTERY);
@@ -370,17 +366,13 @@ void CItemKevlar::Precache()
 
 BOOL CItemKevlar::MyTouch(CBasePlayer *pPlayer)
 {
-#ifdef REGAMEDLL_ADD
 	if (!g_bItemCreatedByBuying && pPlayer->HasRestrictItem(ITEM_KEVLAR, ITEM_TYPE_TOUCHED))
 		return FALSE;
 
 	g_bItemCreatedByBuying = false;
-#endif
 
-#ifdef REGAMEDLL_FIXES
 	if (pPlayer->m_iKevlar != ARMOR_NONE && pPlayer->pev->armorvalue >= MAX_NORMAL_BATTERY)
 		return FALSE;
-#endif
 
 	if (pPlayer->m_iKevlar == ARMOR_NONE)
 		pPlayer->m_iKevlar = ARMOR_KEVLAR;
@@ -393,11 +385,7 @@ BOOL CItemKevlar::MyTouch(CBasePlayer *pPlayer)
 	MESSAGE_END();
 
 	MESSAGE_BEGIN(MSG_ONE, gmsgArmorType, nullptr, pPlayer->pev);
-#ifdef REGAMEDLL_FIXES
 		WRITE_BYTE(pPlayer->m_iKevlar == ARMOR_KEVLAR ? 0 : 1); // 0 = ARMOR_KEVLAR, 1 = ARMOR_VESTHELM
-#else
-		WRITE_BYTE(0);
-#endif
 	MESSAGE_END();
 
 	if (TheTutor)
@@ -424,17 +412,13 @@ void CItemAssaultSuit::Precache()
 
 BOOL CItemAssaultSuit::MyTouch(CBasePlayer *pPlayer)
 {
-#ifdef REGAMEDLL_ADD
 	if (!g_bItemCreatedByBuying && pPlayer->HasRestrictItem(ITEM_ASSAULT, ITEM_TYPE_TOUCHED))
 		return FALSE;
 
 	g_bItemCreatedByBuying = false;
-#endif
 
-#ifdef REGAMEDLL_FIXES
 	if (pPlayer->m_iKevlar == ARMOR_VESTHELM && pPlayer->pev->armorvalue >= MAX_NORMAL_BATTERY)
 		return FALSE;
-#endif
 
 	pPlayer->m_iKevlar = ARMOR_VESTHELM;
 	pPlayer->pev->armorvalue = MAX_NORMAL_BATTERY;

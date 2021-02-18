@@ -138,13 +138,11 @@ void CMultiSource::Spawn()
 	SetThink(&CMultiSource::Register);
 }
 
-#ifdef REGAMEDLL_FIXES
 void CMultiSource::Restart()
 {
 	Q_memset(m_rgTriggered, 0, sizeof(m_rgTriggered));
 	Spawn();
 }
-#endif
 
 void CMultiSource::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
@@ -217,7 +215,6 @@ void CMultiSource::Register()
 	SetThink(&CMultiSource::SUB_DoNothing);
 
 	// search for all entities which target this multisource (pev->targetname)
-#ifdef REGAMEDLL_FIXES
 	CBaseEntity *pTarget = nullptr;
 	while (m_iTotal < MAX_MS_TARGETS && (pTarget = UTIL_FindEntityByString(pTarget, "target", STRING(pev->targetname)))) {
 		m_rgEntities[m_iTotal++] = pTarget;
@@ -230,34 +227,7 @@ void CMultiSource::Register()
 			m_rgEntities[m_iTotal++] = pTarget;
 		}
 	}
-#else
-	edict_t *pentTarget = FIND_ENTITY_BY_STRING(nullptr, "target", STRING(pev->targetname));
 
-	while (!FNullEnt(pentTarget) && m_iTotal < MAX_MS_TARGETS)
-	{
-		CBaseEntity *pTarget = CBaseEntity::Instance(pentTarget);
-
-		if (pTarget)
-		{
-			m_rgEntities[m_iTotal++] = pTarget;
-		}
-
-		pentTarget = FIND_ENTITY_BY_STRING(pentTarget, "target", STRING(pev->targetname));
-	}
-
-	pentTarget = FIND_ENTITY_BY_STRING(nullptr, "classname", "multi_manager");
-
-	while (!FNullEnt(pentTarget) && m_iTotal < MAX_MS_TARGETS)
-	{
-		CBaseEntity *pTarget = CBaseEntity::Instance(pentTarget);
-		if (pTarget && pTarget->HasTarget(pev->targetname))
-		{
-			m_rgEntities[m_iTotal++] = pTarget;
-		}
-
-		pentTarget = FIND_ENTITY_BY_STRING(pentTarget, "classname", "multi_manager");
-	}
-#endif
 	pev->spawnflags &= ~SF_MULTI_INIT;
 }
 
@@ -741,7 +711,6 @@ void CBaseButton::ButtonReturn()
 	pev->frame = 0;
 }
 
-#ifdef REGAMEDLL_FIXES
 void CBaseButton::Restart()
 {
 	m_hActivator = nullptr;
@@ -758,7 +727,6 @@ void CBaseButton::Restart()
 		SetUse(&CBaseButton::ButtonUse);
 	}
 }
-#endif
 
 // Button has returned to start state. Quiesce it.
 void CBaseButton::ButtonBackHome()
@@ -766,11 +734,7 @@ void CBaseButton::ButtonBackHome()
 	assert(m_toggle_state == EToggleState::GOING_DOWN);
 	m_toggle_state = EToggleState::AT_BOTTOM;
 
-	if (pev->spawnflags & SF_BUTTON_TOGGLE
-#ifdef REGAMEDLL_FIXES
-		&& m_hActivator
-#endif
-)
+	if (pev->spawnflags & SF_BUTTON_TOGGLE && m_hActivator)
 	{
 		//EMIT_SOUND(ENT(pev), CHAN_VOICE, (char *)STRING(pev->noise), 1, ATTN_NORM);
 		SUB_UseTargets(m_hActivator, EUseType::TOGGLE, 0);
@@ -818,16 +782,12 @@ void CBaseButton::ButtonBackHome()
 	}
 }
 
-#ifdef REGAMEDLL_FIXES
-
 TYPEDESCRIPTION CRotButton::m_SaveData[] =
 {
 	DEFINE_FIELD(CRotButton, m_vecSpawn, FIELD_VECTOR),
 };
 
 IMPLEMENT_SAVERESTORE(CRotButton, CBaseButton)
-
-#endif
 
 LINK_ENTITY_TO_CLASS(func_rot_button, CRotButton)
 
@@ -872,9 +832,7 @@ void CRotButton::Spawn()
 		pev->takedamage = DAMAGE_YES;
 	}
 
-#ifdef REGAMEDLL_FIXES
 	m_vecSpawn = pev->angles;
-#endif
 
 	m_toggle_state = EToggleState::AT_BOTTOM;
 	m_vecAngle1 = pev->angles;
@@ -898,13 +856,11 @@ void CRotButton::Spawn()
 	}
 }
 
-#ifdef REGAMEDLL_FIXES
 void CRotButton::Restart()
 {
 	pev->angles = m_vecSpawn;
 	Spawn();
 }
-#endif
 
 TYPEDESCRIPTION CMomentaryRotButton::m_SaveData[] =
 {
@@ -1179,7 +1135,6 @@ void CEnvSpark::Spawn()
 	Precache();
 }
 
-#ifdef REGAMEDLL_FIXES
 void CEnvSpark::Restart()
 {
 	SetThink(nullptr);
@@ -1214,7 +1169,6 @@ void CEnvSpark::Restart()
 		m_flDelay = 1.5f;
 	}
 }
-#endif
 
 void CEnvSpark::Precache()
 {

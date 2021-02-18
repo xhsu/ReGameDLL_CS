@@ -527,7 +527,7 @@ C_DLLEXPORT int Server_GetBlendingInterface(int version, struct sv_blending_inte
 	return 1;
 }
 
-#if defined(REGAMEDLL_FIXES) && defined(HAVE_SSE) // SSE2 version
+#if defined(HAVE_SSE) // SSE2 version
 void AngleQuaternion(vec_t *angles, vec_t *quaternion)
 {
 	static const ALIGN16_BEG size_t ps_signmask[4] ALIGN16_END = { 0x80000000, 0, 0x80000000, 0 };
@@ -559,7 +559,7 @@ void AngleQuaternion(vec_t *angles, vec_t *quaternion)
 	__m128 res = _mm_add_ps(part1, part2);
 	_mm_storeu_ps(quaternion, res);
 }
-#else // REGAMEDLL_FIXES
+#else // HAVE_SSE
 void AngleQuaternion(vec_t *angles, vec_t *quaternion)
 {
 	real_t sy, cy, sp_, cp;
@@ -592,7 +592,7 @@ void AngleQuaternion(vec_t *angles, vec_t *quaternion)
 	quaternion[2] = ftmp2 * sy - sp_ * sr * cy;
 	quaternion[3] = sp_ * sr * sy + ftmp2 * cy;
 }
-#endif // REGAMEDLL_FIXES
+#endif // HAVE_SSE
 
 void QuaternionSlerp(vec_t *p, vec_t *q, float t, vec_t *qt)
 {
@@ -1157,11 +1157,7 @@ void SV_StudioSetupBones(model_t *pModel, float frame, int sequence, const vec_t
 
 	VectorCopy(angles, temp_angles);
 
-#ifndef REGAMEDLL_FIXES
-	if (pEdict)
-#else
 	if (pEdict && CBaseEntity::Instance(const_cast<edict_t *>(pEdict))->IsPlayer())
-#endif
 	{
 		temp_angles[1] = UTIL_GetPlayerGaitYaw(ENTINDEX(pEdict));
 

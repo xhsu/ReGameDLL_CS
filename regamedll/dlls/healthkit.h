@@ -36,23 +36,19 @@ public:
 	virtual BOOL MyTouch(CBasePlayer *pPlayer);
 };
 
-const float AMOUNT_CHARGE_HEALTH = 1.0f;
+constexpr float AMOUNT_CHARGE_HEALTH = 1.0f;
 
 class CWallHealth: public CBaseToggle
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
-
-	virtual int ObjectCaps() { return (CBaseToggle::ObjectCaps() | FCAP_CONTINUOUS_USE) & ~FCAP_ACROSS_TRANSITION; }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual void Restart() override;
+	virtual int ObjectCaps() override { return (CBaseToggle::ObjectCaps() | FCAP_CONTINUOUS_USE) & ~FCAP_ACROSS_TRANSITION; }
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
 
 public:
 	void EXPORT Off();

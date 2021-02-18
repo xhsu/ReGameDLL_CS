@@ -106,11 +106,7 @@ bool CCStrikeGameMgrHelper::CanPlayerHearPlayer(CBasePlayer *pListener, CBasePla
 #endif
 	default:
 	{
-		if (
-#ifndef REGAMEDLL_FIXES
-		!pSender->IsPlayer() ||
-#endif
-			pListener->m_iTeam != pSender->m_iTeam) // Different teams can't hear each other
+		if (pListener->m_iTeam != pSender->m_iTeam) // Different teams can't hear each other
 		{
 			return false;
 		}
@@ -437,9 +433,7 @@ CHalfLifeMultiplay::CHalfLifeMultiplay()
 		m_pVIPQueue[j] = nullptr;
 	}
 
-#ifdef REGAMEDLL_FIXES
 	if (!IS_DEDICATED_SERVER())
-#endif
 	{
 		// NOTE: cvar cl_himodels refers for the client side
 		CVAR_SET_FLOAT("cl_himodels", 0);
@@ -448,12 +442,7 @@ CHalfLifeMultiplay::CHalfLifeMultiplay()
 	ReadMultiplayCvars();
 
 	m_iIntroRoundTime += 2;
-
-#ifdef REGAMEDLL_FIXES
 	m_fMaxIdlePeriod = (((m_iRoundTime < 60) ? 60 : m_iRoundTime) * 2);
-#else
-	m_fMaxIdlePeriod = (m_iRoundTime * 2);
-#endif
 
 	float flAutoKickIdle = autokick_timeout.value;
 	if (flAutoKickIdle > 0.0)
@@ -536,10 +525,6 @@ CHalfLifeMultiplay::CHalfLifeMultiplay()
 	m_flTimeLimit = 0.0f;
 	m_flGameStartTime = 0.0f;
 	m_bTeamBalanced = false;
-
-#ifndef REGAMEDLL_FIXES
-	g_pMPGameRules = this;
-#endif
 }
 
 void CHalfLifeMultiplay::RefreshSkillData()
@@ -716,10 +701,8 @@ void CHalfLifeMultiplay::GiveC4()
 		{
 			if (pPlayer->MakeBomber())
 			{
-#ifdef REGAMEDLL_FIXES
 				// we already have bomber
 				return;
-#endif
 			}
 		}
 	}
@@ -1353,9 +1336,7 @@ bool CHalfLifeMultiplay::TeamExterminationCheck(int NumAliveTerrorist, int NumAl
 				if (pBomb->m_bIsC4 && !pBomb->m_bJustBlew)
 				{
 					nowin = true;
-#ifdef REGAMEDLL_FIXES
 					break;
-#endif
 				}
 			}
 
@@ -1460,11 +1441,9 @@ void CHalfLifeMultiplay::SwapAllPlayers()
 		if (pEntity->IsDormant())
 			continue;
 
-#ifdef REGAMEDLL_FIXES
 		// ignore HLTV
 		if (pEntity->IsProxy())
 			continue;
-#endif
 
 		CBasePlayer *pPlayer = GetClassPtr((CBasePlayer *)pEntity->pev);
 		pPlayer->SwitchTeam();
@@ -1618,9 +1597,7 @@ void CHalfLifeMultiplay::RestartRound()
 		g_pHostages->RestartRound();
 	}
 
-#ifdef REGAMEDLL_FIXES
 	if (!m_bCompleteReset)
-#endif
 	{
 		m_iTotalRoundsPlayed++;
 	}
@@ -1642,9 +1619,7 @@ void CHalfLifeMultiplay::RestartRound()
 		MESSAGE_BEGIN(MSG_ALL, gmsgBombPickup);
 		MESSAGE_END();
 
-#ifdef REGAMEDLL_FIXES
 		if (m_iRoundTime > 0)
-#endif
 		{
 			MESSAGE_BEGIN(MSG_ALL, gmsgShowTimer);
 			MESSAGE_END();
@@ -1768,11 +1743,7 @@ void CHalfLifeMultiplay::RestartRound()
 	if (flAutoKickIdle > 0)
 		m_fMaxIdlePeriod = flAutoKickIdle;
 	else
-#ifdef REGAMEDLL_FIXES
 		m_fMaxIdlePeriod = (((m_iRoundTime < 60) ? 60 : m_iRoundTime) * 2);
-#else
-		m_fMaxIdlePeriod = (m_iRoundTime * 2);
-#endif
 
 	// This makes the round timer function as the intro timer on the client side
 	m_iRoundTimeSecs = m_iIntroRoundTime;
@@ -1904,10 +1875,8 @@ void CHalfLifeMultiplay::RestartRound()
 		m_iLoserBonus = m_rgRewardAccountRules[RR_LOSER_BONUS_DEFAULT];
 	}
 
-#ifdef REGAMEDLL_FIXES
 	// Respawn entities (glass, doors, etc..)
 	CleanUpMap();
-#endif
 
 	// tell bots that the round is restarting
 	CBaseEntity *pEntity = nullptr;
@@ -1923,14 +1892,6 @@ void CHalfLifeMultiplay::RestartRound()
 
 		pPlayer->m_iNumSpawns = 0;
 		pPlayer->m_bTeamChanged = false;
-
-#ifndef REGAMEDLL_FIXES
-		// NOTE: unreachable code
-		if (!pPlayer->IsPlayer())
-		{
-			pPlayer->SyncRoundTimer();
-		}
-#endif
 
 		if (pPlayer->m_iTeam == CT)
 		{
@@ -1959,17 +1920,9 @@ void CHalfLifeMultiplay::RestartRound()
 
 		if (pPlayer->m_iTeam != UNASSIGNED && pPlayer->m_iTeam != SPECTATOR)
 		{
-#ifdef REGAMEDLL_FIXES
 			// remove the c4 if the player is carrying it
-			if (pPlayer->m_bHasC4) {
+			if (pPlayer->m_bHasC4)
 				pPlayer->RemoveBomb();
-			}
-#else
-			// drop the c4 if the player is carrying it
-			if (pPlayer->m_bHasC4) {
-				pPlayer->DropPlayerItem("weapon_c4");
-			}
-#endif
 
 			pPlayer->RoundRespawn();
 		}
@@ -1979,17 +1932,8 @@ void CHalfLifeMultiplay::RestartRound()
 		// for EVERY player (regardless of what team they're on)
 	}
 
-	// Moved above the loop spawning the players
-#ifndef REGAMEDLL_FIXES
-	CleanUpMap();
-#endif
-
 	// Give C4 to the terrorists
-	if (m_bMapHasBombTarget
-#ifdef REGAMEDLL_ADD
-		&& give_player_c4.value
-#endif
-		)
+	if (m_bMapHasBombTarget && give_player_c4.value)
 	{
 		GiveC4();
 	}
@@ -2543,9 +2487,7 @@ bool CHalfLifeMultiplay::CheckGameOver()
 		if (m_flIntermissionEndTime < gpGlobals->time && !IsCareer())
 		{
 			if (!UTIL_HumansInGame()				// if only bots, just change immediately
-#ifdef REGAMEDLL_FIXES
 				|| IsMultiplayer()
-#endif
 				|| m_iEndIntermissionButtonHit		// check that someone has pressed a key, or the max intermission time is over
 				|| ((m_flIntermissionStartTime + MAX_INTERMISSION_TIME) < gpGlobals->time))
 			{
@@ -2783,7 +2725,6 @@ bool CHalfLifeMultiplay::Target_Saved(float tmDelay)
 	Broadcast("ctwin");
 	m_iAccountCT += m_rgRewardAccountRules[RR_TARGET_BOMB_SAVED];
 
-#ifdef REGAMEDLL_FIXES
 	if (!m_bNeededPlayers)
 	{
 		m_iNumCTWins++;
@@ -2791,9 +2732,6 @@ bool CHalfLifeMultiplay::Target_Saved(float tmDelay)
 		// Update the clients team score
 		UpdateTeamScores();
 	}
-#else
-	m_iNumCTWins++;
-#endif
 
 	EndRoundMessage("#Target_Saved", ROUND_TARGET_SAVED);
 	TerminateRound(tmDelay, WINSTATUS_CTS);
@@ -2802,10 +2740,6 @@ bool CHalfLifeMultiplay::Target_Saved(float tmDelay)
 	{
 		QueueCareerRoundEndMenu(tmDelay, WINSTATUS_CTS);
 	}
-
-#ifndef REGAMEDLL_FIXES
-	UpdateTeamScores();
-#endif
 
 	MarkLivingPlayersOnTeamAsNotReceivingMoneyNextRound(TERRORIST);
 	return true;
@@ -2816,7 +2750,6 @@ bool CHalfLifeMultiplay::Hostage_NotRescued(float tmDelay)
 	Broadcast("terwin");
 	m_iAccountTerrorist += m_rgRewardAccountRules[RR_HOSTAGE_NOT_RESCUED];
 
-#ifdef REGAMEDLL_FIXES
 	if (!m_bNeededPlayers)
 	{
 		m_iNumTerroristWins++;
@@ -2824,9 +2757,6 @@ bool CHalfLifeMultiplay::Hostage_NotRescued(float tmDelay)
 		// Update the clients team score
 		UpdateTeamScores();
 	}
-#else
-	m_iNumTerroristWins++;
-#endif
 
 	EndRoundMessage("#Hostages_Not_Rescued", ROUND_HOSTAGE_NOT_RESCUED);
 	TerminateRound(tmDelay, WINSTATUS_TERRORISTS);
@@ -2836,10 +2766,6 @@ bool CHalfLifeMultiplay::Hostage_NotRescued(float tmDelay)
 		QueueCareerRoundEndMenu(tmDelay, WINSTATUS_TERRORISTS);
 	}
 
-#ifndef REGAMEDLL_FIXES
-	UpdateTeamScores();
-#endif
-
 	MarkLivingPlayersOnTeamAsNotReceivingMoneyNextRound(CT);
 	return true;
 }
@@ -2848,7 +2774,6 @@ bool CHalfLifeMultiplay::Prison_NotEscaped(float tmDelay)
 {
 	Broadcast("ctwin");
 
-#ifdef REGAMEDLL_FIXES
 	if (!m_bNeededPlayers)
 	{
 		m_iNumCTWins++;
@@ -2856,9 +2781,6 @@ bool CHalfLifeMultiplay::Prison_NotEscaped(float tmDelay)
 		// Update the clients team score
 		UpdateTeamScores();
 	}
-#else
-	m_iNumCTWins++;
-#endif
 
 	EndRoundMessage("#Terrorists_Not_Escaped", ROUND_TERRORISTS_NOT_ESCAPED);
 	TerminateRound(tmDelay, WINSTATUS_CTS);
@@ -2868,9 +2790,6 @@ bool CHalfLifeMultiplay::Prison_NotEscaped(float tmDelay)
 		QueueCareerRoundEndMenu(tmDelay, WINSTATUS_CTS);
 	}
 
-#ifndef REGAMEDLL_FIXES
-	UpdateTeamScores();
-#endif
 	return true;
 }
 
@@ -2879,7 +2798,6 @@ bool CHalfLifeMultiplay::VIP_NotEscaped(float tmDelay)
 	Broadcast("terwin");
 	m_iAccountTerrorist += m_rgRewardAccountRules[RR_VIP_NOT_ESCAPED];
 
-#ifdef REGAMEDLL_FIXES
 	if (!m_bNeededPlayers)
 	{
 		m_iNumTerroristWins++;
@@ -2887,9 +2805,6 @@ bool CHalfLifeMultiplay::VIP_NotEscaped(float tmDelay)
 		// Update the clients team score
 		UpdateTeamScores();
 	}
-#else
-	m_iNumTerroristWins++;
-#endif
 
 	EndRoundMessage("#VIP_Not_Escaped", ROUND_VIP_NOT_ESCAPED);
 	TerminateRound(tmDelay, WINSTATUS_TERRORISTS);
@@ -2898,10 +2813,6 @@ bool CHalfLifeMultiplay::VIP_NotEscaped(float tmDelay)
 	{
 		QueueCareerRoundEndMenu(tmDelay, WINSTATUS_TERRORISTS);
 	}
-
-#ifndef REGAMEDLL_FIXES
-	UpdateTeamScores();
-#endif
 
 	return true;
 }
@@ -2922,28 +2833,7 @@ void CHalfLifeMultiplay::CheckRoundTimeExpired()
 	if (!HasRoundTimeExpired())
 		return;
 
-#if 0
-	// Round time expired
-	float flEndRoundTime;
-
-	// Check to see if there's still a live C4 hanging around.. if so, wait until this C4 blows before ending the round
-	CGrenade *pBomb = (CGrenade *)UTIL_FindEntityByClassname(nullptr, "grenade");
-
-	if (pBomb)
-	{
-		if (!pBomb->m_bJustBlew)
-			flEndRoundTime = pBomb->m_flC4Blow;
-		else
-			flEndRoundTime = gpGlobals->time + 5.0f;
-	}
-#endif
-
-#ifdef REGAMEDLL_ADD
 	int scenarioFlags = UTIL_ReadFlags(round_infinite.string);
-#else
-	// the icc compiler will cut out all of the code which refers to it
-	int scenarioFlags = 0;
-#endif
 
 	// New code to get rid of round draws!!
 	if (!(scenarioFlags & SCENARIO_BLOCK_BOMB_TIME) && m_bMapHasBombTarget)
@@ -2966,14 +2856,12 @@ void CHalfLifeMultiplay::CheckRoundTimeExpired()
 		if (!OnRoundEnd(WINSTATUS_TERRORISTS, ROUND_VIP_NOT_ESCAPED, GetRoundRestartDelay()))
 			return;
 	}
-#ifdef REGAMEDLL_ADD
 	else if (roundover.value)
 	{
 		// round is over
 		if (!OnRoundEnd(WINSTATUS_DRAW, ROUND_GAME_OVER, GetRoundRestartDelay()))
 			return;
 	}
-#endif
 
 	// This is done so that the portion of code has enough time to do it's thing.
 	m_fRoundStartTime = gpGlobals->time + 60.0f;
@@ -3313,10 +3201,9 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer *pl)
 		if (!plr)
 			continue;
 
-#ifdef REGAMEDLL_FIXES
 		if (plr->IsDormant())
 			continue;
-#endif
+
 		MESSAGE_BEGIN(MSG_ONE, gmsgScoreInfo, nullptr, pl->edict());
 			WRITE_BYTE(i);	// client number
 			WRITE_SHORT(int(plr->pev->frags));
@@ -3358,10 +3245,8 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer *pl)
 		if (!plr)
 			continue;
 
-#ifdef REGAMEDLL_FIXES
 		if (plr->IsDormant())
 			continue;
-#endif
 
 		MESSAGE_BEGIN(MSG_ONE, gmsgTeamInfo, nullptr, pl->edict());
 			WRITE_BYTE(plr->entindex());
@@ -3372,15 +3257,7 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer *pl)
 
 		if (pl->entindex() != i)
 		{
-#ifndef REGAMEDLL_FIXES
-			if (plr->pev->flags == FL_DORMANT)
-				continue;
-#endif
-			if (plr->pev->deadflag == DEAD_NO
-#ifdef BUILD_LATEST_FIXES
-				&& plr->m_iTeam == pl->m_iTeam
-#endif
-				)
+			if (plr->pev->deadflag == DEAD_NO && plr->m_iTeam == pl->m_iTeam)
 			{
 				MESSAGE_BEGIN(MSG_ONE, gmsgRadar, nullptr, pl->edict());
 					WRITE_BYTE(plr->entindex());
@@ -3422,7 +3299,6 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer *pl)
 			SendMsgBombDrop(BOMB_FLAG_DROPPED, pWeaponC4->pev->origin);
 		}
 	}
-#ifdef REGAMEDLL_FIXES
 	else
 	{
 		CGrenade *bomb = nullptr;
@@ -3441,15 +3317,12 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer *pl)
 				else
 				{
 					// HACK HACK, we need to hide only the timer.
-					SendMsgBombDrop(BOMB_FLAG_PLANTED, g_vecZero);
-					MESSAGE_BEGIN(MSG_ONE, gmsgBombPickup, nullptr, pl->pev);
-					MESSAGE_END();
+					pl->HideTimer();
 				}
 				break;
 			}
 		}
 	}
-#endif
 }
 
 void CHalfLifeMultiplay::ClientDisconnected(edict_t *pClient)
@@ -3467,14 +3340,6 @@ void CHalfLifeMultiplay::ClientDisconnected(edict_t *pClient)
 			{
 				pPlayer->DropPlayerItem("weapon_c4");
 			}
-
-#ifndef REGAMEDLL_FIXES
-			// Why ? DropPlayerItem didn't handle item_thighpack
-			if (pPlayer->m_bHasDefuser)
-			{
-				pPlayer->DropPlayerItem("item_thighpack");
-			}
-#endif
 
 			if (pPlayer->m_bIsVIP)
 			{
@@ -3539,18 +3404,13 @@ void CHalfLifeMultiplay::ClientDisconnected(edict_t *pClient)
 					int iMode = pObserver->pev->iuser1;
 
 					pObserver->pev->iuser1 = OBS_NONE;
-#ifdef REGAMEDLL_FIXES
 					pObserver->m_flNextFollowTime = 0.0;
-#endif
 					pObserver->Observer_SetMode(iMode);
 				}
 			}
 
-#ifdef REGAMEDLL_FIXES
 			// Client is gone, make sure that his body disappeared and became not solid
 			pPlayer->MakeDormant();
-#endif
-
 		}
 	}
 
@@ -3725,18 +3585,12 @@ BOOL CHalfLifeMultiplay::FPlayerCanRespawn(CBasePlayer *pPlayer)
 
 		if (m_iNumTerrorist > 0 && m_iNumCT > 0)
 		{
-#ifdef REGAMEDLL_ADD
 			// means no time limit
 			if (GetRoundRespawnTime() != -1)
-#endif
 			{
 				// TODO: to be correct, need use time the real one starts of round, m_fRoundStartTimeReal instead of it.
 				// m_fRoundStartTime able to extend the time to 60 seconds when there is a remaining time of round.
-#ifdef REGAMEDLL_FIXES
 				if (gpGlobals->time > m_fRoundStartTimeReal + GetRoundRespawnTime())
-#else
-				if (gpGlobals->time > m_fRoundStartTime + GetRoundRespawnTime())
-#endif
 				{
 					// If this player just connected and fadetoblack is on, then maybe
 					// the server admin doesn't want him peeking around.
@@ -3831,25 +3685,13 @@ void CHalfLifeMultiplay::PlayerKilled(CBasePlayer *pVictim, entvars_t *pKiller, 
 			ClientPrint(killer->pev, HUD_PRINTCENTER, "#Killed_Teammate");
 			ClientPrint(killer->pev, HUD_PRINTCONSOLE, "#Game_teammate_kills", UTIL_dtos1(killer->m_iTeamKills));
 
-#ifdef REGAMEDLL_ADD
 			if (autokick.value && max_teamkills.value && killer->m_iTeamKills >= (int)max_teamkills.value)
-#else
-			if (autokick.value && killer->m_iTeamKills == 3)
-#endif
 			{
-#ifdef REGAMEDLL_FIXES
 				ClientPrint(killer->pev, HUD_PRINTCONSOLE, "#Banned_For_Killing_Teammates");
-#else
-				ClientPrint(killer->pev, HUD_PRINTCONSOLE, "#Banned_For_Killing_Teamates");
-#endif
 				int iUserID = GETPLAYERUSERID(killer->edict());
 				if (iUserID != -1)
 				{
-#ifdef REGAMEDLL_FIXES
 					SERVER_COMMAND(UTIL_VarArgs("kick #%d \"For killing too many teammates\"\n", iUserID));
-#else
-					SERVER_COMMAND(UTIL_VarArgs("kick # %d\n", iUserID));
-#endif
 				}
 			}
 
@@ -3899,11 +3741,7 @@ void CHalfLifeMultiplay::PlayerKilled(CBasePlayer *pVictim, entvars_t *pKiller, 
 
 	// update the scores
 	// killed scores
-#ifndef REGAMEDLL_FIXES
-	MESSAGE_BEGIN(MSG_BROADCAST, gmsgScoreInfo);
-#else
 	MESSAGE_BEGIN(MSG_ALL, gmsgScoreInfo);
-#endif
 		WRITE_BYTE(ENTINDEX(pVictim->edict()));
 		WRITE_SHORT(int(pVictim->pev->frags));
 		WRITE_SHORT(pVictim->m_iDeaths);
@@ -3937,12 +3775,6 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer *pVictim, entvars_t *pKiller, e
 	const char *killer_weapon_name = "world";
 	int killer_index = 0;
 
-#ifndef REGAMEDLL_FIXES
-	// Hack to fix name change
-	char *tau = "tau_cannon";
-	char *gluon = "gluon gun";
-#endif
-
 	// Is the killer a client?
 	if (pKiller->flags & FL_CLIENT)
 	{
@@ -3969,10 +3801,7 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer *pVictim, entvars_t *pKiller, e
 			}
 		}
 	}
-	else
-#ifdef REGAMEDLL_FIXES
-		if (pevInflictor)
-#endif
+	else if (pevInflictor)
 	{
 		killer_weapon_name = STRING(pevInflictor->classname);
 	}
@@ -4001,15 +3830,6 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer *pVictim, entvars_t *pKiller, e
 			WRITE_STRING(killer_weapon_name);		// what they were killed by (should this be a string?)
 		MESSAGE_END();
 	}
-
-	// This weapons from HL isn't it?
-#ifndef REGAMEDLL_FIXES
-	if (!Q_strcmp(killer_weapon_name, "egon"))
-		killer_weapon_name = gluon;
-
-	else if (!Q_strcmp(killer_weapon_name, "gauss"))
-		killer_weapon_name = tau;
-#endif
 
 	// Did he kill himself?
 	if (pVictim->pev == pKiller)
@@ -4354,12 +4174,8 @@ int ReloadMapCycleFile(char *filename, mapcycle_t *cycle)
 			if (Q_strlen(pToken) <= 0)
 				break;
 
-#ifdef REGAMEDLL_FIXES
 			Q_strncpy(szMap, pToken, sizeof(szMap) - 1);
 			szMap[sizeof(szMap) - 1] = '\0';
-#else
-			Q_strcpy(szMap, pToken);
-#endif
 
 			// Any more tokens on this line?
 			if (SharedTokenWaiting(pFileList))
@@ -4726,13 +4542,8 @@ void CHalfLifeMultiplay::ChangeLevel()
 	char szRules[1500];
 	int minplayers = 0, maxplayers = 0;
 
-#ifdef REGAMEDLL_FIXES
 	// the absolute default level is de_dust
 	Q_strcpy(szFirstMapInList, "de_dust");
-#else
-	// the absolute default level is hldm1
-	Q_strcpy(szFirstMapInList, "hldm1");
-#endif
 
 	int curplayers;
 	bool do_cycle = true;

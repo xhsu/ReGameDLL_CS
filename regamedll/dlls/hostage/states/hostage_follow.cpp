@@ -183,18 +183,14 @@ void HostageFollowState::OnUpdate(CHostageImprov *improv)
 					cross.x = to.y;
 
 				float ground;
-				float const sideStepSize = 15.0f;
+				float constexpr sideStepSize = 15.0f;
 				Vector sideStepPos = improv->GetFeet() + cross * sideStepSize;
 
 				if (GetGroundHeight(&sideStepPos, &ground))
 				{
-#ifdef REGAMEDLL_FIXES
 					if (Q_abs(ground - improv->GetFeet().z) < 18.0f)
-#else
-					if (Q_abs(int(ground - improv->GetFeet().z)) < 18.0f)
-#endif
 					{
-						const float push = 20.0f;
+						constexpr float push = 20.0f;
 						Vector lat = cross * push;
 
 						improv->ApplyForce(lat);

@@ -63,11 +63,7 @@ void CG3SG1::SecondaryAttack()
 	{
 	case 90: m_pPlayer->m_iFOV = m_pPlayer->pev->fov = 40; break;
 	case 40: m_pPlayer->m_iFOV = m_pPlayer->pev->fov = 15; break;
-#ifdef REGAMEDLL_FIXES
 	default:
-#else
-	case 15:
-#endif
 		m_pPlayer->m_iFOV = m_pPlayer->pev->fov = 90; break;
 	}
 

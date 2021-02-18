@@ -54,9 +54,7 @@ int CSG550::GetItemInfo(ItemInfo *p)
 
 BOOL CSG550::Deploy()
 {
-#ifdef REGAMEDLL_FIXES
 	m_flAccuracy = 0.2f;
-#endif
 
 	return DefaultDeploy("models/v_sg550.mdl", "models/p_sg550.mdl", SG550_DRAW, "rifle", UseDecrement() != FALSE);
 }
@@ -67,12 +65,7 @@ void CSG550::SecondaryAttack()
 	{
 	case 90: m_pPlayer->m_iFOV = m_pPlayer->pev->fov = 40; break;
 	case 40: m_pPlayer->m_iFOV = m_pPlayer->pev->fov = 15; break;
-#ifdef REGAMEDLL_FIXES
-	default:
-#else
-	case 15:
-#endif
-		m_pPlayer->m_iFOV = m_pPlayer->pev->fov = 90; break;
+	default: m_pPlayer->m_iFOV = m_pPlayer->pev->fov = 90; break;
 	}
 
 	m_pPlayer->ResetMaxSpeed();

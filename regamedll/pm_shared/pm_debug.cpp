@@ -234,10 +234,5 @@ void PM_ViewEntity()
 	}
 
 	// Draw the hull or bbox.
-#ifndef REGAMEDLL_FIXES
-	if (trace.ent > 0)
-#endif
-	{
-		PM_DrawPhysEntBBox(trace.ent, pcolor, 0.3f);
-	}
+	PM_DrawPhysEntBBox(trace.ent, pcolor, 0.3f);
 }

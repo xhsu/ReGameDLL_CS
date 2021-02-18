@@ -328,8 +328,7 @@ void CCSBot::StrafeAwayFromPosition(const Vector *pos)
 	float toProj = to.x * dir.x + to.y * dir.y;
 	float latProj = to.x * lat.x + to.y * lat.y;
 
-#ifdef REGAMEDLL_FIXES
-	const float c = 0.5f;
+	constexpr float c = 0.5f;
 	if (toProj > c)
 		MoveBackward();
 	else if (toProj < -c)
@@ -339,12 +338,6 @@ void CCSBot::StrafeAwayFromPosition(const Vector *pos)
 		StrafeRight();
 	else if (latProj <= -c)
 		StrafeLeft();
-#else
-	if (latProj >= 0.0f)
-		StrafeRight();
-	else
-		StrafeLeft();
-#endif
 }
 
 // For getting un-stuck

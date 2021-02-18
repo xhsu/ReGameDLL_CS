@@ -74,10 +74,6 @@ void CFlashbang::Holster(int skiplocal)
 
 	if (!m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType])
 	{
-#ifndef REGAMEDLL_FIXES
-		// Moved to DestroyItem()
-		m_pPlayer->pev->weapons &= ~(1 << WEAPON_FLASHBANG);
-#endif
 		DestroyItem();
 	}
 
@@ -227,9 +223,6 @@ void CFlashbang::WeaponIdle()
 	}
 	else if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType])
 	{
-		int iAnim;
-		float flRand = RANDOM_FLOAT(0, 1);
-
 		if (m_pPlayer->HasShield())
 		{
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 20.0f;
@@ -241,25 +234,8 @@ void CFlashbang::WeaponIdle()
 		}
 		else
 		{
-			if (flRand <= 0.75)
-			{
-				iAnim = FLASHBANG_IDLE;
-
-				// how long till we do this again.
-				m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + RANDOM_FLOAT(10, 15);
-			}
-			else
-			{
-			#ifdef REGAMEDLL_FIXES
-				iAnim = FLASHBANG_IDLE;
-			#else
-				// TODO: This is a bug?
-				iAnim = *(int *)&flRand;
-			#endif
-				m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 75.0f / 30.0f;
-			}
-
-			SendWeaponAnim(iAnim, UseDecrement() != FALSE);
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 20.0f;
+			SendWeaponAnim(FLASHBANG_IDLE, UseDecrement() != FALSE);
 		}
 	}
 }

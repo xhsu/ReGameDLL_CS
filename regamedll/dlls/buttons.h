@@ -53,18 +53,14 @@ public:
 class CRotButton: public CBaseButton
 {
 public:
-	virtual void Spawn();
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
+	virtual void Spawn() override;
+	virtual void Restart() override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
 	Vector m_vecSpawn;
-#endif
-
 };
 
 // Make this button behave like a door (HACKHACK)
@@ -120,15 +116,12 @@ public:
 class CEnvSpark: public CBaseEntity
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual void Restart() override;
 
 public:
 	void EXPORT SparkThink();

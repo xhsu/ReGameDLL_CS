@@ -47,7 +47,6 @@ void CFuncWallToggle::Spawn()
 	}
 }
 
-#ifdef REGAMEDLL_FIXES
 void CFuncWallToggle::Restart()
 {
 	CFuncWall::Spawn();
@@ -60,7 +59,6 @@ void CFuncWallToggle::Restart()
 
 	TurnOn();
 }
-#endif
 
 void CFuncWallToggle::TurnOff()
 {
@@ -211,11 +209,7 @@ void CFuncRotating::KeyValue(KeyValueData *pkvd)
 		m_flFanFriction = Q_atof(pkvd->szValue) / 100;
 		pkvd->fHandled = TRUE;
 	}
-#ifdef REGAMEDLL_FIXES
 	else if (FStrEq(pkvd->szKeyName, "volume"))
-#else
-	else if (FStrEq(pkvd->szKeyName, "Volume"))
-#endif
 	{
 		m_flVolume = Q_atof(pkvd->szValue) / 10.0;
 
@@ -261,9 +255,7 @@ void CFuncRotating::KeyValue(KeyValueData *pkvd)
 // REVERSE will cause the it to rotate in the opposite direction.
 void CFuncRotating::Spawn()
 {
-#ifdef REGAMEDLL_FIXES
 	m_angles = pev->angles;
-#endif
 
 	// set final pitch.  Must not be PITCH_NORM, since we
 	// plan on pitch shifting later.
@@ -361,7 +353,6 @@ void CFuncRotating::Spawn()
 	Precache();
 }
 
-#ifdef REGAMEDLL_FIXES
 void CFuncRotating::Restart()
 {
 	// stop sound, we're done
@@ -410,7 +401,6 @@ void CFuncRotating::Restart()
 		SetTouch(&CFuncRotating::HurtTouch);
 	}
 }
-#endif
 
 void CFuncRotating::Precache()
 {
@@ -504,20 +494,12 @@ void CFuncRotating::RampPitchVol(BOOL fUp)
 	int pitch;
 
 	// get current angular velocity
-#ifdef REGAMEDLL_FIXES
 	vecCur = Q_abs(vecAVel.x != 0 ? vecAVel.x : (vecAVel.y != 0 ? vecAVel.y : vecAVel.z));
-#else
-	vecCur = Q_abs(int(vecAVel.x != 0 ? vecAVel.x : (vecAVel.y != 0 ? vecAVel.y : vecAVel.z)));
-#endif
 
 	// get target angular velocity
 	vecFinal = (pev->movedir.x != 0 ? pev->movedir.x : (pev->movedir.y != 0 ? pev->movedir.y : pev->movedir.z));
 	vecFinal *= pev->speed;
-#ifdef REGAMEDLL_FIXES
 	vecFinal = Q_abs(vecFinal);
-#else
-	vecFinal = Q_abs(int(vecFinal));
-#endif
 
 	// calc volume and pitch as % of final vol and pitch
 	fpct = vecCur / vecFinal;
@@ -555,15 +537,9 @@ void CFuncRotating::SpinUp()
 	Vector vecAVel = pev->avelocity;
 
 	// if we've met or exceeded target speed, set target speed and stop thinking
-#ifdef REGAMEDLL_FIXES
 	if (Q_abs(vecAVel.x) >= Q_abs(pev->movedir.x * pev->speed)
 		&& Q_abs(vecAVel.y) >= Q_abs(pev->movedir.y * pev->speed)
 		&& Q_abs(vecAVel.z) >= Q_abs(pev->movedir.z * pev->speed))
-#else
-	if (Q_abs(int(vecAVel.x)) >= Q_abs(int(pev->movedir.x * pev->speed))	
-		&& Q_abs(int(vecAVel.y)) >= Q_abs(int(pev->movedir.y * pev->speed))
-		&& Q_abs(int(vecAVel.z)) >= Q_abs(int(pev->movedir.z * pev->speed)))
-#endif
 	{
 		// set speed in case we overshot
 		pev->avelocity = pev->movedir * pev->speed;

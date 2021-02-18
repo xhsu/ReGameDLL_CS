@@ -209,7 +209,6 @@ LINK_ENTITY_TO_CLASS(worldspawn, CWorld)
 
 void CWorld::Spawn()
 {
-#ifdef REGAMEDLL_FIXES
 	static char szMapBriefingFile[64] = "";
 
 	EmptyEntityHashTable();
@@ -244,34 +243,6 @@ void CWorld::Spawn()
 	{
 		FREE_FILE(pFile);
 	}
-
-#else
-	EmptyEntityHashTable();
-	Precache();
-
-	g_szMapBriefingText[0] = '\0';
-
-	int flength = 0;
-	char *pFile = (char *)LOAD_FILE_FOR_ME(UTIL_VarArgs("maps/%s.txt", STRING(gpGlobals->mapname)), &flength);
-
-	if (pFile && flength)
-	{
-		Q_strncpy(g_szMapBriefingText, pFile, ARRAYSIZE(g_szMapBriefingText) - 2);
-		PRECACHE_GENERIC(UTIL_VarArgs("maps/%s.txt", STRING(gpGlobals->mapname)));
-		FREE_FILE(pFile);
-	}
-	else
-	{
-		pFile = (char *)LOAD_FILE_FOR_ME(UTIL_VarArgs("maps/default.txt"), &flength);
-
-		if (pFile && flength)
-		{
-			Q_strncpy(g_szMapBriefingText, pFile, ARRAYSIZE(g_szMapBriefingText) - 2);
-			PRECACHE_GENERIC(UTIL_VarArgs("maps/default.txt"));
-			FREE_FILE(pFile);
-		}
-	}
-#endif
 }
 
 void CWorld::Precache()
@@ -420,9 +391,7 @@ void CWorld::Precache()
 		}
 	}
 
-#ifdef REGAMEDLL_FIXES
 	if (!IS_DEDICATED_SERVER())
-#endif
 	{
 		// NOTE: cvar v_dark refers for the client side
 		if (pev->spawnflags & SF_WORLD_DARK)

@@ -165,11 +165,9 @@ void CAK47::AK47Fire(float flSpread, float flCycleTime, BOOL fUseAutoAim)
 
 void CAK47::Reload()
 {
-#ifdef REGAMEDLL_FIXES
 	// to prevent reload if not enough ammo
 	if (m_pPlayer->ammo_762nato <= 0)
 		return;
-#endif
 
 	if (DefaultReload(iMaxClip(), AK47_RELOAD, AK47_RELOAD_TIME))
 	{

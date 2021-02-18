@@ -50,13 +50,10 @@ public:
 class CFuncWallToggle: public CFuncWall
 {
 public:
-	virtual void Spawn();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-	virtual int ObjectCaps() { return CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
-#endif
+	virtual void Spawn() override;
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
+	virtual void Restart() override;
+	virtual int ObjectCaps() override { return CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
 public:
 	void TurnOff();
@@ -130,10 +127,7 @@ public:
 	virtual int Restore(CRestore &restore);
 	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | FCAP_MUST_RESET; }
 	virtual void Blocked(CBaseEntity *pOther);
-
-#ifdef REGAMEDLL_FIXES
 	virtual void Restart();
-#endif
 
 public:
 	void EXPORT SpinUp();
@@ -151,11 +145,7 @@ public:
 	float m_flVolume;
 	float m_pitch;
 	int m_sounds;
-
-#ifdef REGAMEDLL_FIXES
 	Vector m_angles;
-#endif
-
 };
 
 #define SF_PENDULUM_START_ON    BIT(0)

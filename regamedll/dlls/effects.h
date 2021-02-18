@@ -195,16 +195,13 @@ public:
 class CLaser: public CBeam
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
+	virtual void Restart() override;
 
 public:
 	void TurnOn();
@@ -250,16 +247,13 @@ public:
 class CLightning: public CBeam
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual void Activate();
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual void Activate() override;
+	virtual void Restart() override;
 
 public:
 	void EXPORT StrikeThink();

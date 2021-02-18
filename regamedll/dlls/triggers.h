@@ -52,17 +52,14 @@ public:
 class CAutoTrigger: public CBaseDelay
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual int ObjectCaps() { return (CBaseDelay::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Think();
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual int ObjectCaps() override { return (CBaseDelay::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+	virtual void Think() override;
+	virtual void Restart() override;
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -213,11 +210,8 @@ public:
 class CTriggerHurt: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void Restart() override;
 
 	void EXPORT RadiationThink();
 };
@@ -225,18 +219,18 @@ public:
 class CTriggerMonsterJump: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
-	virtual void Think();
-	virtual void Touch(CBaseEntity *pOther);
+	virtual void Spawn() override;
+	virtual void Think() override;
+	virtual void Touch(CBaseEntity *pOther) override;
 };
 
 // Starts/stops cd audio tracks
 class CTriggerCDAudio: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
-	virtual void Touch(CBaseEntity *pOther);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	virtual void Spawn() override;
+	virtual void Touch(CBaseEntity *pOther) override;
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
 
 public:
 	void PlayTrack(edict_t *pEdict);
@@ -246,10 +240,10 @@ public:
 class CTargetCDAudio: public CPointEntity
 {
 public:
-	virtual void Spawn();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Think();
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	virtual void Spawn() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual void Think() override;
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
 
 public:
 	void Play(edict_t *pEdict);
@@ -289,11 +283,8 @@ public:
 class CTriggerOnce: public CTriggerMultiple
 {
 public:
-	virtual void Spawn();
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void Restart() override;
 };
 
 #define SF_TRIGGER_COUNTER_NOMESSAGE BIT(0)
@@ -305,24 +296,24 @@ public:
 class CTriggerCounter: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 };
 
 // Derive from point entity so this doesn't move across levels
 class CTriggerVolume: public CPointEntity
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 };
 
 // Fires a target after level transition and then dies
 class CFireAndDie: public CBaseDelay
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual int ObjectCaps() { return (CBaseDelay::ObjectCaps() | FCAP_FORCE_TRANSITION); }		// Always go across transitions
-	virtual void Think();
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual int ObjectCaps() override { return (CBaseDelay::ObjectCaps() | FCAP_FORCE_TRANSITION); }		// Always go across transitions
+	virtual void Think() override;
 };
 
 #define SF_CHANGELEVEL_USEONLY BIT(1)
@@ -332,10 +323,10 @@ public:
 class CChangeLevel: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
+	virtual void Spawn() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
 
 public:
 	void EXPORT UseChangeLevel(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
@@ -356,18 +347,15 @@ public:
 	char m_szLandmarkName[MAX_MAPNAME_LENGHT];	// landmark on next map
 	int m_changeTarget;
 	float m_changeTargetDelay;
-
-#ifdef REGAMEDLL_FIXES
 	float m_flPercentOfPlayers;
-#endif
 };
 
 class CLadder: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
 };
 
 #define SF_TRIGGER_PUSH_ONCE      BIT(0)
@@ -376,25 +364,22 @@ public:
 class CTriggerPush: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Touch(CBaseEntity *pOther);
-
-#ifdef REGAMEDLL_FIXES
-	virtual void Restart();
-#endif
+	virtual void Spawn() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual void Touch(CBaseEntity *pOther) override;
+	virtual void Restart() override;
 };
 
 class CTriggerTeleport: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 };
 
 class CBuyZone: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 
 	void EXPORT BuyTouch(CBaseEntity *pOther);
 };
@@ -403,8 +388,9 @@ class CBombTarget: public CBaseTrigger
 {
 private:
 	bool IsPlayerInBombSite(CBasePlayer *pPlayer);
+
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 	void EXPORT BombTargetTouch(CBaseEntity *pOther);
 	void EXPORT BombTargetUse(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 };
@@ -412,7 +398,7 @@ public:
 class CHostageRescue: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 
 public:
 	void EXPORT HostageRescueTouch(CBaseEntity *pOther);
@@ -421,7 +407,7 @@ public:
 class CEscapeZone: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 
 	void EXPORT EscapeTouch(CBaseEntity *pOther);
 };
@@ -429,7 +415,7 @@ public:
 class CVIP_SafetyZone: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 
 	void EXPORT VIP_SafetyTouch(CBaseEntity *pOther);
 };
@@ -437,7 +423,7 @@ public:
 class CTriggerSave: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 
 	void EXPORT SaveTouch(CBaseEntity *pOther);
 };
@@ -447,8 +433,8 @@ public:
 class CTriggerEndSection: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
-	virtual void KeyValue(KeyValueData *pkvd);
+	virtual void Spawn() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
 
 public:
 	void EXPORT EndSectionTouch(CBaseEntity *pOther);
@@ -458,7 +444,7 @@ public:
 class CTriggerGravity: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 
 	void EXPORT GravityTouch(CBaseEntity *pOther);
 };
@@ -467,12 +453,12 @@ public:
 class CTriggerChangeTarget: public CBaseDelay
 {
 public:
-	virtual void Spawn();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	virtual void Spawn() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual int ObjectCaps() override { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
 
 public:
 	static TYPEDESCRIPTION m_SaveData[];
@@ -488,12 +474,12 @@ private:
 class CTriggerCamera: public CBaseDelay
 {
 public:
-	virtual void Spawn();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	virtual void Spawn() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
+	virtual int ObjectCaps() override { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value) override;
 
 public:
 	void EXPORT FollowTarget();
@@ -519,14 +505,14 @@ public:
 class CWeather: public CBaseTrigger
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 };
 
 class CClientFog: public CBaseEntity
 {
 public:
-	virtual void Spawn();
-	virtual void KeyValue(KeyValueData *pkvd);
+	virtual void Spawn() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
 
 public:
 	int m_iStartDist;

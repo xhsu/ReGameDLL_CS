@@ -273,14 +273,12 @@ void CBot::ExecuteCommand()
 		m_buttonFlags |= IN_DUCK;
 	}
 
-#ifdef REGAMEDLL_FIXES
 	// don't move if frozen state present
 	if (pev->flags & FL_FROZEN)
 	{
 		adjustedMSec = 0;
 		ResetCommand();
 	}
-#endif
 
 	// Run the command
 	PLAYER_RUN_MOVE(edict(), pev->v_angle, m_forwardSpeed, m_strafeSpeed, m_verticalSpeed, m_buttonFlags, 0, adjustedMSec);
@@ -308,21 +306,6 @@ byte CBot::ThrottledMsec() const
 
 	return byte(iNewMsec);
 }
-
-#ifndef REGAMEDLL_FIXES
-// Do a "client command" - useful for invoking menu choices, etc.
-void CBot::ClientCommand(const char *cmd, const char *arg1, const char *arg2, const char *arg3)
-{
-	BotArgs[0] = cmd;
-	BotArgs[1] = arg1;
-	BotArgs[2] = arg2;
-	BotArgs[3] = arg3;
-
-	UseBotArgs = true;
-	::ClientCommand_(ENT(pev));
-	UseBotArgs = false;
-}
-#endif
 
 // Returns TRUE if given entity is our enemy
 bool CBot::IsEnemy(CBaseEntity *pEntity) const

@@ -122,12 +122,10 @@ TutorStateType CCSTutorWaitingForStartState::CheckForStateTransition(GameEventTy
 
 const char *CCSTutorWaitingForStartState::GetStateString()
 {
-#ifdef REGAMEDLL_FIXES
 	if (m_type < TUTORSTATE_UNDEFINED || m_type > TUTORSTATE_WAITING_FOR_START)
 	{
 		return nullptr;
 	}
-#endif
 
 	return m_TutorStateStrings[m_type];
 }
@@ -174,12 +172,10 @@ TutorStateType CCSTutorBuyMenuState::CheckForStateTransition(GameEventType event
 
 const char *CCSTutorBuyMenuState::GetStateString()
 {
-#ifdef REGAMEDLL_FIXES
 	if (m_type < TUTORSTATE_UNDEFINED || m_type > TUTORSTATE_WAITING_FOR_START)
 	{
 		return nullptr;
 	}
-#endif
 
 	return m_TutorStateStrings[m_type];
 }

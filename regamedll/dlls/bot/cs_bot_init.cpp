@@ -295,14 +295,12 @@ void CCSBot::ResetValues()
 	m_avoid = nullptr;
 	m_enemy = nullptr;
 
-#ifdef REGAMEDLL_FIXES
 	for (int i = 0; i < MAX_ENEMY_QUEUE; i++)
 	{
 		m_enemyQueue[i].player = nullptr;
 		m_enemyQueue[i].isReloading = false;
 		m_enemyQueue[i].isProtectedByShield = false;
 	}
-#endif
 
 	// start in idle state
 	StopAttacking();

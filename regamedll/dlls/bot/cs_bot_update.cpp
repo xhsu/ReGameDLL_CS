@@ -174,10 +174,8 @@ void CCSBot::Upkeep()
 		m_lookPitch += driftAmplitude * BotSIN(13.0f * gpGlobals->time);
 	}
 
-#ifdef REGAMEDLL_FIXES
 	// Don't update view angles at frozen state
 	if (!(pev->flags & FL_FROZEN))
-#endif
 	{
 		// view angles can change quickly
 		UpdateLookAngles();

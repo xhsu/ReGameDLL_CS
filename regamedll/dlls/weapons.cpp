@@ -582,9 +582,7 @@ void CBasePlayerItem::DefaultTouch(CBaseEntity *pOther)
 	if (pOther->AddPlayerItem(this))
 	{
 		AttachToPlayer(pPlayer);
-#ifndef REGAMEDLL_FIXES
-		SetThink(nullptr);
-#endif
+
 		EMIT_SOUND(ENT(pPlayer->pev), CHAN_ITEM, "items/gunpickup2.wav", VOL_NORM, ATTN_NORM);
 	}
 
@@ -889,9 +887,7 @@ void CBasePlayerWeapon::ItemPostFrame()
 	}
 
 	if ((usableButtons & IN_ATTACK2) && CanAttack(m_flNextSecondaryAttack, UTIL_WeaponTimeBase(), UseDecrement())
-#ifdef REGAMEDLL_FIXES
 		&& !m_pPlayer->m_bIsDefusing // In-line: I think it's fine to block secondary attack, when defusing. It's better then blocking speed resets in weapons.
-#endif
     )
 	{
 		if (pszAmmo2() && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()])
@@ -1064,13 +1060,9 @@ void CBasePlayerItem::AttachToPlayer(CBasePlayer *pPlayer)
 	pev->model = 0;
 	pev->owner = pPlayer->edict();
 
-#ifndef REGAMEDLL_FIXES
-	pev->nextthink = gpGlobals->time + 0.1f;
-#else
 	// Remove think - prevents futher attempts to materialize
 	pev->nextthink = 0;
 	SetThink(nullptr);
-#endif
 
 	SetTouch(nullptr);
 }
@@ -1483,16 +1475,6 @@ void CBasePlayerWeapon::RetireWeapon()
 // GetNextAttackDelay - An accurate way of calcualting the next attack time.
 float CBasePlayerWeapon::GetNextAttackDelay(float delay)
 {
-#ifndef REGAMEDLL_FIXES
-	if (m_flLastFireTime == 0.0f || m_flNextPrimaryAttack == -1.0f)
-	{
-		// At this point, we are assuming that the client has stopped firing
-		// and we are going to reset our book keeping variables.
-		m_flPrevPrimaryAttack = delay;
-		m_flLastFireTime = gpGlobals->time;
-	}
-#endif
-
 #ifdef REGAMEDLL_BUILD_6153
 
 	// TODO: Build 6xxx
@@ -1699,20 +1681,13 @@ void CWeaponBox::Touch(CBaseEntity *pOther)
 				return;
 			}
 
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem((pItem->m_iId == WEAPON_SHIELDGUN) ? ITEM_SHIELDGUN : (ItemID)pItem->m_iId, ITEM_TYPE_TOUCHED))
 				return;
-#endif
 
 			if (FClassnameIs(pItem->pev, "weapon_c4"))
 			{
-#ifdef REGAMEDLL_FIXES
 				if (pPlayer->m_iTeam != TERRORIST)
 					return;
-#else
-				if (pPlayer->m_iTeam != TERRORIST || pPlayer->pev->deadflag != DEAD_NO)
-					return;
-#endif
 
 				if (pPlayer->m_bShowHints && !(pPlayer->m_flDisplayHistory & DHF_BOMB_RETRIEVED))
 				{
@@ -1789,7 +1764,6 @@ void CWeaponBox::Touch(CBaseEntity *pOther)
 				{
 					int playerGrenades = pPlayer->m_rgAmmo[pGrenade->m_iPrimaryAmmoType];
 
-#ifdef REGAMEDLL_FIXES
 					auto info = GetWeaponInfo(pGrenade->m_iId);
 					if (info && playerGrenades < info->maxRounds)
 					{
@@ -1804,45 +1778,6 @@ void CWeaponBox::Touch(CBaseEntity *pOther)
 						m_rgpPlayerItems[i] = pItem = pNext;
 						continue;
 					}
-#else
-
-					int maxGrenades = 0;
-					const char *grenadeName = nullptr;
-
-					switch (pGrenade->m_iId)
-					{
-					case WEAPON_HEGRENADE:
-						grenadeName = "weapon_hegrenade";
-						maxGrenades = 1;
-						break;
-					case WEAPON_SMOKEGRENADE:
-						grenadeName = "weapon_smokegrenade";
-						maxGrenades = 1;
-						break;
-					case WEAPON_FLASHBANG:
-						grenadeName = "weapon_flashbang";
-						maxGrenades = 2;
-						break;
-					}
-
-					if (playerGrenades < maxGrenades && grenadeName)
-					{
-						// CRITICAL BUG: since gives a new entity using GiveNamedItem,
-						// but the entity is packaged in a weaponbox still exists and will never used or removed. It's leak!
-						// How reproduced: Drop your grenade on the ground, check output of command `entity_dump`,
-						// there we will see only get one grenade. Next step - pick it up, do check again `entity_dump`,
-						// but this time we'll see them x2.
-
-						bEmitSound = true;
-						pPlayer->GiveNamedItem(grenadeName);
-
-						// unlink this weapon from the box
-						pItem = m_rgpPlayerItems[i]->m_pNext;
-						m_rgpPlayerItems[i] = pItem;
-						continue;
-					}
-#endif
-
 				}
 			}
 			else if (pPlayer->HasShield() && i == PRIMARY_WEAPON_SLOT)
@@ -2110,10 +2045,8 @@ void CArmoury::Spawn()
 		m_iCount = 1;
 	}
 
-#ifdef REGAMEDLL_FIXES
 	// Cache the placed origin of source point
 	pev->oldorigin = pev->origin;
-#endif
 
 	m_bAlreadyCounted = false;
 	m_iInitialCount = m_iCount;
@@ -2121,18 +2054,14 @@ void CArmoury::Spawn()
 
 void CArmoury::Restart()
 {
-#ifdef REGAMEDLL_ADD
 	if (!weapons_allow_map_placed.value)
 	{
 		Hide();
 		return;
 	}
-#endif
 
-#ifdef REGAMEDLL_FIXES
 	// This code refers to the mode of Escape. (Because there is relationship to the team Terrorists)
 	if (CSGameRules()->m_bMapHasEscapeZone)
-#endif
 	{
 		if (m_iItem == ARMOURY_FLASHBANG || m_iItem == ARMOURY_HEGRENADE)
 		{
@@ -2177,24 +2106,19 @@ void CArmoury::Restart()
 			m_iCount = int(flRatio);
 		}
 	}
-
-#ifdef REGAMEDLL_FIXES
 	else
 	{
 		m_iCount = m_iInitialCount;
 	}
-#endif
 
 	if (m_iCount < 1)
 		m_iCount = 1;
 
 	Draw();
 
-#ifdef REGAMEDLL_FIXES
 	// Restored origin from the cache
 	UTIL_SetOrigin(pev, pev->oldorigin);
 	DROP_TO_FLOOR(edict());
-#endif
 }
 
 void CArmoury::Precache()
@@ -2209,19 +2133,15 @@ void CArmoury::Draw()
 {
 	pev->effects &= ~EF_NODRAW;
 
-#ifdef REGAMEDLL_FIXES
 	pev->solid = SOLID_TRIGGER;
-#endif
 }
 
 void CArmoury::Hide()
 {
 	pev->effects |= EF_NODRAW;
 
-#ifdef REGAMEDLL_FIXES
 	// more not to touch with the world.
 	pev->solid = SOLID_NOT;
-#endif
 }
 
 struct ArmouryItemStruct
@@ -2273,38 +2193,23 @@ void CArmoury::ArmouryTouch(CBaseEntity *pOther)
 	if (pToucher->m_bIsVIP)
 		return;
 
-#ifdef REGAMEDLL_ADD
 	if (pToucher->HasRestrictItem(GetItemIdByArmoury(m_iItem), ITEM_TYPE_TOUCHED))
 		return;
-#endif
 
-#ifdef REGAMEDLL_FIXES
 	if (pToucher->IsBot() && TheCSBots() && !TheCSBots()->IsWeaponUseable(m_iItem))
 		return;
-#endif
 
 	// primary weapons
-	if (m_iCount > 0 && (m_iItem <= ARMOURY_M249
-#ifdef REGAMEDLL_ADD
-		|| (m_iItem >= ARMOURY_FAMAS && m_iItem <= ARMOURY_UMP45)
-#endif
-))
+	if (m_iCount > 0 && (m_iItem <= ARMOURY_M249 || (m_iItem >= ARMOURY_FAMAS && m_iItem <= ARMOURY_UMP45)))
 	{
 		if (pToucher->m_bHasPrimary)
 			return;
 
 		m_iCount--;
 		auto item = &armouryItemInfo[m_iItem];
-
-#ifdef REGAMEDLL_FIXES
 		pToucher->GiveNamedItemEx(item->entityName);
-#else
-		pToucher->GiveNamedItem(item->entityName);
-#endif
-
 		pToucher->GiveAmmo(item->giveAmount, item->ammoName, item->maxRounds);
 	}
-#ifdef REGAMEDLL_ADD
 	// secondary weapons (pistols)
 	else if (m_iCount > 0 && m_iItem >= ARMOURY_GLOCK18)
 	{
@@ -2320,7 +2225,6 @@ void CArmoury::ArmouryTouch(CBaseEntity *pOther)
 		pToucher->GiveNamedItemEx(item->entityName);
 		pToucher->GiveAmmo(item->giveAmount, item->ammoName, item->maxRounds);
 	}
-#endif
 	// items & grenades
 	else if (m_iCount > 0 && m_iItem >= ARMOURY_FLASHBANG)
 	{
@@ -2347,11 +2251,7 @@ void CArmoury::ArmouryTouch(CBaseEntity *pOther)
 		case ARMOURY_KEVLAR:
 		{
 
-#ifdef REGAMEDLL_FIXES
 			if (pToucher->m_iKevlar != ARMOR_NONE && pToucher->pev->armorvalue >= MAX_NORMAL_BATTERY)
-#else
-			if (pToucher->m_iKevlar == ARMOR_KEVLAR)
-#endif
 			{
 				return;
 			}
@@ -2362,11 +2262,7 @@ void CArmoury::ArmouryTouch(CBaseEntity *pOther)
 		}
 		case ARMOURY_ASSAULT:
 		{
-			if (pToucher->m_iKevlar == ARMOR_VESTHELM
-#ifdef REGAMEDLL_FIXES
-				&& pToucher->pev->armorvalue >= MAX_NORMAL_BATTERY
-#endif
-				)
+			if (pToucher->m_iKevlar == ARMOR_VESTHELM && pToucher->pev->armorvalue >= MAX_NORMAL_BATTERY)
 			{
 				return;
 			}
@@ -2384,7 +2280,6 @@ void CArmoury::ArmouryTouch(CBaseEntity *pOther)
 			m_iCount--;
 			break;
 		}
-#ifdef REGAMEDLL_ADD
 		case ARMOURY_SHIELD:
 		{
 			if (pToucher->m_bHasPrimary || (pToucher->m_rgpPlayerItems[PISTOL_SLOT] && pToucher->GetItemById(WEAPON_ELITE)))
@@ -2394,7 +2289,6 @@ void CArmoury::ArmouryTouch(CBaseEntity *pOther)
 			m_iCount--;
 			break;
 		}
-#endif
 		}
 	}
 
@@ -2420,13 +2314,11 @@ void CArmoury::KeyValue(KeyValueData *pkvd)
 	}
 }
 
-#ifdef REGAMEDLL_FIXES
 void CArmoury::SetObjectCollisionBox()
 {
 	pev->absmin = pev->origin + Vector(-16, -16, 0);
 	pev->absmax = pev->origin + Vector(16, 16, 16);
 }
-#endif
 
 LINK_ENTITY_TO_CLASS(armoury_entity, CArmoury)
 

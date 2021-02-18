@@ -966,19 +966,5 @@ void CBaseMonster::BloodSplat(const Vector &vecSrc, const Vector &vecDir, int Hi
 	if (HitLocation != HITGROUP_HEAD)
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	UTIL_BloodStream(vecSrc, vecDir, BLOOD_COLOR_DARKRED, iVelocity + RANDOM_LONG(0, 100));
-#else
-	MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, vecSrc);
-		WRITE_BYTE(TE_BLOODSTREAM);
-		WRITE_COORD(vecSrc.x);
-		WRITE_COORD(vecSrc.y);
-		WRITE_COORD(vecSrc.z);
-		WRITE_COORD(vecDir.x);
-		WRITE_COORD(vecDir.y);
-		WRITE_COORD(vecDir.z);
-		WRITE_BYTE(BLOOD_COLOR_DARKRED);
-		WRITE_BYTE(iVelocity + RANDOM_LONG(0, 100));
-	MESSAGE_END();
-#endif
 }

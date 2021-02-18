@@ -46,17 +46,14 @@ void CRecharge::Spawn()
 	SET_MODEL(ENT(pev), STRING(pev->model));
 
 	int armorValue = (int)gSkillData.suitchargerCapacity;
-#ifdef REGAMEDLL_FIXES
-	if (pev->armorvalue != 0.0f) {
+
+	if (pev->armorvalue != 0.0f)
 		armorValue = (int)pev->armorvalue;
-	}
-#endif
 
 	m_iJuice = armorValue;
 	pev->frame = 0;
 }
 
-#ifdef REGAMEDLL_FIXES
 void CRecharge::Restart()
 {
 	pev->solid = SOLID_BSP;
@@ -71,7 +68,6 @@ void CRecharge::Restart()
 	SetThink(&CRecharge::Recharge);
 }
 
-#endif
 void CRecharge::Precache()
 {
 	PRECACHE_SOUND("items/suitcharge1.wav");
@@ -81,7 +77,6 @@ void CRecharge::Precache()
 
 void CRecharge::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value)
 {
-#ifdef REGAMEDLL_FIXES
 	// Make sure that we have a caller
 	if (!pActivator)
 		return;
@@ -89,16 +84,10 @@ void CRecharge::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useT
 	// if it's not a player, ignore
 	if (!pActivator->IsPlayer())
 		return;
-#else
-	if (!FClassnameIs(pActivator->pev, "player"))
-		return;	
-#endif // #ifdef REGAMEDLL_FIXES
 	
 	// if there is no juice left, turn it off
 	if (m_iJuice <= 0
-#ifdef REGAMEDLL_FIXES
 		&& pev->frame != 1.0f // recharging... don't reset think
-#endif
 		)
 	{
 		pev->frame = 1.0f;
@@ -107,9 +96,7 @@ void CRecharge::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useT
 
 	// if the player doesn't have the suit, or there is no juice left, make the deny noise
 	if (m_iJuice <= 0 || !(pActivator->pev->weapons & (1 << WEAPON_SUIT))
-#ifdef REGAMEDLL_FIXES
 		|| pActivator->pev->armorvalue >= MAX_CHARGE_ARMOR // don't charge health if we can't more, prevent thinking entity
-#endif
 		)
 	{
 		if (m_flSoundTime <= gpGlobals->time)
@@ -155,11 +142,9 @@ void CRecharge::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useT
 	// charge the player
 	if (m_hActivator->pev->armorvalue < MAX_CHARGE_ARMOR)
 	{
-#ifdef REGAMEDLL_FIXES
 		CBasePlayer *pPlayer = m_hActivator.Get<CBasePlayer>();
 		if (pPlayer->m_iKevlar == ARMOR_NONE)
 			pPlayer->m_iKevlar = ARMOR_KEVLAR;
-#endif
 
 		m_iJuice--;
 		m_hActivator->pev->armorvalue += AMOUNT_CHARGE_ARMOR;
@@ -175,11 +160,8 @@ void CRecharge::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useT
 void CRecharge::Recharge()
 {
 	int armorValue = (int)gSkillData.suitchargerCapacity;
-#ifdef REGAMEDLL_FIXES
-	if (pev->armorvalue != 0.0f) {
+	if (pev->armorvalue != 0.0f)
 		armorValue = (int)pev->armorvalue;
-	}
-#endif
 
 	m_iJuice = armorValue;
 
@@ -199,9 +181,7 @@ void CRecharge::Off()
 	{
 		int iReactivate = m_iReactivate;
 
-#ifdef REGAMEDLL_FIXES
 		if (iReactivate <= 0)
-#endif // #ifdef REGAMEDLL_FIXES
 		{
 			if ((iReactivate = g_pGameRules->FlHEVChargerRechargeTime()) <= 0)
 				return;

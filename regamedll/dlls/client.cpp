@@ -312,12 +312,7 @@ void ClientDisconnect(edict_t *pEntity)
 	if (!g_pGameRules->IsGameOver())
 	{
 		UTIL_ClientPrintAll(HUD_PRINTNOTIFY, "#Game_disconnected", STRING(pEntity->v.netname));
-#ifndef REGAMEDLL_FIXES
-		CSound *pSound = CSoundEnt::SoundPointerForIndex(CSoundEnt::ClientSoundIndex(pEntity));
 
-		if (pSound)
-			pSound->Reset();
-#endif
 		pEntity->v.takedamage = DAMAGE_NO;
 		pEntity->v.solid = SOLID_NOT;
 		pEntity->v.flags = FL_DORMANT;
@@ -331,12 +326,7 @@ void ClientDisconnect(edict_t *pEntity)
 		g_pGameRules->ClientDisconnected(pEntity);
 	}
 
-#ifndef REGAMEDLL_FIXES
-	if (TheBots && pPlayer && pPlayer->IsBot())
-#else
-	// These checks are already inside into this CCSBotManager::ClientDisconnect
 	if (TheBots)
-#endif
 	{
 		TheBots->ClientDisconnect(pPlayer);
 	}
@@ -556,16 +546,11 @@ void ProcessKickVote(CBasePlayer *pVotingPlayer, CBasePlayer *pKickPlayer)
 
 	if (iVotesNeeded >= int(fKickPercent))
 	{
-#ifdef REGAMEDLL_FIXES
 		SERVER_COMMAND(UTIL_VarArgs("kick #%d \"You have been voted off.\"\n", iVoteID));
 		SERVER_EXECUTE();
-#endif
 
 		UTIL_ClientPrintAll(HUD_PRINTCENTER, "#Game_kicked", STRING(pKickPlayer->pev->netname));
 
-#ifndef REGAMEDLL_FIXES
-		SERVER_COMMAND(UTIL_VarArgs("kick #%d\n", iVoteID));
-#endif
 		pTempEntity = nullptr;
 
 		while ((pTempEntity = UTIL_FindEntityByClassname(pTempEntity, "player")))
@@ -684,21 +669,6 @@ void ClientPutInServer(edict_t *pEntity)
 		pPlayer->m_fIntroCamTime = gpGlobals->time + 6;
 		pPlayer->pev->view_ofs = g_vecZero;
 	}
-#ifndef REGAMEDLL_FIXES
-	else
-	{
-		pPlayer->m_iTeam = CT;
-
-		if (g_pGameRules)
-		{
-			g_pGameRules->GetPlayerSpawnSpot(pPlayer);
-		}
-
-		pPlayer->m_iTeam = UNASSIGNED;
-		pPlayer->pev->v_angle = g_vecZero;
-		pPlayer->pev->angles = gpGlobals->v_forward;
-	}
-#endif
 
 	if (TheBots)
 	{
@@ -775,9 +745,7 @@ void Host_Say(edict_t *pEntity, BOOL teamonly)
 		p = szTemp;
 	}
 
-#ifdef REGAMEDLL_FIXES
 	Q_StripPrecedingAndTrailingWhitespace(p);
-#endif
 
 	// remove quotes (leading & trailing) if present
 	if (*p == '"')
@@ -990,10 +958,8 @@ void Host_Say(edict_t *pEntity, BOOL teamonly)
 
 	MESSAGE_END();
 
-#ifdef REGAMEDLL_FIXES
 	// don't to type for listenserver
 	if (IS_DEDICATED_SERVER())
-#endif
 	{
 		// echo to server console
 		if (pszConsoleFormat)
@@ -1428,25 +1394,17 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 				pPlayer->pev->body = 1;
 				pPlayer->AddAccount(-DEFUSEKIT_PRICE, RT_PLAYER_BOUGHT_SOMETHING);
 
-#ifdef REGAMEDLL_FIXES
 				EMIT_SOUND(ENT(pPlayer->pev), CHAN_VOICE, "items/kevlar.wav", VOL_NORM, ATTN_NORM);
-#else
-				EMIT_SOUND(ENT(pPlayer->pev), CHAN_ITEM, "items/kevlar.wav", VOL_NORM, ATTN_NORM);
-#endif
-				pPlayer->SendItemStatus();
 
-#ifdef BUILD_LATEST
+				pPlayer->SendItemStatus();
 				pPlayer->SetScoreboardAttributes();
-#endif
 			}
 			break;
 		}
 		case MENU_SLOT_ITEM_SHIELD:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_SHIELDGUN, ITEM_TYPE_BUYING))
 				return;
-#endif
 
 			if (!CanBuyThis(pPlayer, WEAPON_SHIELDGUN))
 				return;
@@ -1662,11 +1620,7 @@ void HandleMenu_ChooseAppearance(CBasePlayer *pPlayer, int slot)
 		appearance.model_name_index = 9;
 	}
 
-#ifdef REGAMEDLL_FIXES
 	pPlayer->ResetMenu();
-#else
-	pPlayer->m_iMenu = Menu_OFF;
-#endif
 
 	// Reset the player's state
 	switch (pPlayer->m_iJoiningState)
@@ -1822,14 +1776,7 @@ BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 
 			pPlayer->RemoveAllItems(TRUE);
 
-#ifndef REGAMEDLL_FIXES
-			// NOTE: It is already does reset inside RemoveAllItems
-			pPlayer->m_bHasC4 = false;
-#endif
-
-#ifdef REGAMEDLL_FIXES
 			if (pPlayer->m_iTeam != SPECTATOR)
-#endif
 			{
 				// notify other clients of player joined to team spectator
 				UTIL_LogPrintf("\"%s<%i><%s><%s>\" joined team \"SPECTATOR\"\n", STRING(pPlayer->pev->netname),
@@ -1840,22 +1787,9 @@ BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 			pPlayer->m_iJoiningState = JOINED;
 
 			// Reset money
-#ifdef REGAMEDLL_ADD
 			pPlayer->AddAccount(0, RT_PLAYER_SPEC_JOIN, false);
-#else
-			pPlayer->m_iAccount = 0;
 
-			MESSAGE_BEGIN(MSG_ONE, gmsgMoney, nullptr, pPlayer->pev);
-				WRITE_LONG(pPlayer->m_iAccount);
-				WRITE_BYTE(0);
-			MESSAGE_END();
-#endif
-
-#ifndef REGAMEDLL_FIXES
-			MESSAGE_BEGIN(MSG_BROADCAST, gmsgScoreInfo);
-#else
 			MESSAGE_BEGIN(MSG_ALL, gmsgScoreInfo);
-#endif
 				WRITE_BYTE(ENTINDEX(pPlayer->edict()));
 				WRITE_SHORT(int(pPlayer->pev->frags));
 				WRITE_SHORT(pPlayer->m_iDeaths);
@@ -1876,13 +1810,6 @@ BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 			edict_t *pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot(pPlayer);
 			pPlayer->StartObserver(pentSpawnSpot->v.origin, pentSpawnSpot->v.angles);
 
-#ifndef REGAMEDLL_FIXES
-			// TODO: it was already sent in StartObserver
-			MESSAGE_BEGIN(MSG_ALL, gmsgSpectator);
-				WRITE_BYTE(ENTINDEX(pPlayer->edict()));
-				WRITE_BYTE(1);
-			MESSAGE_END();
-#endif
 			// do we have fadetoblack on? (need to fade their screen back in)
 			if (fadetoblack.value)
 			{
@@ -1956,11 +1883,7 @@ BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 		if (humanTeam != UNASSIGNED && team != humanTeam)
 		{
 			// TODO: These localization strings are not defined on the client CS 1.6, only for CZero
-#ifdef REGAMEDLL_FIXES
 			ClientPrint(pPlayer->pev, HUD_PRINTCENTER, (team == TERRORIST) ? "Humans can only be CT!" : "Humans can only be terrorists!");
-#else
-			ClientPrint(pPlayer->pev, HUD_PRINTCENTER, (team == TERRORIST) ? "#Humans_Join_Team_CT" : "#Humans_Join_Team_T");
-#endif
 			return FALSE;
 		}
 	}
@@ -2232,16 +2155,10 @@ bool BuyGunAmmo(CBasePlayer *pPlayer, CBasePlayerItem *weapon, bool bBlinkMoney)
 	// Purchase the ammo if the player has enough money
 	if (pPlayer->m_iAccount >= info->clipCost)
 	{
-#ifdef REGAMEDLL_FIXES
 		if (pPlayer->GiveAmmo(info->buyClipSize, info->ammoName2, weapon->iMaxAmmo1()) == -1)
 			return false;
 
 		EMIT_SOUND(ENT(weapon->pev), CHAN_ITEM, "items/9mmclip1.wav", VOL_NORM, ATTN_NORM);
-#else
-		if (!pPlayer->GiveNamedItemEx(info->ammoName1)) {
-			return false;
-		}
-#endif
 
 		pPlayer->AddAccount(-info->clipCost, RT_PLAYER_BOUGHT_SOMETHING);
 		return true;
@@ -2978,9 +2895,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 				if (canOpenOldMenu())
 				{
 					BuyPistol(pPlayer, slot);
-#ifdef REGAMEDLL_FIXES
 					pPlayer->BuildRebuyStruct();
-#endif
 				}
 				break;
 			}
@@ -2989,9 +2904,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 				if (canOpenOldMenu())
 				{
 					BuyShotgun(pPlayer, slot);
-#ifdef REGAMEDLL_FIXES
 					pPlayer->BuildRebuyStruct();
-#endif
 				}
 				break;
 			}
@@ -3000,9 +2913,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 				if (canOpenOldMenu())
 				{
 					BuySubMachineGun(pPlayer, slot);
-#ifdef REGAMEDLL_FIXES
 					pPlayer->BuildRebuyStruct();
-#endif
 				}
 				break;
 			}
@@ -3011,9 +2922,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 				if (canOpenOldMenu())
 				{
 					BuyRifle(pPlayer, slot);
-#ifdef REGAMEDLL_FIXES
 					pPlayer->BuildRebuyStruct();
-#endif
 				}
 				break;
 			}
@@ -3022,9 +2931,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 				if (canOpenOldMenu())
 				{
 					BuyMachineGun(pPlayer, slot);
-#ifdef REGAMEDLL_FIXES
 					pPlayer->BuildRebuyStruct();
-#endif
 				}
 				break;
 			}
@@ -3033,9 +2940,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 				if (canOpenOldMenu())
 				{
 					BuyItem(pPlayer, slot);
-#ifdef REGAMEDLL_FIXES
 					pPlayer->BuildRebuyStruct();
-#endif
 				}
 				break;
 			}
@@ -3131,11 +3036,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 	}
 	else if (FStrEq(pcmd, "become_vip"))
 	{
-		if (pPlayer->m_iJoiningState != JOINED || pPlayer->m_iTeam != CT
-#ifdef REGAMEDLL_FIXES
-			|| !CSGameRules()->m_bMapHasVIPSafetyZone
-#endif
-			)
+		if (pPlayer->m_iJoiningState != JOINED || pPlayer->m_iTeam != CT || !CSGameRules()->m_bMapHasVIPSafetyZone)
 		{
 			ClientPrint(pPlayer->pev, HUD_PRINTCENTER, "#Command_Not_Available");
 			return;
@@ -3184,7 +3085,6 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 			pPlayer->Observer_FindNextPlayer(false, parg1);
 		}
 	}
-#ifdef REGAMEDLL_FIXES
 	else if (FStrEq(pcmd, "cl_setautobuy"))
 	{
 		if (pPlayer->pev->deadflag != DEAD_NO && pPlayer->m_autoBuyString[0] != '\0')
@@ -3223,7 +3123,6 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 			}
 		}
 	}
-#endif
 	else
 	{
 		if (g_pGameRules->ClientCommand_DeadOrAlive(GetClassPtr((CBasePlayer *)pev), pcmd))
@@ -3251,13 +3150,7 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 			if (HandleMenu_ChooseTeam(pPlayer, slot))
 			{
 				if (slot == MENU_SLOT_TEAM_VIP || slot == MENU_SLOT_TEAM_SPECT || pPlayer->m_bIsVIP)
-				{
-#ifdef REGAMEDLL_FIXES
 					pPlayer->ResetMenu();
-#else
-					pPlayer->m_iMenu = Menu_OFF;
-#endif
-				}
 				else
 					pPlayer->m_iMenu = Menu_ChooseAppearance;
 			}
@@ -3455,35 +3348,6 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 					}
 				}
 			}
-#ifndef REGAMEDLL_FIXES
-			// Moved to above
-			else if (FStrEq(pcmd, "cl_setautobuy"))
-			{
-				pPlayer->ClearAutoBuyData();
-
-				for (int i = 1; i < CMD_ARGC_(); i++)
-				{
-					pPlayer->AddAutoBuyData(CMD_ARGV_(i));
-				}
-
-				bool oldval = g_bClientPrintEnable;
-				g_bClientPrintEnable = false;
-				pPlayer->AutoBuy();
-				g_bClientPrintEnable = oldval;
-			}
-			else if (FStrEq(pcmd, "cl_setrebuy"))
-			{
-				if (CMD_ARGC_() == 2)
-				{
-					pPlayer->InitRebuyData(parg1);
-
-					bool oldval = g_bClientPrintEnable;
-					g_bClientPrintEnable = false;
-					pPlayer->Rebuy();
-					g_bClientPrintEnable = oldval;
-				}
-			}
-#endif
 			else if (FStrEq(pcmd, "cl_autobuy"))
 			{
 				if (pPlayer->m_signals.GetState() & SIGNAL_BUY)
@@ -3542,12 +3406,11 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 					// max total length is 192 ...and we're adding a string below ("Unknown command: %s\n")
 					Q_strncpy(command, pcmd, sizeof(command) - 1);
 					command[sizeof(command) - 1] = '\0';
-#ifdef REGAMEDLL_FIXES
+
 					// Add extra '\n' to make command string safe
 					// This extra '\n' is removed by the client, so it is ok
 					command[sizeof(command) - 2] = '\0';
 					command[Q_strlen(command)] = '\n';
-#endif
 
 					// tell the user they entered an unknown command
 					ClientPrint(&pEntity->v, HUD_PRINTCONSOLE, "#Game_unknown_command", command);
@@ -4156,11 +4019,7 @@ void ClientPrecache()
 	PRECACHE_MODEL("sprites/black_smoke2.spr");
 	PRECACHE_MODEL("sprites/black_smoke3.spr");
 	PRECACHE_MODEL("sprites/black_smoke4.spr");
-
-#ifdef REGAMEDLL_FIXES
 	PRECACHE_MODEL("sprites/gas_puff_01.spr");
-#endif
-
 	PRECACHE_MODEL("sprites/fast_wallpuff1.spr");
 	PRECACHE_MODEL("sprites/pistol_smoke1.spr");
 	PRECACHE_MODEL("sprites/pistol_smoke2.spr");
@@ -4956,14 +4815,11 @@ int ConnectionlessPacket(const struct netadr_s *net_from, const char *args, char
 
 BOOL GetHullBounds(int hullnumber, float *mins, float *maxs)
 {
-#ifdef REGAMEDLL_ADD
 	if (hullbounds_sets.value == 0.0f)
 	{
 		return (hullnumber < 3) ? TRUE : FALSE;
 	}
-#endif
 
-#ifdef REGAMEDLL_FIXES
 	switch (hullnumber)
 	{
 	case 0: // Normal player
@@ -4981,32 +4837,13 @@ BOOL GetHullBounds(int hullnumber, float *mins, float *maxs)
 	default:
 		return FALSE;
 	}
-#else // REGAMEDLL_FIXES
-	switch (hullnumber)
-	{
-	case 0: // Normal player
-		mins = VEC_HULL_MIN;
-		maxs = VEC_HULL_MAX;
-		return TRUE;
-	case 1: // Crouched player
-		mins = VEC_DUCK_HULL_MIN;
-		maxs = VEC_DUCK_HULL_MAX;
-		return TRUE;
-	case 2: // Point based hull
-		mins = Vector(0, 0, 0);
-		maxs = Vector(0, 0, 0);
-		return TRUE;
-	default:
-		return FALSE;
-	}
-#endif // REGAMEDLL_FIXES
 }
 
 // Create pseudo-baselines for items that aren't placed in the map at spawn time, but which are likely
 // to be created during play ( e.g., grenades, ammo packs, projectiles, corpses, etc. )
 void CreateInstancedBaselines()
 {
-#ifndef REGAMEDLL_FIXES
+#if 0
 	int iret = 0;
 	entity_state_t state;
 

@@ -37,11 +37,7 @@ void CUMP45::Precache()
 int CUMP45::GetItemInfo(ItemInfo *p)
 {
 	p->pszName = STRING(pev->classname);
-#ifdef REGAMEDLL_FIXES
 	p->pszAmmo1 = "45acp";
-#else
-	p->pszAmmo1 = "45ACP";
-#endif
 	p->iMaxAmmo1 = MAX_AMMO_45ACP;
 	p->pszAmmo2 = nullptr;
 	p->iMaxAmmo2 = -1;

@@ -44,12 +44,12 @@ const int MAX_TR_TARGETS = 16; // maximum number of targets a single trigger_ran
 
 class CTriggerRandom: public CBaseDelay {
 public:
-	void Spawn();
-	void KeyValue(KeyValueData *pkvd);
-	int Save(CSave &save);
-	int Restore(CRestore &restore);
-	int ObjectCaps() { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
-	void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
+	void Spawn() override;
+	void KeyValue(KeyValueData *pkvd) override;
+	int Save(CSave &save) override;
+	int Restore(CRestore &restore) override;
+	int ObjectCaps()  override { return (CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); }
+	void Use(CBaseEntity* pActivator, CBaseEntity* pCaller, EUseType useType, float value) override;
 
 protected:
 	void InitUnique();

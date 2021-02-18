@@ -1328,11 +1328,9 @@ qboolean PM_InWater()
 // Sets pmove->waterlevel and pmove->watertype values.
 qboolean PM_CheckWater()
 {
-#ifdef REGAMEDLL_FIXES
 	// do not check for dead
 	if (pmove->dead || pmove->deadflag != DEAD_NO)
 		return FALSE;
-#endif
 
 	vec3_t point;
 	int cont;
@@ -1786,11 +1784,8 @@ void PM_FixPlayerCrouchStuck(int direction)
 
 void PM_UnDuck()
 {
-#ifdef REGAMEDLL_ADD
 	if (unduck_method.value)
-#endif
 	{
-#ifdef REGAMEDLL_FIXES
 		// if ducking isn't finished yet, so don't unduck
 		if (pmove->bInDuck || !(pmove->flags & FL_DUCKING))
 		{
@@ -1800,7 +1795,6 @@ void PM_UnDuck()
 			pmove->view_ofs[2] = PM_VEC_VIEW;
 			return;
 		}
-#endif // #ifdef REGAMEDLL_FIXES
 	}
 
 	pmtrace_t trace;
@@ -1810,13 +1804,9 @@ void PM_UnDuck()
 
 	if (pmove->onground != -1)
 	{
-#ifdef REGAMEDLL_FIXES
 		vec3_t offset;
 		VectorSubtract(pmove->player_mins[1], pmove->player_mins[0], offset);
 		VectorAdd(newOrigin, offset, newOrigin);
-#else
-		newOrigin[2] += 18.0;
-#endif
 	}
 
 	trace = pmove->PM_PlayerTrace(newOrigin, newOrigin, PM_NORMAL, -1);
@@ -1916,13 +1906,9 @@ void PM_Duck()
 				// HACKHACK - Fudge for collision bug - no time to fix this properly
 				if (pmove->onground != -1)
 				{
-#ifdef REGAMEDLL_FIXES
 					vec3_t newOrigin;
 					VectorSubtract(pmove->player_mins[1], pmove->player_mins[0], newOrigin);
 					VectorSubtract(pmove->origin, newOrigin, pmove->origin);
-#else
-					pmove->origin[2] = pmove->origin[2] - 18.0;
-#endif
 
 					// See if we are stuck?
 					PM_FixPlayerCrouchStuck(STUCK_MOVEUP);
@@ -1941,11 +1927,7 @@ void PM_Duck()
 					duckFraction = PM_SplineFraction(time, (1.0 / TIME_TO_DUCK));
 				}
 
-#ifdef REGAMEDLL_FIXES
 				float fMore = (pmove->player_mins[1][2] - pmove->player_mins[0][2]);
-#else
-				float fMore = (PM_VEC_DUCK_HULL_MIN - PM_VEC_HULL_MIN);
-#endif
 
 				pmove->view_ofs[2] = ((PM_VEC_DUCK_VIEW - fMore) * duckFraction) + (PM_VEC_VIEW * (1 - duckFraction));
 			}
@@ -2724,13 +2706,11 @@ void PM_CheckParameters()
 	// Set dead player view_offset
 	if (pmove->dead)
 	{
-#ifdef REGAMEDLL_FIXES
 		if (pmove->bInDuck)
 		{
 			PM_UnDuck();
 			pmove->bInDuck = FALSE;
 		}
-#endif
 
 		pmove->view_ofs[2] = PM_DEAD_VIEWHEIGHT;
 	}

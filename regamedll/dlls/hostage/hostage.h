@@ -92,10 +92,6 @@ public:
 	virtual BOOL TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
 	virtual int BloodColor() { return BLOOD_COLOR_RED; }
 
-#ifndef REGAMEDLL_FIXES
-	virtual BOOL IsAlive() { return (pev->takedamage == DAMAGE_YES); }
-#endif
-
 	virtual void Touch(CBaseEntity *pOther);
 	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
 

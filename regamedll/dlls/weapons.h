@@ -143,9 +143,7 @@ public:
 	virtual void Precache();
 	virtual void Restart();
 	virtual void KeyValue(KeyValueData *pkvd);
-#ifdef REGAMEDLL_FIXES
 	virtual void SetObjectCollisionBox();
-#endif
 
 public:
 	void EXPORT ArmouryTouch(CBaseEntity *pOther);
@@ -308,7 +306,6 @@ public:
 };
 
 // inventory items that
-class CCSPlayerWeapon;
 class CBasePlayerWeapon: public CBasePlayerItem
 {
 public:
@@ -368,15 +365,6 @@ public:
 	void InstantReload(bool bCanRefillBPAmmo = false);
 	bool DefaultShotgunReload(int iAnim, int iStartAnim, float fDelay, float fStartDelay, const char *pszReloadSound1 = nullptr, const char *pszReloadSound2 = nullptr);
 
-#ifdef REGAMEDLL_API
-	BOOL CanDeploy_OrigFunc();
-	BOOL DefaultDeploy_OrigFunc(char *szViewModel, char *szWeaponModel, int iAnim, char *szAnimExt, int skiplocal);
-	BOOL DefaultReload_OrigFunc(int iClipSize, int iAnim, float fDelay);
-	bool DefaultShotgunReload_OrigFunc(int iAnim, int iStartAnim, float fDelay, float fStartDelay, const char *pszReloadSound1, const char *pszReloadSound2);
-
-	CCSPlayerWeapon *CSPlayerWeapon() const;
-#endif
-
 public:
 	static TYPEDESCRIPTION m_SaveData[];
 
@@ -419,13 +407,6 @@ public:
 	float m_flLastFireTime;
 };
 
-#ifdef REGAMEDLL_API
-inline CCSPlayerWeapon *CBasePlayerWeapon::CSPlayerWeapon() const
-{
-	return reinterpret_cast<CCSPlayerWeapon *>(this->m_pEntity);
-}
-#endif
-
 class CWeaponBox: public CBaseEntity
 {
 public:
@@ -449,10 +430,6 @@ public:
 	BOOL PackWeapon(CBasePlayerItem *pWeapon);
 	BOOL PackAmmo(string_t iszName, int iCount);
 
-#ifdef REGAMEDLL_API
-	void SetModel_OrigFunc(const char *pszModelName);
-#endif
-
 public:
 	static TYPEDESCRIPTION m_SaveData[];
 
@@ -469,12 +446,7 @@ const float USP_DAMAGE          = 34.0f;
 const float USP_DAMAGE_SIL      = 30.0f;
 const float USP_RANGE_MODIFER   = 0.79f;
 const float USP_RELOAD_TIME     = 2.7f;
-
-#ifdef REGAMEDLL_FIXES
 const float USP_ADJUST_SIL_TIME = 3.13f;
-#else
-const float USP_ADJUST_SIL_TIME = 3.0f;
-#endif
 
 enum usp_e
 {
@@ -540,10 +512,6 @@ public:
 
 private:
 	unsigned short m_usFireUSP;
-
-#ifdef REGAMEDLL_API
-	float m_flBaseDamageSil;
-#endif
 };
 
 
@@ -805,18 +773,17 @@ enum c4_e
 class CC4: public CBasePlayerWeapon
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
-	virtual int GetItemInfo(ItemInfo *p);
-	virtual BOOL Deploy();
-	virtual void Holster(int skiplocal);
-	virtual float GetMaxSpeed();
-	virtual int iItemSlot() { return C4_SLOT; }
-	virtual void PrimaryAttack();
-	virtual void WeaponIdle();
-	virtual BOOL UseDecrement()
+	virtual void Spawn() override;
+	virtual void Precache() override;
+	virtual void KeyValue(KeyValueData *pkvd) override;
+	virtual int GetItemInfo(ItemInfo *p) override;
+	virtual BOOL Deploy() override;
+	virtual void Holster(int skiplocal) override;
+	virtual float GetMaxSpeed() override;
+	virtual int iItemSlot()  override { return C4_SLOT; }
+	virtual void PrimaryAttack() override;
+	virtual void WeaponIdle() override;
+	virtual BOOL UseDecrement() override
 	{
 	#ifdef CLIENT_WEAPONS
 		return TRUE;
@@ -917,19 +884,6 @@ public:
 		return FALSE;
 	#endif
 	}
-	virtual BOOL IsPistol()
-	{
-	#ifdef REGAMEDLL_FIXES
-		return FALSE;
-	#else
-		// TODO: why the object flashbang is IsPistol?
-		return TRUE;
-	#endif
-	}
-
-#ifdef REGAMEDLL_API
-	BOOL CanDeploy_OrigFunc();
-#endif
 
 public:
 	bool ShieldSecondaryFire(int iUpAnim, int iDownAnim);
@@ -1086,10 +1040,6 @@ public:
 		return FALSE;
 	#endif
 	}
-
-#ifdef REGAMEDLL_API
-	BOOL CanDeploy_OrigFunc();
-#endif
 
 public:
 	bool ShieldSecondaryFire(int iUpAnim, int iDownAnim);
@@ -1270,7 +1220,6 @@ public:
 
 public:
 	int m_iShell;
-	float m_flPumpTime;
 
 private:
 	unsigned short m_usFireM3;
@@ -1332,10 +1281,6 @@ public:
 
 private:
 	unsigned short m_usFireM4A1;
-
-#ifdef REGAMEDLL_API
-	float m_flBaseDamageSil;
-#endif
 };
 
 
@@ -1579,10 +1524,6 @@ public:
 	#endif
 	}
 
-#ifdef REGAMEDLL_API
-	BOOL CanDeploy_OrigFunc();
-#endif
-
 public:
 	bool ShieldSecondaryFire(int iUpAnim, int iDownAnim);
 	void SetPlayerShieldAnim();
@@ -1680,7 +1621,6 @@ public:
 
 public:
 	int m_iShell;
-	float m_flPumpTime;
 
 private:
 	unsigned short m_usFireXM1014;
@@ -1982,10 +1922,6 @@ public:
 public:
 	int m_iShell;
 	int iShellOn;
-
-#ifdef REGAMEDLL_API
-	float m_flBaseDamageBurst;
-#endif
 };
 
 extern short g_sModelIndexLaser;

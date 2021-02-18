@@ -541,31 +541,6 @@ public:
 	virtual void ChangeLevel();
 	virtual void GoToIntermission();
 
-#ifdef REGAMEDLL_API
-	BOOL FShouldSwitchWeapon_OrigFunc(CBasePlayer *pPlayer, CBasePlayerItem *pWeapon);
-	BOOL GetNextBestWeapon_OrigFunc(CBasePlayer *pPlayer, CBasePlayerItem *pCurrentWeapon);
-	float FlPlayerFallDamage_OrigFunc(CBasePlayer *pPlayer);
-	BOOL FPlayerCanTakeDamage_OrigFunc(CBasePlayer *pPlayer, CBaseEntity *pAttacker);
-	void PlayerSpawn_OrigFunc(CBasePlayer *pPlayer);
-	BOOL FPlayerCanRespawn_OrigFunc(CBasePlayer *pPlayer);
-	edict_t *GetPlayerSpawnSpot_OrigFunc(CBasePlayer *pPlayer);
-	void ClientUserInfoChanged_OrigFunc(CBasePlayer *pPlayer, char *infobuffer);
-	void PlayerKilled_OrigFunc(CBasePlayer *pVictim, entvars_t *pKiller, entvars_t *pInflictor);
-	void DeathNotice_OrigFunc(CBasePlayer *pVictim, entvars_t *pKiller, entvars_t *pInflictor);
-	BOOL CanHavePlayerItem_OrigFunc(CBasePlayer *pPlayer, CBasePlayerItem *pWeapon);
-	int DeadPlayerWeapons_OrigFunc(CBasePlayer *pPlayer);
-	void ServerDeactivate_OrigFunc();
-	void CheckMapConditions_OrigFunc();
-	void CleanUpMap_OrigFunc();
-	void RestartRound_OrigFunc();
-	void CheckWinConditions_OrigFunc();
-	void RemoveGuns_OrigFunc();
-	void GiveC4_OrigFunc();
-	void ChangeLevel_OrigFunc();
-	void GoToIntermission_OrigFunc();
-	void BalanceTeams_OrigFunc();
-#endif
-
 public:
 	void ServerActivate();
 	void ReadMultiplayCvars();
@@ -810,27 +785,15 @@ class CCStrikeGameMgrHelper: public IVoiceGameMgrHelper
 public:
 	virtual bool CanPlayerHearPlayer(CBasePlayer *pListener, CBasePlayer *pSender);
 
-#ifdef REGAMEDLL_ADD
 	virtual void ResetCanHearPlayer(edict_t* pEdict);
 	virtual void SetCanHearPlayer(CBasePlayer* pListener, CBasePlayer* pSender, bool bCanHear);
 	virtual bool GetCanHearPlayer(CBasePlayer* pListener, CBasePlayer* pSender);
-#endif
-
-#ifdef REGAMEDLL_API
-	bool CanPlayerHearPlayer_OrigFunc(CBasePlayer *pListener, CBasePlayer *pSender);
-#endif
 
 public:
-#ifdef REGAMEDLL_ADD
 	CBitVec<VOICE_MAX_PLAYERS> m_iCanHearMasks[VOICE_MAX_PLAYERS];
-#endif
 };
 
 extern CGameRules DLLEXPORT *g_pGameRules;
-
-#ifdef REGAMEDLL_API
-CGameRules *InstallGameRules_OrigFunc();
-#endif
 
 CGameRules *InstallGameRules();
 
@@ -849,69 +812,46 @@ inline void CHalfLifeMultiplay::TerminateRound(float tmDelay, int iWinStatus)
 
 inline float CHalfLifeMultiplay::GetRoundRemainingTimeReal() const
 {
-#ifdef REGAMEDLL_FIXES
 	return m_iRoundTimeSecs - gpGlobals->time + m_fRoundStartTimeReal;
-#else
-	return GetRoundRemainingTime();
-#endif
 }
 
 inline float CHalfLifeMultiplay::GetRoundRespawnTime() const
 {
-#ifdef REGAMEDLL_ADD
 	return roundrespawn_time.value;
-#else
-	return ROUND_RESPAWN_TIME;
-#endif
 }
 
 inline bool CHalfLifeMultiplay::IsFreeForAll() const
 {
-#ifdef REGAMEDLL_ADD
 	if (freeforall.value != 0.0f)
 		return true;
-#endif
+
 	return false;
 }
 
 inline float CHalfLifeMultiplay::GetRoundRestartDelay() const
 {
-#ifdef REGAMEDLL_ADD
 	return round_restart_delay.value;
-#else
-	return ROUND_BEGIN_DELAY;
-#endif
 }
 
 inline bool HasRoundInfinite(int flags = 0)
 {
-#ifdef REGAMEDLL_ADD
 	if (round_infinite.string[0] == '1')
 		return true;
 
 	if (flags && (UTIL_ReadFlags(round_infinite.string) & flags))
 		return true;
 
-#endif
 	return false;
 }
 
 inline float CGameRules::GetItemKillDelay()
 {
-#ifdef REGAMEDLL_ADD
 	return item_staytime.value;
-#else
-	return ITEM_KILL_DELAY;
-#endif
 }
 
 inline float CGameRules::GetRadioTimeout()
 {
-#ifdef REGAMEDLL_ADD
 	return radio_timeout.value;
-#else
-	return RADIO_TIMEOUT;
-#endif
 }
 
 bool IsBotSpeaking();

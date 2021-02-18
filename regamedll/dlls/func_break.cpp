@@ -158,7 +158,6 @@ void CBreakable::Restart()
 		pev->flags |= FL_WORLDBRUSH;
 	}
 
-#ifdef REGAMEDLL_FIXES
 	if (m_iszSpawnObject)
 	{
 		CBaseEntity *pEntity = nullptr;
@@ -172,7 +171,6 @@ void CBreakable::Restart()
 			}
 		}
 	}
-#endif
 }
 
 void CBreakable::KeyValue(KeyValueData *pkvd)
@@ -407,11 +405,6 @@ void CBreakable::DamageSound()
 
 	fvol = RANDOM_FLOAT(0.75, 1.0);
 
-#ifndef REGAMEDLL_FIXES
-	if (material == matComputer && RANDOM_LONG(0, 1))
-		material = matMetal;
-#endif
-
 	switch (material)
 	{
 	case matGlass:
@@ -434,11 +427,7 @@ void CBreakable::DamageSound()
 		rgpsz[0] = "debris/metal1.wav";
 		rgpsz[1] = "debris/metal3.wav";
 		rgpsz[2] = "debris/metal2.wav";
-#ifdef REGAMEDLL_FIXES
 		i = 3;
-#else
-		i = 2;
-#endif
 		break;
 
 	case matFlesh:
@@ -487,12 +476,6 @@ void CBreakable::BreakTouch(CBaseEntity *pOther)
 
 		g_vecAttackDir = gpGlobals->v_forward;
 
-#ifndef REGAMEDLL_FIXES
-		pev->takedamage = DAMAGE_NO;
-		pev->deadflag = DEAD_DEAD;
-		pev->effects = EF_NODRAW;
-#endif
-
 		Die();
 	}
 
@@ -539,12 +522,6 @@ void CBreakable::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType use
 		pev->angles.y = m_angle;
 		UTIL_MakeVectors(pev->angles);
 		g_vecAttackDir = gpGlobals->v_forward;
-
-#ifndef REGAMEDLL_FIXES
-		pev->takedamage = DAMAGE_NO;
-		pev->deadflag = DEAD_DEAD;
-		pev->effects = EF_NODRAW;
-#endif
 
 		Die();
 	}
@@ -630,11 +607,6 @@ BOOL CBreakable::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, flo
 
 	if (pev->health <= 0)
 	{
-#ifndef REGAMEDLL_FIXES
-		pev->takedamage = DAMAGE_NO;
-		pev->deadflag = DEAD_DEAD;
-		pev->effects = EF_NODRAW;
-#endif
 		Die();
 
 		if (m_flDelay == 0.0f)
@@ -661,11 +633,9 @@ void CBreakable::Die()
 	int pitch;
 	float fvol;
 
-#ifdef REGAMEDLL_FIXES
 	pev->takedamage = DAMAGE_NO;
 	pev->deadflag = DEAD_DEAD;
 	pev->effects = EF_NODRAW;
-#endif
 
 	pitch = 95 + RANDOM_LONG(0, 29);
 
@@ -674,12 +644,7 @@ void CBreakable::Die()
 
 	// The more negative pev->health, the louder
 	// the sound should be.
-
-#ifdef REGAMEDLL_FIXES
 	fvol = RANDOM_FLOAT(0.85f, 1.0f) + (Q_abs(pev->health) / 100.0f);
-#else
-	fvol = RANDOM_FLOAT(0.85f, 1.0f) + (Q_abs(int(pev->health)) / 100.0f);
-#endif
 
 	if (fvol > 1.0f)
 		fvol = 1.0f;
@@ -835,13 +800,8 @@ void CBreakable::Die()
 	{
 		// TODO: Implement a list of entities to remove them on restart round
 		auto pItem = CBaseEntity::Create((char *)STRING(m_iszSpawnObject), VecBModelOrigin(pev), pev->angles, edict());
-
-#ifdef REGAMEDLL_FIXES
 		if (pItem)
-		{
 			pItem->pev->spawnflags |= SF_NORESPAWN;
-		}
-#endif
 
 	}
 
@@ -908,10 +868,7 @@ void CPushable::Spawn()
 	// Pick up off of the floor
 	pev->origin.z += 1;
 	UTIL_SetOrigin(pev, pev->origin);
-
-#ifdef REGAMEDLL_FIXES
 	pev->oldorigin = pev->origin;
-#endif
 
 	// Multiply by area of the box's cross-section (assume 1000 units^3 standard volume)
 	pev->skin = int((pev->skin * (pev->maxs.x - pev->mins.x) * (pev->maxs.y - pev->mins.y)) * 0.0005);
@@ -931,7 +888,6 @@ void CPushable::Precache()
 	}
 }
 
-#ifdef REGAMEDLL_FIXES
 void CPushable::Restart()
 {
 	if (pev->spawnflags & SF_PUSH_BREAKABLE)
@@ -953,7 +909,6 @@ void CPushable::Restart()
 
 	UTIL_SetOrigin(pev, pev->oldorigin);
 }
-#endif
 
 void CPushable::KeyValue(KeyValueData *pkvd)
 {
@@ -1082,10 +1037,6 @@ void CPushable::Move(CBaseEntity *pOther, int push)
 	if (bPlayerTouch)
 	{
 // do not push player along with entity
-#ifndef REGAMEDLL_FIXES
-		pevToucher->velocity.x = pev->velocity.x;
-		pevToucher->velocity.y = pev->velocity.y;
-#endif // REGAMEDLL_FIXES
 
 		if ((gpGlobals->time - m_soundTime) > 0.7f)
 		{

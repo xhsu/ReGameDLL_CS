@@ -33,10 +33,8 @@ void InstallTutor(bool bCreate)
 
 void Tutor_RegisterCVars()
 {
-#ifdef REGAMEDLL_FIXES
 	if (!AreRunningCZero())
 		return;
-#endif
 
 	CVAR_REGISTER(&cv_tutor_message_repeats);
 	CVAR_REGISTER(&cv_tutor_debug_level);

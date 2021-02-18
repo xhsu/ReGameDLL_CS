@@ -374,7 +374,6 @@ void CLightning::Spawn()
 	}
 }
 
-#ifdef REGAMEDLL_FIXES
 void CLightning::Restart()
 {
 	if (FStringNull(m_iszSpriteName))
@@ -428,7 +427,6 @@ void CLightning::Restart()
 		}
 	}
 }
-#endif
 
 void CLightning::Precache()
 {
@@ -920,7 +918,6 @@ void CLaser::Spawn()
 		TurnOn();
 }
 
-#ifdef REGAMEDLL_FIXES
 void CLaser::Restart()
 {
 	if (FStringNull(pev->model))
@@ -945,7 +942,6 @@ void CLaser::Restart()
 	else
 		TurnOn();
 }
-#endif
 
 void CLaser::Precache()
 {
@@ -1123,9 +1119,7 @@ LINK_ENTITY_TO_CLASS(env_bombglow, CBombGlow)
 
 void CBombGlow::Spawn()
 {
-#ifdef REGAMEDLL_FIXES
 	PRECACHE_MODEL("sprites/flare1.spr");
-#endif
 
 	pev->solid = SOLID_NOT;
 	pev->movetype = MOVETYPE_NONE;

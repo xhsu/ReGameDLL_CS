@@ -41,7 +41,6 @@ class CBaseEntity;
 class CBaseMonster;
 class CBasePlayerItem;
 class CSquadMonster;
-class CCSEntity;
 
 #undef CREATE_NAMED_ENTITY
 #undef REMOVE_ENTITY
@@ -151,8 +150,8 @@ public:
 	void EXPORT SUB_CallUseToggle() { Use(this, this, EUseType::TOGGLE, 0); }
 	bool ShouldToggle(EUseType useType, bool currentState);
 
-	void FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
-	void FireBuckshots(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, Vector& vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
+	void FireBullets(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, const Vector& vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
+	void FireBuckshots(ULONG cShots, Vector& vecSrc, Vector& vecDirShooting, const Vector& vecSpread, float flDistance, int iTracerFreq, int iDamage, entvars_t *pevAttacker);
 	Vector& FireBullets3(Vector& vecSrc, Vector& vecDirShooting, float vecSpread, float flDistance, int iPenetration, int iBulletType, int iDamage, float flRangeModifier, entvars_t *pevAttacker, bool bPistol, int shared_rand = 0);
 
 	void SUB_UseTargets(CBaseEntity *pActivator, EUseType useType, float value);
@@ -239,14 +238,6 @@ public:
 	template <typename T>
 	void SetBlocked(void (T::*pfn)(CBaseEntity *pOther));
 	void SetBlocked(std::nullptr_t);
-
-#ifdef REGAMEDLL_API
-	CCSEntity *m_pEntity;
-#else
-	// We use this variables to store each ammo count.
-	// let's sacrifice this unused member, for its own needs in favor of m_pEntity
-	int *current_ammo;
-#endif
 
 	float currentammo;
 	int maxammo_buckshot;
@@ -378,10 +369,6 @@ public:
 	int ExtractBbox(int sequence, float *mins, float *maxs);
 	void SetSequenceBox();
 
-#ifdef REGAMEDLL_API
-	void ResetSequenceInfo_OrigFunc();
-#endif
-
 public:
 	static TYPEDESCRIPTION m_SaveData[];
 
@@ -473,7 +460,8 @@ inline void CBaseToggle::SetMoveDone(std::nullptr_t)
 #define SF_BUTTON_TOUCH_ONLY    BIT(8) // button only fires as a result of USE key.
 
 // Generic Button
-class CBaseButton: public CBaseToggle {
+class CBaseButton: public CBaseToggle
+{
 public:
 	virtual void Spawn();
 	virtual void Precache();
@@ -493,9 +481,7 @@ public:
 		return (CBaseToggle::ObjectCaps() & ~FCAP_ACROSS_TRANSITION);
 	}
 
-#ifdef REGAMEDLL_FIXES
 	virtual void Restart();
-#endif
 
 public:
 	void RotSpawn();
@@ -545,10 +531,7 @@ public:
 	virtual int ObjectCaps() { return (CPointEntity::ObjectCaps() | FCAP_MASTER); }
 	virtual BOOL IsTriggered(CBaseEntity *pActivator);
 	virtual void Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType useType, float value);
-
-#ifdef REGAMEDLL_FIXES
 	virtual void Restart();
-#endif
 
 public:
 	void EXPORT Register();

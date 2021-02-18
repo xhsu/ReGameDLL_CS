@@ -1037,9 +1037,8 @@ bool BotStatement::Update()
 					else if (enemyCount > 1)
 					{
 						phrase = TheBotPhrases->GetPhrase("EnemySpotted");
-#ifdef REGAMEDLL_FIXES
+
 						if (phrase)
-#endif
 						{
 							phrase->SetCountCriteria(enemyCount);
 						}
@@ -1581,20 +1580,16 @@ bool BotChatterInterface::ShouldSpeak() const
 
 float BotChatterInterface::GetRadioSilenceDuration()
 {
-#ifdef REGAMEDLL_FIXES
 	if (m_me->m_iTeam != CT && m_me->m_iTeam != TERRORIST)
 		return 0;
-#endif
 
 	return m_radioSilenceInterval[m_me->m_iTeam - 1].GetElapsedTime();
 }
 
 void BotChatterInterface::ResetRadioSilenceDuration()
 {
-#ifdef REGAMEDLL_FIXES
 	if (m_me->m_iTeam != CT && m_me->m_iTeam != TERRORIST)
 		return;
-#endif
 
 	m_radioSilenceInterval[m_me->m_iTeam - 1].Reset();
 }
@@ -1970,13 +1965,11 @@ NOXREF void BotChatterInterface::GuardingLooseBomb(CBaseEntity *bomb)
 	if (TheCSBots()->IsRoundOver() || !bomb)
 		return;
 
-#ifdef REGAMEDLL_FIXES
-	const float minInterval = 20.0f;
+	constexpr float minInterval = 20.0f;
 	if (m_planInterval.IsLessThen(minInterval))
 		return;
 
 	m_planInterval.Reset();
-#endif
 
 	// update our gamestate
 	m_me->GetGameState()->UpdateLooseBomb(&bomb->pev->origin);
@@ -2104,13 +2097,11 @@ void BotChatterInterface::GuardingHostages(Place place, bool isPlan)
 	if (TheCSBots()->IsRoundOver())
 		return;
 
-	const float minInterval = 20.0f;
+	constexpr float minInterval = 20.0f;
 	if (m_planInterval.IsLessThen(minInterval))
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	m_planInterval.Reset();
-#endif
 
 	if (isPlan)
 		AnnouncePlan("GoingToGuardHostages", place);
@@ -2123,13 +2114,11 @@ void BotChatterInterface::GuardingHostageEscapeZone(bool isPlan)
 	if (TheCSBots()->IsRoundOver())
 		return;
 
-	const float minInterval = 20.0f;
+	constexpr float minInterval = 20.0f;
 	if (m_planInterval.IsLessThen(minInterval))
 		return;
 
-#ifdef REGAMEDLL_FIXES
 	m_planInterval.Reset();
-#endif
 
 	if (isPlan)
 		AnnouncePlan("GoingToGuardHostageEscapeZone", UNDEFINED_PLACE);

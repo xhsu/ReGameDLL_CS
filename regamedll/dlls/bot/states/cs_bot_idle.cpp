@@ -84,9 +84,8 @@ void IdleState::OnUpdate(CCSBot *me)
 		{
 			const CCSBotManager::Zone *zone = TheCSBots()->GetClosestZone(me->GetLastKnownArea(), PathCost(me, FASTEST_ROUTE));
 			const Vector *zonePos = TheCSBots()->GetRandomPositionInZone(zone);
-#ifdef REGAMEDLL_FIXES
+
 			if (zonePos)
-#endif
 			{
 				me->SetTask(CCSBot::RESCUE_HOSTAGES);
 				me->Run();
@@ -125,9 +124,8 @@ void IdleState::OnUpdate(CCSBot *me)
 				{
 					// T's always know where the bomb is - go defend it
 					const CCSBotManager::Zone *zone = TheCSBots()->GetZone(me->GetGameState()->GetPlantedBombsite());
-#ifdef REGAMEDLL_FIXES
+
 					if (zone)
-#endif
 					{
 						me->SetTask(CCSBot::GUARD_TICKING_BOMB);
 
@@ -312,10 +310,8 @@ void IdleState::OnUpdate(CCSBot *me)
 						ShortestPathCost pathCost = ShortestPathCost();
 						real_t dist = NavAreaTravelDistance(me->GetLastKnownArea(), TheNavAreaGrid.GetNearestNavArea(&TheCSBots()->GetZone(z)->m_center), pathCost);
 
-#ifdef REGAMEDLL_FIXES
 						if (dist < 0.0f)
 							continue;
-#endif
 
 						if (dist < travelDistance)
 						{

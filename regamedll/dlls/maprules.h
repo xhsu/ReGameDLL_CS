@@ -216,11 +216,8 @@ public:
 	int LimitValue() const { return int(pev->health); }
 	bool HitLimit() const
 	{
-#ifdef REGAMEDLL_FIXES
-		if (pev->spawnflags & SF_GAMECOUNT_OVER_LIMIT) {
+		if (pev->spawnflags & SF_GAMECOUNT_OVER_LIMIT)
 			return CountValue() >= LimitValue();
-		}
-#endif
 
 		return CountValue() == LimitValue();
 	}

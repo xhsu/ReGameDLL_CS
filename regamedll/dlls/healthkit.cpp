@@ -18,18 +18,12 @@ void CHealthKit::Precache()
 
 BOOL CHealthKit::MyTouch(CBasePlayer *pPlayer)
 {
-#ifdef REGAMEDLL_ADD
 	if (pPlayer->HasRestrictItem(ITEM_HEALTHKIT, ITEM_TYPE_TOUCHED))
 		return FALSE;
-#endif
 
 	auto healthValue = gSkillData.healthkitCapacity;
-
-#ifdef REGAMEDLL_FIXES
-	if (pev->health != 0.0f) {
+	if (pev->health != 0.0f)
 		healthValue = pev->health;
-	}
-#endif
 
 	if (pPlayer->TakeHealth(healthValue, DMG_GENERIC))
 	{
@@ -93,17 +87,13 @@ void CWallHealth::Spawn()
 	SET_MODEL(ENT(pev), pev->model);
 
 	int healthValue = (int)gSkillData.healthchargerCapacity;
-#ifdef REGAMEDLL_FIXES
-	if (pev->health != 0.0f) {
+	if (pev->health != 0.0f)
 		healthValue = (int)pev->health;
-	}
-#endif
 
 	m_iJuice = healthValue;
 	pev->frame = 0.0f;
 }
 
-#ifdef REGAMEDLL_FIXES
 void CWallHealth::Restart()
 {
 	pev->solid = SOLID_BSP;
@@ -118,7 +108,6 @@ void CWallHealth::Restart()
 	pev->nextthink = pev->ltime + 0.1f;
 	SetThink(&CWallHealth::Recharge);
 }
-#endif // #ifdef REGAMEDLL_FIXES
 
 void CWallHealth::Precache()
 {
@@ -139,9 +128,7 @@ void CWallHealth::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType us
 
 	// if there is no juice left, turn it off
 	if (m_iJuice <= 0
-#ifdef REGAMEDLL_FIXES
 		&& pev->frame != 1.0f // recharging... don't reset think
-#endif
 		)
 	{
 		pev->frame = 1.0f;
@@ -150,9 +137,7 @@ void CWallHealth::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, EUseType us
 
 	// if the player doesn't have the suit, or there is no juice left, make the deny noise
 	if (m_iJuice <= 0 || !(pActivator->pev->weapons & (1 << WEAPON_SUIT))
-#ifdef REGAMEDLL_FIXES
 		|| !pActivator->CanTakeHealth(AMOUNT_CHARGE_HEALTH) // don't charge health if we can't more, prevent thinking entity
-#endif // REGAMEDLL_FIXES
 		)
 	{
 		if (gpGlobals->time >= m_flSoundTime)
@@ -199,11 +184,8 @@ void CWallHealth::Recharge()
 	EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/medshot4.wav", VOL_NORM, ATTN_NORM);
 
 	int healthValue = (int)gSkillData.healthchargerCapacity;
-#ifdef REGAMEDLL_FIXES
-	if (pev->health != 0.0f) {
+	if (pev->health != 0.0f)
 		healthValue = (int)pev->health;
-	}
-#endif
 
 	m_iJuice = healthValue;
 
@@ -223,9 +205,7 @@ void CWallHealth::Off()
 	{
 		int iReactivate = m_iReactivate;
 
-#ifdef REGAMEDLL_FIXES
 		if (iReactivate <= 0)
-#endif // #ifdef REGAMEDLL_FIXES
 		{
 			if ((iReactivate = g_pGameRules->FlHealthChargerRechargeTime()) <= 0)
 				return;

@@ -423,15 +423,9 @@ void HideState::OnUpdate(CCSBot *me)
 				me->PrintIfWatched("No available hiding spots - hiding where I'm at.\n");
 
 				// hide where we are
-#ifndef REGAMEDLL_FIXES
-				m_hidingSpot.x = me->pev->origin.x;
-				m_hidingSpot.x = me->pev->origin.y;
-				m_hidingSpot.z = me->GetFeetZ();
-#else
 				m_hidingSpot.x = me->pev->origin.x;
 				m_hidingSpot.y = me->pev->origin.y;
 				m_hidingSpot.z = me->GetFeetZ();
-#endif
 			}
 			else
 			{
