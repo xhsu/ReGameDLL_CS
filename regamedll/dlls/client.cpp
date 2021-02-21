@@ -1327,10 +1327,8 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 		}
 		case MENU_SLOT_ITEM_NVG:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_NVG, ITEM_TYPE_BUYING))
 				return;
-#endif
 			if (pPlayer->m_bHasNightVision)
 			{
 				if (g_bClientPrintEnable)
@@ -1360,10 +1358,9 @@ void BuyItem(CBasePlayer *pPlayer, int iSlot)
 		}
 		case MENU_SLOT_ITEM_DEFUSEKIT:
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_DEFUSEKIT, ITEM_TYPE_BUYING))
 				return;
-#endif
+
 			if (pPlayer->m_iTeam != CT || !CSGameRules()->m_bMapHasBombTarget)
 				return;
 
@@ -1453,10 +1450,8 @@ CBaseEntity *BuyWeaponByWeaponID(CBasePlayer *pPlayer, WeaponIdType weaponID)
 	if (!pPlayer->CanPlayerBuy(true))
 		return nullptr;
 
-#ifdef REGAMEDLL_ADD
 	if (pPlayer->HasRestrictItem((ItemID)weaponID, ITEM_TYPE_BUYING))
 		return nullptr;
-#endif
 
 	if (!CanBuyThis(pPlayer, weaponID))
 		return nullptr;
@@ -1488,7 +1483,6 @@ CBaseEntity *BuyWeaponByWeaponID(CBasePlayer *pPlayer, WeaponIdType weaponID)
 	auto pEntity = pPlayer->GiveNamedItem(info->entityName);
 	pPlayer->AddAccount(-info->cost, RT_PLAYER_BOUGHT_SOMETHING);
 
-#ifdef REGAMEDLL_ADD
 	if (refill_bpammo_weapons.value > 1)
 	{
 		CBasePlayerItem *pItem = static_cast<CBasePlayerItem *>(pEntity);
@@ -1497,7 +1491,6 @@ CBaseEntity *BuyWeaponByWeaponID(CBasePlayer *pPlayer, WeaponIdType weaponID)
 			pPlayer->GiveAmmo(pItem->iMaxAmmo1(), pItem->pszAmmo1(), pItem->iMaxAmmo1());
 		}
 	}
-#endif
 
 	if (TheTutor)
 	{
@@ -1863,11 +1856,7 @@ BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 		return FALSE;
 	}
 
-	if (team != SPECTATOR && !pPlayer->IsBot()
-#ifdef REGAMEDLL_ADD
-		&& !(pPlayer->pev->flags & FL_FAKECLIENT) && auto_join_team.value != 1.0f
-#endif
-	)
+	if (team != SPECTATOR && !pPlayer->IsBot() && !(pPlayer->pev->flags & FL_FAKECLIENT) && auto_join_team.value != 1.0f)
 	{
 		int humanTeam = UNASSIGNED;
 		if (!Q_stricmp(humans_join_team.string, "CT"))
@@ -1907,11 +1896,7 @@ BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 		CheckStartMoney();
 
 		// all players start with "mp_startmoney" bucks
-#ifdef REGAMEDLL_ADD
 		pPlayer->AddAccount(startmoney.value, RT_PLAYER_SPEC_JOIN, false);
-#else
-		pPlayer->m_iAccount = int(startmoney.value);
-#endif
 
 		pPlayer->pev->solid = SOLID_NOT;
 		pPlayer->pev->movetype = MOVETYPE_NOCLIP;
@@ -1924,25 +1909,13 @@ BOOL HandleMenu_ChooseTeam(CBasePlayer *pPlayer, int slot)
 		pPlayer->m_iHostagesKilled = 0;
 		pPlayer->m_fDeadTime = 0;
 		pPlayer->has_disconnected = false;
-
-#ifdef REGAMEDLL_ADD
 		pPlayer->m_iJoiningState = PICKINGTEAM;
-#else
-		pPlayer->pev->velocity = g_vecZero;
-		pPlayer->m_iJoiningState = GETINTOGAME;
-#endif
 		pPlayer->SendItemStatus();
-
-#ifndef REGAMEDLL_ADD
-		SET_CLIENT_MAXSPEED(ENT(pPlayer->pev), 1);
-#endif
 
 		SET_MODEL(ENT(pPlayer->pev), "models/player.mdl");
 	}
 
-#ifdef REGAMEDLL_ADD
 	if (!CSGameRules()->ShouldSkipShowMenu())
-#endif
 	{
 		if (!CSGameRules()->IsCareer())
 		{
@@ -2707,7 +2680,6 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 			}
 		}
 
-#ifdef REGAMEDLL_ADD
 		auto canOpenOldMenu = [pPlayer]()-> bool
 		{
 			if (!pPlayer->m_bVGUIMenus || pPlayer->m_bForceShowMenu) {
@@ -2717,11 +2689,6 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 
 			return false;
 		};
-#else
-		auto canOpenOldMenu = [pPlayer]()-> bool {
-			return pPlayer->m_bVGUIMenus == false;
-		};
-#endif
 
 		switch (pPlayer->m_iMenu)
 		{
@@ -3371,7 +3338,6 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 			{
 				pPlayer->SmartRadio();
 			}
-#ifdef REGAMEDLL_ADD
 			else if (FStrEq(pcmd, "give"))
 			{
 				if (CVAR_GET_FLOAT("sv_cheats") != 0.0f && CMD_ARGC() > 1 && FStrnEq(parg1, "weapon_", sizeof("weapon_") - 1))
@@ -3387,7 +3353,6 @@ void InternalCommand(edict_t *pEntity, const char *pcmd, const char *parg1)
 					}
 				}
 			}
-#endif
 			else
 			{
 				if (HandleBuyAliasCommands(pPlayer, pcmd))
@@ -3552,9 +3517,7 @@ void ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 		g_pHostages->ServerActivate();
 	}
 
-#ifdef REGAMEDLL_ADD
 	CSGameRules()->ServerActivate();
-#endif
 }
 
 void PlayerPreThink(edict_t *pEntity)
@@ -4035,15 +3998,9 @@ void ClientPrecache()
 
 const char *GetGameDescription()
 {
-#ifdef REGAMEDLL_ADD
-	if (CSGameRules()) {
+	if (CSGameRules())
 		return CSGameRules()->GetGameDescription();
-	}
-#else
-	if (AreRunningCZero()) {
-		return "Condition Zero";
-	}
-#endif
+
 	return "Counter-Strike";
 }
 
@@ -4213,7 +4170,6 @@ BOOL AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		if ((ent->v.effects & EF_NODRAW) == EF_NODRAW)
 			return FALSE;
 
-#ifdef REGAMEDLL_ADD
 		if (ent->v.owner == host)
 		{
 			// the owner can't see this entity
@@ -4223,7 +4179,6 @@ BOOL AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		// no one can't see this entity except the owner
 		else if ((ent->v.effects & EF_OWNER_VISIBILITY) == EF_OWNER_VISIBILITY)
 			return FALSE;
-#endif
 	}
 
 	if (!ent->v.modelindex || !STRING(ent->v.model))
@@ -4237,9 +4192,7 @@ BOOL AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 	if (CheckPlayerPVSLeafChanged(host, hostnum))
 		ResetPlayerPVS(host, hostnum);
 
-#ifdef REGAMEDLL_ADD
 	if ((ent->v.effects & EF_FORCEVISIBILITY) != EF_FORCEVISIBILITY)
-#endif
 	{
 		if (ent != host)
 		{
@@ -4304,7 +4257,6 @@ BOOL AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 	state->skin = ent->v.skin;
 	state->effects = ent->v.effects;
 
-#ifdef REGAMEDLL_ADD
 	// don't send unhandled custom bits to client
 	state->effects &= ~(EF_FORCEVISIBILITY | EF_OWNER_VISIBILITY | EF_OWNER_NO_VISIBILITY);
 
@@ -4312,7 +4264,6 @@ BOOL AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 		(host->v.iuser3 & PLAYER_PREVENT_CLIMB) == PLAYER_PREVENT_CLIMB) {
 		state->skin = CONTENTS_EMPTY;
 	}
-#endif
 
 	if (!player && ent->v.animtime && !ent->v.velocity.x && !ent->v.velocity.y && !ent->v.velocity.z)
 		state->eflags |= EFLAG_SLERP;
@@ -4737,10 +4688,9 @@ void UpdateClientData(const edict_t *ent, int sendweapons, struct clientdata_s *
 
 		if (pPlayer->pev->iuser1 == OBS_NONE && !pevOrg)
 		{
-#ifdef REGAMEDLL_ADD
 			// useful for mods
 			iUser3 |= pev->iuser3;
-#endif
+
 			cd->iuser3 = iUser3;
 		}
 

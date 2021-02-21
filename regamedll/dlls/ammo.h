@@ -77,9 +77,9 @@ extern const AmmoInfo g_rgAmmoInfo[static_cast<unsigned>(EAmmoType::MAXTYPE)];*/
 class CBasePlayerAmmo: public CBaseEntity
 {
 public:
-	virtual void Spawn();
+	virtual void Spawn() override;
 	virtual BOOL AddAmmo(CBaseEntity *pOther);
-	virtual CBaseEntity *Respawn();
+	virtual CBaseEntity *Respawn() override;
 
 public:
 	void EXPORT DefaultTouch(CBaseEntity *pOther);
@@ -89,69 +89,69 @@ public:
 class C9MMAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class CBuckShotAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C556NatoAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C556NatoBoxAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C762NatoAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C45ACPAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C50AEAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C338MagnumAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C57MMAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };
 
 class C357SIGAmmo: public CBasePlayerAmmo
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
+	virtual void Spawn() final;
+	virtual void Precache() final;
 };

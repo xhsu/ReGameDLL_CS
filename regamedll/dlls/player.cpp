@@ -418,11 +418,7 @@ void CBasePlayer::Radio(const char *msg_id, const char *msg_verbose, short pitch
 			}
 
 			// icon over the head for teammates
-#ifdef REGAMEDLL_ADD
 			if (showIcon && show_radioicon.value)
-#else
-			if (showIcon)
-#endif
 			{
 					// put an icon over this guys head to show that he used the radio
 					MESSAGE_BEGIN(MSG_ONE, SVC_TEMPENTITY, nullptr, pEntity->pev);
@@ -830,26 +826,19 @@ BOOL CBasePlayer::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 
 				pAttack = CBasePlayer::Instance(pevAttacker);
 
-				if (
-#ifdef REGAMEDLL_ADD
-					!CSGameRules()->IsFreeForAll() &&
-#endif
-					pGrenade->m_iTeam == m_iTeam)
+				if (!CSGameRules()->IsFreeForAll() && pGrenade->m_iTeam == m_iTeam)
 				{
 					if (friendlyfire.value)
 					{
 						bTeamAttack = TRUE;
-#ifdef REGAMEDLL_ADD
+
 						flDamage *= clamp(((pAttack == this) ?
 							ff_damage_reduction_grenade_self.value :
 							ff_damage_reduction_grenade.value), 0.0f, 1.0f);
-#endif
 					}
 					else if (pAttack == this)
 					{
-#ifdef REGAMEDLL_ADD
 						flDamage *= clamp(ff_damage_reduction_grenade_self.value, 0.0f, 1.0f);
-#endif
 					}
 					else
 					{
@@ -1029,14 +1018,10 @@ BOOL CBasePlayer::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 				}
 			}
 
-#ifdef REGAMEDLL_ADD
 			// bullets hurt teammates less
 			flDamage *= clamp(((bitsDamageType & DMG_BULLET) ?
 				ff_damage_reduction_bullets.value :
 				ff_damage_reduction_other.value), 0.0f, 1.0f);
-#else
-			flDamage *= 0.35;
-#endif // #ifdef REGAMEDLL_ADD
 		}
 
 		if (pAttack->m_pActiveItem)
@@ -1276,7 +1261,6 @@ void PackPlayerItem(CBasePlayer *pPlayer, CBasePlayerItem *pItem, bool packAmmo)
 	}
 }
 
-#ifdef REGAMEDLL_ADD
 void PackPlayerNade(CBasePlayer *pPlayer, CBasePlayerItem *pItem, bool packAmmo)
 {
 	if (!pItem)
@@ -1322,7 +1306,6 @@ void PackPlayerNade(CBasePlayer *pPlayer, CBasePlayerItem *pItem, bool packAmmo)
 			packAmmo);
 	}
 }
-#endif
 
 // PackDeadPlayerItems - call this when a player dies to
 // pack up the appropriate weapons and ammo items, and to
@@ -1407,7 +1390,6 @@ void CBasePlayer::GiveDefaultItems()
 {
 	RemoveAllItems(FALSE);
 
-#ifdef REGAMEDLL_ADD
 	auto GiveWeapon = [&](int ammo, const char *pszWeaponName) {
 		auto pItem = static_cast<CBasePlayerItem *>(GiveNamedItemEx(pszWeaponName));
 		if (pItem) {
@@ -1524,22 +1506,6 @@ void CBasePlayer::GiveDefaultItems()
 			grenadeString = SharedParse(grenadeString);
 		}
 	}
-
-#else
-	switch (m_iTeam)
-	{
-	case CT:
-		GiveNamedItem("weapon_knife");
-		GiveNamedItem("weapon_usp");
-		GiveAmmo(m_bIsVIP ? 12 : 24, "45acp");
-		break;
-	case TERRORIST:
-		GiveNamedItem("weapon_knife");
-		GiveNamedItem("weapon_glock18");
-		GiveAmmo(40, "9mm");
-		break;
-	}
-#endif
 }
 
 void CBasePlayer::RemoveAllItems(BOOL removeSuit)
@@ -3035,10 +3001,9 @@ void CWShield::Touch(CBaseEntity *pOther)
 
 		if (!pPlayer->m_bIsVIP)
 		{
-#ifdef REGAMEDLL_ADD
 			if (pPlayer->HasRestrictItem(ITEM_SHIELDGUN, ITEM_TYPE_TOUCHED))
 				return;
-#endif
+
 			pPlayer->GiveShield();
 
 			EMIT_SOUND(edict(), CHAN_ITEM, "items/gunpickup2.wav", VOL_NORM, ATTN_NORM);
@@ -3576,9 +3541,7 @@ void CBasePlayer::PlayerDeathThink()
 
 		if (g_pGameRules->FPlayerCanRespawn(this))
 		{
-#ifdef REGAMEDLL_ADD
 			if (forcerespawn.value <= 0 || (m_iTeam != CT && m_iTeam != TERRORIST))
-#endif
 			{
 				pev->deadflag = DEAD_RESPAWNABLE;
 
@@ -4099,9 +4062,7 @@ bool CBasePlayer::CanPlayerBuy(bool display)
 		return false;
 	}
 
-#ifdef REGAMEDLL_ADD
 	if (buytime.value != -1.0f)
-#endif
 	{
 		int buyTime = int(buytime.value * 60.0f);
 		if (buyTime < MIN_BUY_TIME)
@@ -4880,10 +4841,8 @@ BOOL IsSpawnPointValid(CBaseEntity *pPlayer, CBaseEntity *pSpot)
 	if (!pSpot->IsTriggered(pPlayer))
 		return FALSE;
 
-#ifdef REGAMEDLL_ADD
 	if (!kill_filled_spawn.value)
 		return TRUE;
-#endif
 
 	CBaseEntity *pEntity = nullptr;
 	while ((pEntity = UTIL_FindEntityInSphere(pEntity, pSpot->pev->origin, MAX_PLAYER_USE_RADIUS)))
@@ -4938,9 +4897,7 @@ bool CBasePlayer::SelectSpawnSpot(const char *pEntClassName, CBaseEntity *&pSpot
 	// we haven't found a place to spawn yet,  so kill any guy at the first spawn point and spawn there
 	if (!FNullEnt(pSpot))
 	{
-#ifdef REGAMEDLL_ADD
 		if (kill_filled_spawn.value != 0.0)
-#endif
 		{
 			CBaseEntity *pEntity = nullptr;
 			while ((pEntity = UTIL_FindEntityInSphere(pEntity, pSpot->pev->origin, MAX_PLAYER_USE_RADIUS)))
@@ -5154,11 +5111,7 @@ void CBasePlayer::Spawn()
 	m_flLastTalk = 0;
 	m_flIdleCheckTime = 0;
 	m_flRadioTime = 0;
-#ifdef REGAMEDLL_ADD
 	m_iRadioMessages = int(radio_maxinround.value);
-#else
-	m_iRadioMessages = 60;
-#endif
 	m_bHasC4 = false;
 	m_bKilledByBomb = false;
 	m_bKilledByGrenade = false;
@@ -5275,9 +5228,7 @@ void CBasePlayer::Spawn()
 	m_iFlashBattery = 99;
 	m_flFlashLightTime = 1;
 
-#ifdef REGAMEDLL_ADD
 	ReloadWeapons();
-#endif
 
 	if (m_bHasDefuser)
 		pev->body = 1;
@@ -6549,11 +6500,7 @@ void CBasePlayer::SendHostagePos()
 
 void CBasePlayer::SendHostageIcons()
 {
-	if (!AreRunningCZero()
-#ifdef REGAMEDLL_ADD
-		&& !show_scenarioicon.value
-#endif
-		)
+	if (!AreRunningCZero() && !show_scenarioicon.value)
 	{
 		return;
 	}
@@ -6930,10 +6877,8 @@ void CBasePlayer::UpdateClientData()
 		Vector vecOrigin = pev->origin;
 		m_tmNextRadarUpdate = gpGlobals->time + 1.0f;
 
-#ifdef REGAMEDLL_ADD
 		if (CSGameRules()->IsFreeForAll())
 			vecOrigin = g_vecZero;
-#endif
 
 		const float flToleranceDist = 64.0f;
 		if ((pev->origin - m_vLastOrigin).Length() >= flToleranceDist)
@@ -9208,7 +9153,6 @@ void CBasePlayer::UpdateLocation(bool forceUpdate)
 
 void CBasePlayer::ReloadWeapons(CBasePlayerItem *pWeapon, bool bForceReload, bool bForceRefill)
 {
-#ifdef REGAMEDLL_ADD
 	bool bCanAutoReload = (bForceReload || auto_reload_weapons.value != 0.0f);
 	bool bCanRefillBPAmmo = (bForceRefill || refill_bpammo_weapons.value != 0.0f);
 
@@ -9248,7 +9192,6 @@ void CBasePlayer::ReloadWeapons(CBasePlayerItem *pWeapon, bool bForceReload, boo
 		if (pWeapon && pWeapon == item)
 			break;
 	}
-#endif
 }
 
 void CBasePlayer::TeamChangeUpdate()
@@ -9280,19 +9223,10 @@ void CBasePlayer::DropSecondary()
 		m_bShieldDrawn = false;
 	}
 
-#ifdef REGAMEDLL_ADD
 	ForEachItem(PISTOL_SLOT, [this](CBasePlayerItem *item) {
 		DropPlayerItem(STRING(item->pev->classname));
 		return false;
 	});
-#else
-	auto item = m_rgpPlayerItems[PISTOL_SLOT];
-	if (item)
-	{
-		DropPlayerItem(STRING(item->pev->classname));
-	}
-#endif
-
 }
 
 void CBasePlayer::DropPrimary()
@@ -9302,19 +9236,10 @@ void CBasePlayer::DropPrimary()
 		return;
 	}
 
-#ifdef REGAMEDLL_ADD
 	ForEachItem(PRIMARY_WEAPON_SLOT, [this](CBasePlayerItem *item) {
 		DropPlayerItem(STRING(item->pev->classname));
 		return false;
 	});
-#else
-	auto item = m_rgpPlayerItems[PRIMARY_WEAPON_SLOT];
-	if (item)
-	{
-		DropPlayerItem(STRING(item->pev->classname));
-	}
-#endif
-
 }
 
 CBasePlayerItem *CBasePlayer::GetItemByName(const char *itemName) {
@@ -9444,9 +9369,6 @@ bool CBasePlayer::GetIntoGame()
 
 	if (CSGameRules()->m_bMapHasEscapeZone && m_iTeam == CT)
 	{
-#ifndef REGAMEDLL_ADD
-		m_iAccount = 0;
-#endif
 		CheckStartMoney();
 		AddAccount(startmoney.value, RT_INTO_GAME);
 	}
@@ -9456,14 +9378,11 @@ bool CBasePlayer::GetIntoGame()
 		Spawn();
 		CSGameRules()->CheckWinConditions();
 
-		if (!CSGameRules()->m_flRestartRoundTime && CSGameRules()->m_bMapHasBombTarget && !CSGameRules()->IsThereABomber() && !CSGameRules()->IsThereABomb()
-#ifdef REGAMEDLL_ADD
-			&& give_player_c4.value
-#endif
-			)
+		if (!CSGameRules()->m_flRestartRoundTime && CSGameRules()->m_bMapHasBombTarget && !CSGameRules()->IsThereABomber() && !CSGameRules()->IsThereABomb() && give_player_c4.value)
 		{
 			CSGameRules()->GiveC4();
 		}
+
 		if (m_iTeam == TERRORIST)
 		{
 			CSGameRules()->m_iNumEscapers++;
@@ -9513,7 +9432,6 @@ bool CBasePlayer::GetIntoGame()
 
 void CBasePlayer::PlayerRespawnThink()
 {
-#ifdef REGAMEDLL_ADD
 	if (GetObserverMode() != OBS_NONE && (m_iTeam == UNASSIGNED || m_iTeam == SPECTATOR))
 		return;
 
@@ -9535,7 +9453,6 @@ void CBasePlayer::PlayerRespawnThink()
 		pev->nextthink = -1;
 		return;
 	}
-#endif
 }
 
 bool CBasePlayer::CanSwitchTeam(TeamName teamToSwap)

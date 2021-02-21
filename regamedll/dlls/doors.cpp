@@ -411,10 +411,8 @@ void CBaseDoor::DoorTouch(CBaseEntity *pOther)
 {
 	entvars_t *pevToucher = pOther->pev;
 
-#ifdef REGAMEDLL_ADD
 	if ((pev->spawnflags & SF_DOOR_TOUCH_ONLY_CLIENTS) && !pOther->IsPlayer())
 		return;
-#endif
 
 	// Ignore touches by dead players
 	if (pevToucher->deadflag != DEAD_NO)

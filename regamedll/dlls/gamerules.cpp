@@ -21,11 +21,7 @@ CGameRules::~CGameRules()
 // this is the game name that gets seen in the server browser
 const char *CGameRules::GetGameDescription()
 {
-#ifdef REGAMEDLL_ADD
 	return m_GameDesc;
-#else
-	return "Counter-Strike";
-#endif
 }
 
 BOOL CGameRules::CanHaveAmmo(CBasePlayer *pPlayer, const char *pszAmmoName, int iMaxCarry)

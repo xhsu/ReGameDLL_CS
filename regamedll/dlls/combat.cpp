@@ -244,13 +244,12 @@ void RadiusDamage(Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker
 
 			damageRatio = GetAmountOfPlayerVisible(vecSrc, pEntity);
 
-			float length;
-#ifdef REGAMEDLL_ADD
+			float length = 0;
+
 			// allow to damage breakable objects
 			if (FClassnameIs(pEntity->pev, "func_breakable"))
 				length = (vecSrc - pEntity->Center()).Length();
 			else
-#endif
 				length = (vecSrc - pEntity->pev->origin).Length();
 
 			if (useLOS)

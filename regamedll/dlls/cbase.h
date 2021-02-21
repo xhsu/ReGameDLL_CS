@@ -176,7 +176,7 @@ public:
 		return GET_PRIVATE<CBaseEntity>(pEdict);
 	}
 
-	static CBaseEntity *Instance(entvars_t *pev) { return Instance(ENT(pev)); }
+	static CBaseEntity *Instance(const entvars_t const*pev) { return Instance(ENT(pev)); }
 	static CBaseEntity *Instance(EOFFSET offset) { return Instance(ENT(offset)); }
 
 	CBaseMonster *GetMonsterPointer(entvars_t *pevMonster)
@@ -342,8 +342,8 @@ public:
 
 class CBaseAnimating: public CBaseDelay {
 public:
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
+	virtual int Save(CSave &save) override;
+	virtual int Restore(CRestore &restore) override;
 	virtual void HandleAnimEvent(MonsterEvent_t *pEvent) {}
 
 public:

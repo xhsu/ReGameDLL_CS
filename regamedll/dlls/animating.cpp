@@ -57,7 +57,6 @@ int CBaseAnimating::LookupActivityHeaviest(int activity)
 
 void CBaseAnimating::DispatchAnimEvents(float flInterval)
 {
-	MonsterEvent_t event;
 	void *pmodel = GET_MODEL_PTR(ENT(pev));
 
 	if (!pmodel)
@@ -82,9 +81,10 @@ void CBaseAnimating::DispatchAnimEvents(float flInterval)
 	}
 
 	int index = 0;
-	while ((index = GetAnimationEvent(pmodel, pev, &event, flStart, flEnd, index)) != 0)
+	MonsterEvent_t monsterEv;
+	while ((index = GetAnimationEvent(pmodel, pev, &monsterEv, flStart, flEnd, index)) != 0)
 	{
-		HandleAnimEvent(&event);
+		HandleAnimEvent(&monsterEv);
 	}
 }
 

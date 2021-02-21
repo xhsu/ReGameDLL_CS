@@ -1174,11 +1174,7 @@ CGrenade *CGrenade::ShootSmokeGrenade(entvars_t *pevOwner, Vector& vecStart, Vec
 
 void AnnounceFlashInterval(float interval, float offset)
 {
-	if (!AreRunningCZero()
-#ifdef REGAMEDLL_ADD
-		&& !show_scenarioicon.value
-#endif
-		)
+	if (!AreRunningCZero() && !show_scenarioicon.value)
 	{
 		return;
 	}

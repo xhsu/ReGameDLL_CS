@@ -132,8 +132,6 @@ extern cvar_t sk_scientist_heal1;
 extern cvar_t sk_scientist_heal2;
 extern cvar_t sk_scientist_heal3;
 
-#ifdef REGAMEDLL_ADD
-
 extern cvar_t maxmoney;
 extern cvar_t round_infinite;
 extern cvar_t hegrenade_penetration;
@@ -183,8 +181,6 @@ extern cvar_t t_default_grenades;
 extern cvar_t t_give_player_knife;
 extern cvar_t t_default_weapons_secondary;
 extern cvar_t t_default_weapons_primary;
-
-#endif
 
 extern cvar_t scoreboard_showmoney;
 extern cvar_t scoreboard_showhealth;
