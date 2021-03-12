@@ -133,10 +133,10 @@ private:
 class BuyState: public BotState
 {
 public:
-	virtual void OnEnter(CCSBot *me);
-	virtual void OnUpdate(CCSBot *me);
-	virtual void OnExit(CCSBot *me);
-	virtual const char *GetName() const { return "Buy"; }
+	virtual void OnEnter(CCSBot *me) final;
+	virtual void OnUpdate(CCSBot *me) final;
+	virtual void OnExit(CCSBot *me) final;
+	virtual const char* GetName() const final { return "Buy"; }
 
 private:
 	bool m_isInitialDelay;

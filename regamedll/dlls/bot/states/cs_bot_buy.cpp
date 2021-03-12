@@ -256,20 +256,16 @@ void BuyState::OnUpdate(CCSBot *me)
 	{
 		if (CSGameRules()->IsMultiplayer() && CSGameRules()->IsFreezePeriod())
 		{
-#ifdef REGAMEDLL_FIXES
 			// make sure we're locked and loaded
 			me->EquipBestWeapon(MUST_EQUIP);
 			me->Reload();
 			me->ResetStuckMonitor();
-#endif
+
 			return;
 		}
 
 		me->Idle();
-
-#ifdef REGAMEDLL_FIXES
 		return;
-#endif
 	}
 
 	// is the bot spawned outside of a buy zone?
@@ -286,20 +282,62 @@ void BuyState::OnUpdate(CCSBot *me)
 	{
 		me->m_stateTimestamp = gpGlobals->time;
 
-		bool isPreferredAllDisallowed = true;
-
 		for (auto& rgWeaponPrefList : me->GetProfile()->m_rgSortedBySlotWpnPref)
 		{
 			for (auto& iWeaponId : rgWeaponPrefList)
 			{
-				auto iSavedMoney = me->m_iAccount;
+				const auto iSavedMoney = me->m_iAccount;
 				auto pBuyCommand = WeaponIDToAlias(iWeaponId);
+				const auto iItemType = GetWeaponType(pBuyCommand);
+
+				switch (iItemType)
+				{
+				case PISTOL:
+					if (!TheCSBots()->AllowPistols())
+						pBuyCommand = nullptr;
+					break;
+
+				case SHOTGUN:
+					if (!TheCSBots()->AllowShotguns())
+						pBuyCommand = nullptr;
+					break;
+
+				case SUB_MACHINE_GUN:
+					if (!TheCSBots()->AllowSubMachineGuns())
+						pBuyCommand = nullptr;
+					break;
+
+				case RIFLE:
+					if (!TheCSBots()->AllowRifles())
+						pBuyCommand = nullptr;
+					break;
+
+				case MACHINE_GUN:
+					if (!TheCSBots()->AllowMachineGuns())
+						pBuyCommand = nullptr;
+					break;
+
+				case SNIPER_RIFLE:
+					if (!TheCSBots()->AllowSnipers())
+						pBuyCommand = nullptr;
+					break;
+
+				case GRENADE:
+					if (!TheCSBots()->AllowGrenades())
+						pBuyCommand = nullptr;
+					break;
+
+				default:
+					break;
+				}
 
 				if (pBuyCommand)
 				{
 					me->ClientCommand(pBuyCommand);
 					me->PrintIfWatched("Tried to buy %s.\n", pBuyCommand);
 				}
+				else
+					continue;
 
 				// A successfully bought.
 				if (iSavedMoney != me->m_iAccount)
@@ -321,70 +359,20 @@ void BuyState::OnUpdate(CCSBot *me)
 			me->ClientCommand("vesthelm");
 			me->ClientCommand("vest");
 
-			// pistols - if we have no preferred pistol, buy at random
-			if (TheCSBots()->AllowPistols() && !me->GetProfile()->HasPistolPreference())
-			{
-				if (m_buyPistol)
-				{
-					int which = RANDOM_LONG(0, MAX_BUY_WEAPON_SECONDARY - 1);
-
-					if (me->m_iTeam == TERRORIST)
-						me->ClientCommand(secondaryWeaponBuyInfoT[which].buyAlias);
-					else
-						me->ClientCommand(secondaryWeaponBuyInfoCT[which].buyAlias);
-
-					// only buy one pistol
-					m_buyPistol = false;
-				}
-
-				me->ClientCommand("secammo");
-			}
-
-			// buy a grenade if we wish, and we don't already have one
-			if (m_buyGrenade && !me->HasGrenade())
-			{
-				if (UTIL_IsTeamAllBots(me->m_iTeam))
-				{
-					// only allow Flashbangs if everyone on the team is a bot (dont want to blind our friendly humans)
-					float rnd = RANDOM_FLOAT(0, 100);
-
-					if (rnd < 10.0f)
-					{
-						// smoke grenade
-						me->ClientCommand("sgren");
-					}
-					else if (rnd < 35.0f)
-					{
-						// flashbang
-						me->ClientCommand("flash");
-					}
-					else
-					{
-						// he grenade
-						me->ClientCommand("hegren");
-					}
-				}
-				else
-				{
-					if (RANDOM_FLOAT(0, 100) < 10.0f)
-					{
-						// smoke grenade
-						me->ClientCommand("sgren");
-					}
-					else
-					{
-						// he grenade
-						me->ClientCommand("hegren");
-					}
-				}
-			}
-
+			// Of course you should buy it.
 			if (m_buyDefuseKit)
 			{
 				me->ClientCommand("defuser");
 			}
 
 			m_doneBuying = true;
+		}
+
+		// pistols - refill in the last, since it's the least important. (?)
+		// In the shield case, command "primammo" will still refill pistol ammunition.
+		if (!FNullEnt(me->m_rgpPlayerItems[PISTOL_SLOT]))
+		{
+			me->ClientCommand("secammo");
 		}
 	}
 }

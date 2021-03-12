@@ -41,7 +41,7 @@ public:
 public:
 	virtual void OnEvent(GameEventType event, CBasePlayer *pAttacker, CBasePlayer *pVictim);
 	virtual void Reset();
-	virtual bool IsTaskCompletableThisRound() { return true; }
+	virtual bool IsTaskCompletableThisRound() const { return true; }
 
 public:
 	static CCareerTask *NewTask(const char *taskName, GameEventType event, const char *weaponName, int n, bool mustLive, bool crossRounds, int id, bool isComplete);
@@ -68,8 +68,8 @@ private:
 	bool m_mustLive;
 	bool m_crossRounds;
 	bool m_diedThisRound;
-	int m_weaponId;
-	int m_weaponClassId;
+	WeaponIdType m_weaponId;
+	WeaponClassType m_weaponClassId;
 	bool m_rescuer;
 	bool m_defuser;
 	bool m_vip;
@@ -93,9 +93,9 @@ public:
 	CPreventDefuseTask(const char *taskName, GameEventType event, const char *weaponName, int n, bool mustLive, bool crossRounds, int id, bool isComplete);
 
 public:
-	virtual void OnEvent(GameEventType event, CBasePlayer *pAttacker, CBasePlayer *pVictim);
-	virtual void Reset();
-	virtual bool IsTaskCompletableThisRound() { return m_bombPlantedThisRound && !m_defuseStartedThisRound; }
+	virtual void OnEvent(GameEventType event, CBasePlayer *pAttacker, CBasePlayer *pVictim) final;
+	virtual void Reset() final;
+	virtual bool IsTaskCompletableThisRound() const final { return m_bombPlantedThisRound && !m_defuseStartedThisRound; }
 
 public:
 	static CCareerTask *NewTask(const char *taskName, GameEventType event, const char *weaponName, int n, bool mustLive, bool crossRounds, int id, bool isComplete);

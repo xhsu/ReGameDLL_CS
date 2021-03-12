@@ -305,7 +305,7 @@ void CCareerTask::OnEvent(GameEventType event, CBasePlayer *pVictim, CBasePlayer
 
 		if (m_event == EVENT_ROUND_WIN && !Q_strcmp(m_name, "winfast"))
 		{
-			TheCareerTasks->SetFinishedTaskTime(int(TheCareerTasks->GetRoundElapsedTime()));
+			TheCareerTasks->SetFinishedTaskTime(TheCareerTasks->GetRoundElapsedTime());
 			pLocalPlayer->SyncRoundTimer();
 		}
 	}

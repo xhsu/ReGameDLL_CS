@@ -2028,9 +2028,6 @@ void EXT_FUNC CBasePlayer::__API_HOOK(Killed)(entvars_t *pevAttacker, int iGib)
 
 	if (CSGameRules()->IsCareer())
 	{
-		bool killerHasShield = false;
-		bool wasBlind = false;
-
 		if (TheCareerTasks)
 		{
 			if (!IsBot())
@@ -2045,28 +2042,12 @@ void EXT_FUNC CBasePlayer::__API_HOOK(Killed)(entvars_t *pevAttacker, int iGib)
 		{
 			CBasePlayer *pAttacker = CBasePlayer::Instance(pevAttacker);
 
-			if (pAttacker->HasShield())
-				killerHasShield = true;
-
-			if (IsBot() && IsBlind())
+			if (pAttacker != this && !pAttacker->IsBot() && pAttacker->m_iTeam != m_iTeam)
 			{
-				wasBlind = true;
-			}
-
-			for (int i = 1; i <= gpGlobals->maxClients; i++)
-			{
-				CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
-
-				if (!pPlayer)
-					continue;
-
-				bool killedByHumanPlayer = (!pPlayer->IsBot() && pPlayer->pev == pevAttacker && pPlayer->m_iTeam != m_iTeam);
-				if (killedByHumanPlayer)
+				// Valid kill for career task.
+				if (TheCareerTasks)
 				{
-					if (TheCareerTasks)
-					{
-						TheCareerTasks->HandleEnemyKill(wasBlind, GetWeaponName(g_pevLastInflictor, pevAttacker), m_bHeadshotKilled, killerHasShield, this, pPlayer);
-					}
+					TheCareerTasks->HandleEnemyKill(IsBlind(), GetWeaponName(g_pevLastInflictor, pevAttacker), m_bHeadshotKilled, pAttacker->HasShield(), pAttacker, this);
 				}
 			}
 		}
