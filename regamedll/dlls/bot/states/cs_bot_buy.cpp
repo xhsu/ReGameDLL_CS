@@ -292,168 +292,19 @@ void BuyState::OnUpdate(CCSBot *me)
 		{
 			for (auto& iWeaponId : rgWeaponPrefList)
 			{
+				auto iSavedMoney = me->m_iAccount;
+				auto pBuyCommand = WeaponIDToAlias(iWeaponId);
 
-			}
-		}
-
-		// try to buy our preferred weapons first
-		if (m_prefIndex < me->GetProfile()->GetWeaponPreferenceCount())
-		{
-			// need to retry because sometimes first buy fails??
-			constexpr int maxPrefRetries = 2;
-			if (m_prefRetries >= maxPrefRetries)
-			{
-				// try to buy next preferred weapon
-				m_prefIndex++;
-				m_prefRetries = 0;
-				return;
-			}
-
-			int weaponPreference = me->GetProfile()->GetWeaponPreference(m_prefIndex);
-
-			// don't buy it again if we still have one from last round
-			CBasePlayerWeapon *pCurrentWeapon = me->GetActiveWeapon();
-			if (pCurrentWeapon && pCurrentWeapon->m_iId == weaponPreference)
-			{
-				// done with buying preferred weapon
-				m_prefIndex = 9999;
-				return;
-			}
-
-			if (me->HasShield() && weaponPreference == WEAPON_SHIELDGUN)
-			{
-				// done with buying preferred weapon
-				m_prefIndex = 9999;
-				return;
-			}
-
-			const char *buyAlias = nullptr;
-			if (weaponPreference == WEAPON_SHIELDGUN)
-			{
-				if (TheCSBots()->AllowTacticalShield())
-					buyAlias = "shield";
-			}
-			else
-			{
-				buyAlias = WeaponIDToAlias(weaponPreference);
-				WeaponType type = GetWeaponType(buyAlias);
-
-				switch (type)
+				if (pBuyCommand)
 				{
-				case PISTOL:
-					if (!TheCSBots()->AllowPistols())
-						buyAlias = nullptr;
-					break;
-				case SHOTGUN:
-					if (!TheCSBots()->AllowShotguns())
-						buyAlias = nullptr;
-					break;
-				case SUB_MACHINE_GUN:
-					if (!TheCSBots()->AllowSubMachineGuns())
-						buyAlias = nullptr;
-					break;
-				case RIFLE:
-					if (!TheCSBots()->AllowRifles())
-						buyAlias = nullptr;
-					break;
-				case MACHINE_GUN:
-					if (!TheCSBots()->AllowMachineGuns())
-						buyAlias = nullptr;
-					break;
-				case SNIPER_RIFLE:
-					if (!TheCSBots()->AllowSnipers())
-						buyAlias = nullptr;
-					break;
-				}
-			}
-
-			if (buyAlias)
-			{
-				me->ClientCommand(buyAlias);
-				me->PrintIfWatched("Tried to buy preferred weapon %s.\n", buyAlias);
-
-				isPreferredAllDisallowed = false;
-			}
-
-			m_prefRetries++;
-
-			// bail out so we dont waste money on other equipment
-			// unless everything we prefer has been disallowed, then buy at random
-			if (isPreferredAllDisallowed == false)
-				return;
-		}
-
-		// if we have no preferred primary weapon (or everything we want is disallowed), buy at random
-		if (!me->m_bHasPrimary && (isPreferredAllDisallowed || !me->GetProfile()->HasPrimaryPreference()))
-		{
-			if (m_buyShield)
-			{
-				// buy a shield
-				me->ClientCommand("shield");
-				me->PrintIfWatched("Tried to buy a shield.\n");
-			}
-			else
-			{
-				// build list of allowable weapons to buy
-				BuyInfo *masterPrimary = (me->m_iTeam == TERRORIST) ? primaryWeaponBuyInfoT : primaryWeaponBuyInfoCT;
-				BuyInfo *stockPrimary[MAX_BUY_WEAPON_PRIMARY];
-				int stockPrimaryCount = 0;
-
-				// dont choose sniper rifles as often
-				constexpr float sniperRifleChance = 50.0f;
-				bool wantSniper = (RANDOM_FLOAT(0, 100) < sniperRifleChance) ? true : false;
-
-				for (int i = 0; i < MAX_BUY_WEAPON_PRIMARY; i++)
-				{
-					if ((masterPrimary[i].type == SHOTGUN && TheCSBots()->AllowShotguns())
-						|| (masterPrimary[i].type == SUB_MACHINE_GUN && TheCSBots()->AllowSubMachineGuns())
-						|| (masterPrimary[i].type == RIFLE && TheCSBots()->AllowRifles())
-						|| (masterPrimary[i].type == SNIPER_RIFLE && TheCSBots()->AllowSnipers() && wantSniper)
-						|| (masterPrimary[i].type == MACHINE_GUN && TheCSBots()->AllowMachineGuns()))
-					{
-						stockPrimary[stockPrimaryCount++] = &masterPrimary[i];
-					}
+					me->ClientCommand(pBuyCommand);
+					me->PrintIfWatched("Tried to buy %s.\n", pBuyCommand);
 				}
 
-				if (stockPrimaryCount)
-				{
-					// buy primary weapon if we don't have one
-					int which;
-
-					// on hard difficulty levels, bots try to buy preferred weapons on the first pass
-					if (m_retries == 0 && TheCSBots()->GetDifficultyLevel() >= BOT_HARD)
-					{
-						// count up available preferred weapons
-						int prefCount = 0;
-						for (which = 0; which < stockPrimaryCount; which++)
-						{
-							if (stockPrimary[which]->preferred)
-								prefCount++;
-						}
-
-						if (prefCount)
-						{
-							int whichPref = RANDOM_LONG(0, prefCount - 1);
-							for (which = 0; which < stockPrimaryCount; which++)
-							{
-								if (stockPrimary[which]->preferred && whichPref-- == 0)
-									break;
-							}
-						}
-						else
-						{
-							// no preferred weapons available, just pick randomly
-							which = RANDOM_LONG(0, stockPrimaryCount - 1);
-						}
-					}
-					else
-					{
-						which = RANDOM_LONG(0, stockPrimaryCount - 1);
-					}
-
-					me->ClientCommand(stockPrimary[which]->buyAlias);
-					me->PrintIfWatched("Tried to buy %s.\n", stockPrimary[which]->buyAlias);
-				}
+				// A successfully bought.
+				if (iSavedMoney != me->m_iAccount)
+					// Moving to next slot.
+					break;
 			}
 		}
 
