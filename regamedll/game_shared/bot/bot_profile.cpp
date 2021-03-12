@@ -24,7 +24,7 @@ bool BotProfile::HasPrimaryPreference() const
 {
 	for (int i = 0; i < m_weaponPreferenceCount; i++)
 	{
-		int weaponClass = AliasToWeaponClass(WeaponIDToAlias(m_weaponPreference[i]));
+		auto weaponClass = AliasToWeaponClass(WeaponIDToAlias(m_weaponPreference[i]));
 
 		if (weaponClass == WEAPONCLASS_SUBMACHINEGUN ||
 				weaponClass == WEAPONCLASS_SHOTGUN ||
@@ -386,7 +386,11 @@ void BotProfileManager::Init(const char *filename, unsigned int *checksum)
 				{
 					if (profile->m_weaponPreferenceCount < BotProfile::MAX_WEAPON_PREFS)
 					{
-						profile->m_weaponPreference[profile->m_weaponPreferenceCount++] = AliasToWeaponID(token);
+						auto iWeaponId = AliasToWeaponID(token);
+						profile->m_weaponPreference[profile->m_weaponPreferenceCount++] = (int)iWeaponId;
+
+						auto iSlot = GetWeaponSlot(iWeaponId)->slot;
+						profile->m_rgSortedBySlotWpnPref[iSlot].push_back(iWeaponId);
 					}
 				}
 			}

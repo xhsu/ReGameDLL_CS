@@ -43,6 +43,7 @@
 
 #include <list>
 #include <vector>
+#include <array>
 
 #include "bot_constants.h"
 
@@ -80,6 +81,7 @@ public:
 		m_voiceBank = 0;
 		m_prefersSilencer = false;
 	}
+	virtual ~BotProfile() {}
 	const char *GetName() const { return m_name; }
 	float GetAggression() const { return m_aggression; }
 	float GetSkill()      const { return m_skill; }
@@ -103,14 +105,16 @@ public:
 private:
 	void Inherit(const BotProfile *parent, const BotProfile *baseline);
 	friend class BotProfileManager;
+	friend class BuyState;
 
 	char *m_name;
 	float m_aggression;
 	float m_skill;
 	float m_teamwork;
 
-	enum { MAX_WEAPON_PREFS = 16 };
-	int m_weaponPreference[MAX_WEAPON_PREFS];
+	enum { MAX_WEAPON_PREFS = 16U };
+	std::array<int, MAX_WEAPON_PREFS> m_weaponPreference;
+	std::array <std::vector<WeaponIdType>, MAX_ITEM_TYPES> m_rgSortedBySlotWpnPref;
 	int m_weaponPreferenceCount;
 
 	int m_cost;

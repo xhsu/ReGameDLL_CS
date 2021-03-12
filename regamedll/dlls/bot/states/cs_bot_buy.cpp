@@ -67,7 +67,7 @@ void BuyState::OnEnter(CCSBot *me)
 			// CT's sometimes buy defuse kits in the bomb scenario (except in career mode, where the player should defuse)
 			if (!CSGameRules()->IsCareer())
 			{
-				const float buyDefuseKitChance = 50.0f;	// 100.0f * (me->GetProfile()->GetSkill() + 0.2f);
+				constexpr float buyDefuseKitChance = 50.0f;	// 100.0f * (me->GetProfile()->GetSkill() + 0.2f);
 				if (RANDOM_FLOAT(0.0f, 100.0f) < buyDefuseKitChance)
 				{
 					m_buyDefuseKit = true;
@@ -244,7 +244,7 @@ void BuyState::OnUpdate(CCSBot *me)
 	// apparently we cant buy things in the first few seconds, so wait a bit
 	if (m_isInitialDelay)
 	{
-		const float waitToBuyTime = 2.0f; // 0.25f;
+		constexpr float waitToBuyTime = 2.0f; // 0.25f;
 		if (gpGlobals->time - me->GetStateTimestamp() < waitToBuyTime)
 			return;
 
@@ -281,18 +281,26 @@ void BuyState::OnUpdate(CCSBot *me)
 	}
 
 	// try to buy some weapons
-	const float buyInterval = 0.2f; // 0.02f
+	constexpr float buyInterval = 0.2f; // 0.02f
 	if (gpGlobals->time - me->GetStateTimestamp() > buyInterval)
 	{
 		me->m_stateTimestamp = gpGlobals->time;
 
 		bool isPreferredAllDisallowed = true;
 
+		for (auto& rgWeaponPrefList : me->GetProfile()->m_rgSortedBySlotWpnPref)
+		{
+			for (auto& iWeaponId : rgWeaponPrefList)
+			{
+
+			}
+		}
+
 		// try to buy our preferred weapons first
 		if (m_prefIndex < me->GetProfile()->GetWeaponPreferenceCount())
 		{
 			// need to retry because sometimes first buy fails??
-			const int maxPrefRetries = 2;
+			constexpr int maxPrefRetries = 2;
 			if (m_prefRetries >= maxPrefRetries)
 			{
 				// try to buy next preferred weapon
@@ -392,7 +400,7 @@ void BuyState::OnUpdate(CCSBot *me)
 				int stockPrimaryCount = 0;
 
 				// dont choose sniper rifles as often
-				const float sniperRifleChance = 50.0f;
+				constexpr float sniperRifleChance = 50.0f;
 				bool wantSniper = (RANDOM_FLOAT(0, 100) < sniperRifleChance) ? true : false;
 
 				for (int i = 0; i < MAX_BUY_WEAPON_PRIMARY; i++)
