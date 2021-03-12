@@ -1684,6 +1684,11 @@ void EXT_FUNC CHalfLifeMultiplay::__API_HOOK(RestartRound)()
 	m_iNumCT = CountTeamPlayers(CT);
 	m_iNumTerrorist = CountTeamPlayers(TERRORIST);
 
+	// LUNA's FIX
+	// If there are actually players in both team, remove the NeedPlayer check.
+	if (m_iNumCT && m_iNumTerrorist)
+		m_bGameStarted = true;
+
 	// reset the dropped bomb on everyone's radar
 	if (m_bMapHasBombTarget)
 	{
