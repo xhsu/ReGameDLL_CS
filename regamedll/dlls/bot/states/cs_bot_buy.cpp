@@ -290,6 +290,11 @@ void BuyState::OnUpdate(CCSBot *me)
 				auto pBuyCommand = WeaponIDToAlias(iWeaponId);
 				const auto iItemType = GetWeaponType(pBuyCommand);
 
+				// usually this is the first weapon, the most preferred one.
+				// thus we should break the loop here.
+				if (me->m_pActiveItem && me->m_pActiveItem->m_iId == iWeaponId)
+					break;
+
 				switch (iItemType)
 				{
 				case PISTOL:

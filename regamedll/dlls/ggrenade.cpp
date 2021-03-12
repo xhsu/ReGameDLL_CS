@@ -884,9 +884,7 @@ NOXREF CGrenade *CGrenade::ShootContact(entvars_t *pevOwner, Vector vecStart, Ve
 	return pGrenade;
 }
 
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, ThrowHeGrenade, CGrenade::ShootTimed2, (entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, int iTeam, unsigned short usEvent), pevOwner, vecStart, vecVelocity, time, iTeam, usEvent)
-
-CGrenade *CGrenade::__API_HOOK(ShootTimed2)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, int iTeam, unsigned short usEvent)
+CGrenade *CGrenade::ShootTimed2(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, int iTeam, unsigned short usEvent)
 {
 	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
 	pGrenade->Spawn();
@@ -920,9 +918,7 @@ CGrenade *CGrenade::__API_HOOK(ShootTimed2)(entvars_t *pevOwner, VectorRef vecSt
 	return pGrenade;
 }
 
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, ThrowFlashbang, CGrenade::ShootTimed, (entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time), pevOwner, vecStart, vecVelocity, time)
-
-CGrenade *CGrenade::__API_HOOK(ShootTimed)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time)
+CGrenade *CGrenade::ShootTimed(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time)
 {
 	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
 	pGrenade->Spawn();
@@ -1182,9 +1178,7 @@ void CGrenade::Use(CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useTy
 	DefuseBombStart(pPlayer);
 }
 
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, PlantBomb, CGrenade::ShootSatchelCharge, (entvars_t *pevOwner, Vector vecStart, Vector vecAngles), pevOwner, vecStart, vecAngles)
-
-CGrenade *CGrenade::__API_HOOK(ShootSatchelCharge)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecAngles)
+CGrenade *CGrenade::ShootSatchelCharge(entvars_t *pevOwner, Vector vecStart, Vector vecAngles)
 {
 	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
 	pGrenade->pev->movetype = MOVETYPE_TOSS;
@@ -1252,9 +1246,7 @@ CGrenade *CGrenade::__API_HOOK(ShootSatchelCharge)(entvars_t *pevOwner, VectorRe
 	return pGrenade;
 }
 
-LINK_HOOK_CUSTOM2_CHAIN(CGrenade *, ThrowSmokeGrenade, CGrenade::ShootSmokeGrenade, (entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, unsigned short usEvent), pevOwner, vecStart, vecVelocity, time, usEvent)
-
-CGrenade *CGrenade::__API_HOOK(ShootSmokeGrenade)(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, unsigned short usEvent)
+CGrenade *CGrenade::ShootSmokeGrenade(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, unsigned short usEvent)
 {
 	CGrenade *pGrenade = GetClassPtr<CCSGrenade>((CGrenade *)nullptr);
 	pGrenade->Spawn();

@@ -34,14 +34,6 @@
 #define VFUNC
 #endif
 
-#ifdef REGAMEDLL_API
-using VectorRef = Vector&;
-using FloatRef = float&;
-#else
-using VectorRef = Vector;
-using FloatRef = float;
-#endif
-
 #include "archtypes.h"
 #include "enginecallback.h"
 #include "entity_state.h"

@@ -386,8 +386,8 @@ public:
 	void Precache_OrigFunc();
 	int ObjectCaps_OrigFunc();
 	int Classify_OrigFunc();
-	void TraceAttack_OrigFunc(entvars_t *pevAttacker, float flDamage, VectorRef vecDir, TraceResult *ptr, int bitsDamageType);
-	BOOL TakeDamage_OrigFunc(entvars_t *pevInflictor, entvars_t *pevAttacker, FloatRef flDamage, int bitsDamageType);
+	void TraceAttack_OrigFunc(entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
+	BOOL TakeDamage_OrigFunc(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType);
 	BOOL TakeHealth_OrigFunc(float flHealth, int bitsDamageType);
 	void Killed_OrigFunc(entvars_t *pevAttacker, int iGib);
 	void AddPoints_OrigFunc(int score, BOOL bAllowNegativeScore);
@@ -422,7 +422,7 @@ public:
 	bool MakeBomber_OrigFunc();
 	bool GetIntoGame_OrigFunc();
 	void StartDeathCam_OrigFunc();
-	CGrenade *ThrowGrenade_OrigFunc(CBasePlayerWeapon *pWeapon, VectorRef vecSrc, VectorRef vecThrow, float time, unsigned short usEvent = 0);
+	CGrenade *ThrowGrenade_OrigFunc(CBasePlayerWeapon *pWeapon, Vector vecSrc, Vector vecThrow, float time, unsigned short usEvent = 0);
 	void SwitchTeam_OrigFunc();
 	bool CanSwitchTeam_OrigFunc(TeamName teamToSwap);
 	void SetSpawnProtection_OrigFunc(float flProtectionTime);

@@ -199,10 +199,10 @@ public:
 	void SG_Explode(TraceResult *pTrace, int bitsDamageType);
 
 #ifdef REGAMEDLL_API
-	static CGrenade *ShootTimed_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time);
-	static CGrenade *ShootTimed2_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, int iTeam, unsigned short usEvent);
-	static CGrenade *ShootSmokeGrenade_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity, float time, unsigned short usEvent);
-	static CGrenade *ShootSatchelCharge_OrigFunc(entvars_t *pevOwner, VectorRef vecStart, VectorRef vecVelocity);
+	static CGrenade *ShootTimed_OrigFunc(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time);
+	static CGrenade *ShootTimed2_OrigFunc(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, int iTeam, unsigned short usEvent);
+	static CGrenade *ShootSmokeGrenade_OrigFunc(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, unsigned short usEvent);
+	static CGrenade *ShootSatchelCharge_OrigFunc(entvars_t *pevOwner, Vector vecStart, Vector vecVelocity);
 
 	void DefuseBombStart_OrigFunc(CBasePlayer *pPlayer);
 	void DefuseBombEnd_OrigFunc(CBasePlayer *pPlayer, bool bDefused);
