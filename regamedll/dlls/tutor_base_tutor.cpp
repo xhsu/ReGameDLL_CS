@@ -174,7 +174,7 @@ void CBaseTutor::DisplayMessageToPlayer(CBasePlayer *pPlayer, int id, const char
 
 		for (int arg = 0; arg < numArgs; arg++)
 		{
-			char *str = event->GetNextParameter(param, sizeof(param));
+			char *str = event->GetNextParameter(param, sizeof(param) - 1U);	// LUNA's FIX
 			if (str)
 				WRITE_STRING(str);
 			else
