@@ -169,7 +169,7 @@ public:
 	Vector m_vStartAngles;
 	Vector m_vPathToFollow[MAX_HOSTAGES_NAV];
 	int m_iWaypoint;
-	CBasePlayer *m_target;
+	CBasePlayer *m_target;	// LUNA: NOTE: USELESS!!! use m_improv->IsFollowing() instead!!
 	CLocalNav *m_LocalNav;
 	int m_nTargetNode;
 	Vector vecNodes[MAX_NODES];

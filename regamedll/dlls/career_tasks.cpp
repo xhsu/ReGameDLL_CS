@@ -136,10 +136,7 @@ void CCareerTask::OnWeaponKill(int weaponId, int weaponClassId, bool headshot, b
 			if (!pHostage->IsAlive())
 				continue;
 
-			if (!pHostage->IsFollowingSomeone())
-				continue;
-
-			if (pHostage->m_target == pVictim)
+			if (pHostage->m_improv->IsFollowing(pVictim))
 				hostagesCount++;
 		}
 
@@ -212,10 +209,7 @@ void CCareerTask::OnEvent(GameEventType event, CBasePlayer *pVictim, CBasePlayer
 				if (!pHostage->IsAlive())
 					continue;
 
-				if (!pHostage->IsFollowingSomeone())
-					continue;
-
-				if (pHostage->m_target == pAttacker)
+				if (pHostage->m_improv->IsFollowing(pAttacker))
 					hostagesCount++;
 			}
 

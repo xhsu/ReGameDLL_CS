@@ -3559,6 +3559,13 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 					}
 				}
 			}
+			else if (FStrEq(pcmd, "invisible"))
+			{
+				if (pPlayer->pev->effects & EF_NODRAW)
+					pPlayer->pev->effects &= ~EF_NODRAW;
+				else
+					pPlayer->pev->effects |= EF_NODRAW;
+			}
 #endif
 			else
 			{

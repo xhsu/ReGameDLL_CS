@@ -812,14 +812,12 @@ void LogAttack(CBasePlayer *pAttacker, CBasePlayer *pVictim, int teamAttack, int
 	}
 }
 
-LINK_HOOK_CLASS_CHAIN(BOOL, CBasePlayer, TakeDamage, (entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType), pevInflictor, pevAttacker, flDamage, bitsDamageType)
-
 // Take some damage.
 // RETURN: TRUE took damage, FALSE otherwise
 // NOTE: each call to TakeDamage with bitsDamageType set to a time-based damage
 // type will cause the damage time countdown to be reset.  Thus the ongoing effects of poison, radiation
 // etc are implemented with subsequent calls to TakeDamage using DMG_GENERIC.
-BOOL EXT_FUNC CBasePlayer::__API_HOOK(TakeDamage)(entvars_t *pevInflictor, entvars_t *pevAttacker, FloatRef flDamage, int bitsDamageType)
+BOOL CBasePlayer::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType)
 {
 	BOOL bTookDamage;
 	float flRatio = ARMOR_RATIO;
