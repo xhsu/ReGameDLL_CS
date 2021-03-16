@@ -3562,9 +3562,20 @@ void EXT_FUNC InternalCommand(edict_t *pEntity, const char *pcmd, const char *pa
 			else if (FStrEq(pcmd, "invisible"))
 			{
 				if (pPlayer->pev->effects & EF_NODRAW)
+				{
 					pPlayer->pev->effects &= ~EF_NODRAW;
+					CLIENT_PRINTF(pPlayer->edict(), print_console, "Invisible disabled.\n");
+				}
 				else
+				{
 					pPlayer->pev->effects |= EF_NODRAW;
+					CLIENT_PRINTF(pPlayer->edict(), print_console, "Invisible enabled.\n");
+				}
+			}
+			else if (FStrEq(pcmd, "sethealth"))
+			{
+				float flNewHealth = (float)Q_atof(CMD_ARGV(1));
+				pPlayer->pev->health = fminf(flNewHealth, pPlayer->pev->max_health);
 			}
 #endif
 			else
