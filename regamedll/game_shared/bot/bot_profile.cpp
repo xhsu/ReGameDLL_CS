@@ -11,20 +11,20 @@ const char *GetDecoratedSkinName(const char *name, const char *filename)
 	return buf;
 }
 
-const char *BotProfile::GetWeaponPreferenceAsString(int i) const
+const char *BotProfile::GetWeaponPreferenceAsString(unsigned i) const
 {
-	if (i < 0 || i >= m_weaponPreferenceCount)
+	if (i < 0 || i > m_rgWeaponPreference.size())
 		return nullptr;
 
-	return WeaponIDToAlias(m_weaponPreference[i]);
+	return WeaponIDToAlias(m_rgWeaponPreference[i]);
 }
 
 // Return true if this profile has a primary weapon preference
 bool BotProfile::HasPrimaryPreference() const
 {
-	for (int i = 0; i < m_weaponPreferenceCount; i++)
+	for (const auto& iId : m_rgWeaponPreference)
 	{
-		auto weaponClass = AliasToWeaponClass(WeaponIDToAlias(m_weaponPreference[i]));
+		auto weaponClass = AliasToWeaponClass(WeaponIDToAlias(iId));
 
 		if (weaponClass == WEAPONCLASS_SUBMACHINEGUN ||
 				weaponClass == WEAPONCLASS_SHOTGUN ||
@@ -40,9 +40,9 @@ bool BotProfile::HasPrimaryPreference() const
 // Return true if this profile has a pistol weapon preference
 bool BotProfile::HasPistolPreference() const
 {
-	for (int i = 0; i < m_weaponPreferenceCount; i++)
+	for (const auto& iId : m_rgWeaponPreference)
 	{
-		if (AliasToWeaponClass(WeaponIDToAlias(m_weaponPreference[i])) == WEAPONCLASS_PISTOL)
+		if (AliasToWeaponClass(WeaponIDToAlias(iId)) == WEAPONCLASS_PISTOL)
 			return true;
 	}
 
@@ -284,7 +284,7 @@ void BotProfileManager::Init(const char *filename, unsigned int *checksum)
 		}
 
 		// read attributes for this profile
-		bool isFirstWeaponPref = true;
+		std::array <std::vector<WeaponIdType>, MAX_ITEM_TYPES> rgMySlotPref;
 		while (true)
 		{
 			// get next token
@@ -371,27 +371,17 @@ void BotProfileManager::Init(const char *filename, unsigned int *checksum)
 			}
 			else if (!Q_stricmp("WeaponPreference", attributeName))
 			{
-				// weapon preferences override parent prefs
-				if (isFirstWeaponPref)
-				{
-					isFirstWeaponPref = false;
-					profile->m_weaponPreferenceCount = 0;
-				}
-
 				if (!Q_stricmp(token, "none"))
 				{
-					profile->m_weaponPreferenceCount = 0;
+					// Do nothing.
 				}
 				else
 				{
-					if (profile->m_weaponPreferenceCount < BotProfile::MAX_WEAPON_PREFS)
-					{
-						auto iWeaponId = AliasToWeaponID(token);
-						profile->m_weaponPreference[profile->m_weaponPreferenceCount++] = (int)iWeaponId;
+					auto iWeaponId = AliasToWeaponID(token);
+					profile->m_rgWeaponPreference.push_back(iWeaponId);
 
-						auto iSlot = GetWeaponSlot(iWeaponId)->slot;
-						profile->m_rgSortedBySlotWpnPref[iSlot].push_back(iWeaponId);
-					}
+					auto iSlot = GetWeaponSlot(iWeaponId)->slot;
+					rgMySlotPref[iSlot].push_back(iWeaponId);
 				}
 			}
 			else if (!Q_stricmp("ReactionTime", attributeName))
@@ -452,6 +442,16 @@ void BotProfileManager::Init(const char *filename, unsigned int *checksum)
 			{
 				CONSOLE_ECHO("Error parsing %s - unknown attribute '%s'\n", filename, attributeName);
 			}
+		}
+
+		// Put my personal preference before my parents. Typical kids.
+		for (unsigned i = 0; i < profile->m_rgSortedBySlotWpnPref.size(); i++)
+		{
+			profile->m_rgSortedBySlotWpnPref[i].insert(
+				profile->m_rgSortedBySlotWpnPref[i].begin(),
+				std::make_move_iterator(rgMySlotPref[i].begin()),
+				std::make_move_iterator(rgMySlotPref[i].end())
+			);
 		}
 
 		if (!isDefault)

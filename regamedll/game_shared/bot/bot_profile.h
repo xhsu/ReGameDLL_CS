@@ -44,6 +44,7 @@
 #include <list>
 #include <vector>
 #include <array>
+#include <unordered_set>
 
 #include "bot_constants.h"
 
@@ -70,7 +71,6 @@ public:
 		m_aggression = 0.0f;
 		m_skill = 0.0f;
 		m_teamwork = 0.0f;
-		m_weaponPreferenceCount = 0;
 		m_cost = 0;
 		m_skin = 0;
 		m_difficultyFlags = 0;
@@ -86,10 +86,10 @@ public:
 	float GetAggression() const { return m_aggression; }
 	float GetSkill()      const { return m_skill; }
 	float GetTeamwork()   const { return m_teamwork; }
-	int GetWeaponPreference(int i) const { return m_weaponPreference[i]; }
+	WeaponIdType GetWeaponPreference(unsigned i) const { return m_rgWeaponPreference[i]; }
 
-	const char *GetWeaponPreferenceAsString(int i) const;
-	int GetWeaponPreferenceCount() const { return m_weaponPreferenceCount; }
+	const char *GetWeaponPreferenceAsString(unsigned i) const;
+	unsigned GetWeaponPreferenceCount() const { return m_rgWeaponPreference.size(); }
 	bool HasPrimaryPreference() const;
 	bool HasPistolPreference() const;
 	int GetCost() const { return m_cost; }
@@ -112,10 +112,8 @@ private:
 	float m_skill;
 	float m_teamwork;
 
-	enum { MAX_WEAPON_PREFS = 16U };
-	std::array<int, MAX_WEAPON_PREFS> m_weaponPreference;
+	std::vector<WeaponIdType> m_rgWeaponPreference;
 	std::array <std::vector<WeaponIdType>, MAX_ITEM_TYPES> m_rgSortedBySlotWpnPref;
-	int m_weaponPreferenceCount;
 
 	int m_cost;
 	int m_skin;
@@ -145,12 +143,10 @@ inline void BotProfile::Inherit(const BotProfile *parent, const BotProfile *base
 	if (parent->m_teamwork != baseline->m_teamwork)
 		m_teamwork = parent->m_teamwork;
 
-	if (parent->m_weaponPreferenceCount != baseline->m_weaponPreferenceCount)
+	if (parent->m_rgWeaponPreference != baseline->m_rgWeaponPreference)
 	{
-		m_weaponPreferenceCount = parent->m_weaponPreferenceCount;
-		for (int i = 0; i < parent->m_weaponPreferenceCount; i++) {
-			m_weaponPreference[i] = parent->m_weaponPreference[i];
-		}
+		m_rgWeaponPreference = parent->m_rgWeaponPreference;
+		m_rgSortedBySlotWpnPref = parent->m_rgSortedBySlotWpnPref;
 	}
 
 	if (parent->m_cost != baseline->m_cost)

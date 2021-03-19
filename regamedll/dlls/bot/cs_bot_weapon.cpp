@@ -812,13 +812,13 @@ void CCSBot::OnTouchingWeapon(CWeaponBox *box)
 			if (GetProfile()->HasPrimaryPreference())
 			{
 				// don't change weapons if we've seen enemies recently
-				const float safeTime = 2.5f;
+				constexpr float safeTime = 2.5f;
 				if (GetTimeSinceLastSawEnemy() >= safeTime)
 				{
 					// we have a primary weapon - drop it if the one on the ground is better
-					for (int i = 0; i < GetProfile()->GetWeaponPreferenceCount(); i++)
+					for (unsigned i = 0; i < GetProfile()->GetWeaponPreferenceCount(); i++)
 					{
-						int prefID = GetProfile()->GetWeaponPreference(i);
+						auto prefID = GetProfile()->GetWeaponPreference(i);
 						if (!IsPrimaryWeapon(prefID))
 							continue;
 
