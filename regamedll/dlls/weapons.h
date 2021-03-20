@@ -410,17 +410,17 @@ public:
 class CWeaponBox: public CBaseEntity
 {
 public:
-	virtual void Spawn();
-	virtual void Precache();
-	virtual void KeyValue(KeyValueData *pkvd);
-	virtual int Save(CSave &save);
-	virtual int Restore(CRestore &restore);
-	virtual void SetObjectCollisionBox();
-	virtual void Touch(CBaseEntity *pOther);
+	virtual void Spawn() final;
+	virtual void Precache() final;
+	virtual void KeyValue(KeyValueData *pkvd) final;
+	virtual int Save(CSave &save) final;
+	virtual int Restore(CRestore &restore) final;
+	virtual void SetObjectCollisionBox() final;
+	virtual void Touch(CBaseEntity *pOther) final;
+	virtual int GiveAmmo(int iAmount, const char* szName, int iMax = -1) final;
 
 public:
 	BOOL IsEmpty();
-	int GiveAmmo(int iCount, char *szName, int iMax, int *pIndex = nullptr);
 
 	void EXPORT Kill();
 	void EXPORT BombThink();

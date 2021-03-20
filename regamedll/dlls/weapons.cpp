@@ -1904,18 +1904,15 @@ BOOL CWeaponBox::PackAmmo(string_t iszName, int iCount)
 	return FALSE;
 }
 
-int CWeaponBox::GiveAmmo(int iCount, char *szName, int iMax, int *pIndex)
+int CWeaponBox::GiveAmmo(int iAmount, const char* szName, int iMax)
 {
 	int i;
 	for (i = 1; i < MAX_AMMO_SLOTS && !FStringNull(m_rgiszAmmo[i]); i++)
 	{
-		if (!Q_stricmp(szName, STRING(m_rgiszAmmo[i])))
+		if (!Q_stricmp(szName, m_rgiszAmmo[i]))
 		{
-			if (pIndex)
-				*pIndex = i;
-
-			int iAdd = Q_min(iCount, iMax - m_rgAmmo[i]);
-			if (iCount == 0 || iAdd > 0)
+			int iAdd = Q_min(iAmount, iMax - m_rgAmmo[i]);
+			if (iAmount == 0 || iAdd > 0)
 			{
 				m_rgAmmo[i] += iAdd;
 				return i;
@@ -1927,11 +1924,8 @@ int CWeaponBox::GiveAmmo(int iCount, char *szName, int iMax, int *pIndex)
 
 	if (i < MAX_AMMO_SLOTS)
 	{
-		if (pIndex)
-			*pIndex = i;
-
 		m_rgiszAmmo[i] = MAKE_STRING(szName);
-		m_rgAmmo[i] = iCount;
+		m_rgAmmo[i] = iAmount;
 
 		return i;
 	}
