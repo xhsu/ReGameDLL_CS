@@ -960,7 +960,8 @@ BOOL CBasePlayer::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 			if (TheCareerTasks)
 			{
 				CBasePlayer *pPlayerAttacker = CBasePlayer::Instance(pevAttacker);
-				if (pPlayerAttacker && !pPlayerAttacker->IsBot() && pPlayerAttacker->m_iTeam != m_iTeam)
+				// LUNA's FIX: this will crash on C4 explosion.
+				if (pPlayerAttacker && pPlayerAttacker->IsPlayer() && !pPlayerAttacker->IsBot() && pPlayerAttacker->m_iTeam != m_iTeam)
 				{
 					TheCareerTasks->HandleEnemyInjury(GetWeaponName(pevInflictor, pevAttacker), pPlayerAttacker->HasShield(), pPlayerAttacker);
 				}
