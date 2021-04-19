@@ -2780,7 +2780,7 @@ void CHalfLifeMultiplay::CheckRoundTimeExpired()
 		if (!OnRoundEnd(WINSTATUS_CTS, ROUND_TARGET_SAVED, GetRoundRestartDelay()))
 			return;
 	}
-	else if (!(scenarioFlags & SCENARIO_BLOCK_HOSTAGE_RESCUE) && UTIL_FindEntityByClassname(nullptr, "hostage_entity"))
+	else if (!(scenarioFlags & SCENARIO_BLOCK_HOSTAGE_RESCUE_TIME) && UTIL_FindEntityByClassname(nullptr, "hostage_entity"))
 	{
 		if (!OnRoundEnd(WINSTATUS_TERRORISTS, ROUND_HOSTAGE_NOT_RESCUED, GetRoundRestartDelay()))
 			return;
@@ -2797,9 +2797,31 @@ void CHalfLifeMultiplay::CheckRoundTimeExpired()
 	}
 	else if (roundover.value)
 	{
-		// round is over
-		if (!OnRoundEnd(WINSTATUS_DRAW, ROUND_GAME_OVER, GetRoundRestartDelay()))
-			return;
+		switch ((int)roundover.value)
+		{
+		case 1:
+		default:
+		{
+			if (!OnRoundEnd_Intercept(WINSTATUS_DRAW, ROUND_GAME_OVER, GetRoundRestartDelay()))
+				return;
+
+			break;
+		}
+		case 2:
+		{
+			if (!OnRoundEnd_Intercept(WINSTATUS_TERRORISTS, ROUND_TERRORISTS_WIN, GetRoundRestartDelay()))
+				return;
+
+			break;
+		}
+		case 3:
+		{
+			if (!OnRoundEnd_Intercept(WINSTATUS_CTS, ROUND_CTS_WIN, GetRoundRestartDelay()))
+				return;
+
+			break;
+		}
+		}
 	}
 
 	// This is done so that the portion of code has enough time to do it's thing.
@@ -3583,9 +3605,8 @@ void CHalfLifeMultiplay::PlayerKilled(CBasePlayer *pVictim, entvars_t *pKiller, 
 	{
 		// if a player dies in a deathmatch game and the killer is a client, award the killer some points
 		CBasePlayer *killer = GetClassPtr((CBasePlayer *)pKiller);
-		bool killedByFFA = IsFreeForAll();
 
-		if (killer->m_iTeam == pVictim->m_iTeam && !killedByFFA)
+		if (g_pGameRules->PlayerRelationship(pVictim, killer) == GR_TEAMMATE)
 		{
 			// if a player dies by from teammate
 			pKiller->frags -= IPointsForKill(peKiller, pVictim);

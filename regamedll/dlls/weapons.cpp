@@ -808,6 +808,36 @@ bool CBasePlayerWeapon::HasSecondaryAttack()
 	return true;
 }
 
+void CBasePlayerWeapon::HandleInfiniteAmmo()
+{
+	int nInfiniteAmmo = 0;
+	nInfiniteAmmo = m_pPlayer->CSPlayer()->m_iWeaponInfiniteAmmo;
+
+	if (!nInfiniteAmmo)
+		nInfiniteAmmo = static_cast<int>(infiniteAmmo.value);
+
+	if (nInfiniteAmmo == WPNMODE_INFINITE_CLIP && !IsGrenadeWeapon(m_iId))
+	{
+		m_iClip = iMaxClip();
+	}
+	else if ((nInfiniteAmmo == WPNMODE_INFINITE_BPAMMO
+		&&
+		((m_pPlayer->CSPlayer()->m_iWeaponInfiniteIds & (1 << m_iId)) || (m_pPlayer->CSPlayer()->m_iWeaponInfiniteIds <= 0 && !IsGrenadeWeapon(m_iId)))
+		)
+		|| (IsGrenadeWeapon(m_iId) && infiniteGrenades.value == 1.0f))
+	{
+		if (pszAmmo1())
+		{
+			m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] = iMaxAmmo1();
+		}
+
+		if (pszAmmo2())
+		{
+			m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] = iMaxAmmo2();
+		}
+	}
+}
+
 void CBasePlayerWeapon::ItemPostFrame()
 {
 	int usableButtons = m_pPlayer->pev->button;

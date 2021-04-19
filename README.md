@@ -10,13 +10,12 @@ Regamedll_CS is a result of reverse engineering of original library mod HLDS (bu
 ## How can use it?
 ReGameDLL_CS is fully compatible with official mod CS 1.6 / CZero by Valve. All you have to do is to download binaries and replace original mp.dll/cs.so
 
-Compiled binaries are available here: [link](https://github.com/s1lentq/ReGameDLL_CS/releases)
+## Downloads
+* [Release builds](https://github.com/s1lentq/ReGameDLL_CS/releases)
+* [Dev builds](https://github.com/s1lentq/ReGameDLL_CS/actions/workflows/build.yml)
 
-Archive's bin directory contains 2 subdirectories, 'bugfixed' and 'pure'
-* 'pure' version is designed to work exactly as official mod CS
-* 'bugfixed' version contains some fixes and improvements
-
-<b>Warning!</b> ReGameDLL_CS is not binary compatible with original hlds since it's compiled with compilers other than ones used for original mod CS. This means that plugins that do binary code analysis (Orpheu for example) probably will not work with ReGameDLL_CS.
+<b>Warning!</b> ReGameDLL_CS is not binary compatible with original hlds since it's compiled with compilers other than ones used for original mod CS.
+This means that plugins that do binary code analysis (Orpheu for example) probably will not work with ReGameDLL_CS.
 
 ## How can use beta?
 <pre>ReGameDLL_CS also have beta version with latest changes from official version of Counter-Strike.</pre>
@@ -27,7 +26,7 @@ Archive's bin directory contains 2 subdirectories, 'bugfixed' and 'pure'
 | :---------------------------------- | :---------------------------------------------- |
 | game version                        | Will show GameDLL build version, date & URL. |
 | endround                            | Args:<br/>`T` force round end with Terrorists win. <br/>`CT` force round end with Counter-Terrorists win. <br/> or terminate round draw when called without arguments. |
-| mp_swapteams                        | Swap the teams and restart the game. |
+| swapteams                           | Swap the teams and restart the game. |
 
 ## Configuration (cvars)
 <details>
@@ -40,11 +39,11 @@ Archive's bin directory contains 2 subdirectories, 'bugfixed' and 'pure'
 | mp_buytime                         | 1.5     | 0.0 | -            | Designate the desired amount of buy time for each round. (in minutes)<br />`-1` means no time limit<br />`0` disable buy |
 | mp_maxmoney                        | 16000   | 0   | `999999`     | The maximum allowable amount of money in the game |
 | mp_round_infinite                  | 0       | 0   | 1            | Flags for fine grained control (choose as many as needed)<br/>`0` disabled<br/>`1` enabled<br/><br/>or flags<br/>`a` block round time round end check<br/>`b` block needed players round end check<br/>`c` block VIP assassination/success round end check<br/>`d` block prison escape round end check<br/>`e` block bomb round end check<br/>`f` block team extermination round end check<br/>`g` block hostage rescue round end check<br/>`h` block VIP assassination/success round time end check<br/>`i` block prison escape round time end check<br/>`j` block bomb round time end check<br/>`k` block hostage rescue round time end check<br/><br/>`Example setting:` "ae" blocks round time and bomb round end checks |
-| mp_roundover                       | 0       | -   | -            | The round by expired time will be over, if on a map it does not have the scenario of the game.<br/>`0` disabled<br/>`1` enabled |
+| mp_roundover                       | 0       | 0   | 3            | The round by expired time will be over, if on a map it does not have the scenario of the game.<br/>`0` disabled<br/>`1` end of the round with a draw<br/>`2` round end with Terrorists win<br/>`3` round end with Counter-Terrorists win |
 | mp_round_restart_delay             | 5       | -   | -            | Number of seconds to delay before restarting a round after a win. |
 | mp_hegrenade_penetration           | 0       | 0   | 1            | Disable grenade damage through walls.<br/>`0` disabled<br/>`1` enabled |
 | mp_nadedrops                       | 0       | 0   | 2            | Drop a grenade after player death.<br/>`0` disabled<br/>`1` drop first available grenade<br/>`2` drop all grenades |
-| mp_roundrespawn_time               | 20      | 0   | -            | Player cannot respawn until next round if more than N seconds has elapsed since the beginning round |
+| mp_roundrespawn_time               | 20      | 0   | -            | Player cannot respawn until next round if more than N seconds has elapsed since the beginning round.<br />`-1` means no time limit<br /> |
 | mp_auto_reload_weapons             | 0       | 0   | 1            | Automatically reload each weapon on player spawn.<br/>`0` disabled<br/>`1` enabled |
 | mp_refill_bpammo_weapons           | 0       | 0   | 2            | Refill amount of backpack ammo up to the max.<br/>`0` disabled<br/>`1` refill backpack ammo on player spawn<br/>`2` refill backpack ammo on player spawn and on the purchase of the item |
 | mp_infinite_ammo                   | 0       | 0   | 2            | Sets the mode infinite ammo for weapons.<br/>`0` disabled<br/>`1` weapon clip infinite<br/>`2` weapon bpammo infinite (This means for reloading) |
@@ -104,72 +103,77 @@ Archive's bin directory contains 2 subdirectories, 'bugfixed' and 'pure'
 * Extract all the files from an [archive](regamedll/extra/zBot/bot_profiles.zip?raw=true)
 * Enter `-bots` option at the command line HLDS
 
+## How to install CSCZ hostage AI for CS 1.6?
+* Extract all the files from an [archive](regamedll/extra/HostageImprov/host_improv.zip?raw=true)
+* Enter `-host-improv` option at the command line HLDS
+
 ## Build instructions
-There are several software requirements for building Regamedll_CS:
-<ol>
-<li>Java Development Kit (JDK) 7+ (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)</li>
-<li>For Windows: Visual Studio 2015 and later</li>
-<li>For Linux: GCC/Clang/Intel C++ Compiler 15 and later</li>
-</ol>
-
 ### Checking requirements
-#### JDK version
-Windows<pre>&gt; %JAVA_HOME%\bin\javac -version
-javac 1.8.0_25
-</pre>
+There are several software requirements for building ReGameDLL_CS:
 
-Linux
-<pre>$ javac -version
-javac 1.7.0_65
-</pre>
-
-#### Visual Studio
-Help -> About
-
-#### ICC
-<pre>$ icc --version
-icc (ICC) 15.0.1 20141023
-</pre>
-
-### Building and run unit tests using gradle
-#### On Windows:
-<pre>gradlew --max-workers=1 clean buildRelease</pre>
-* For faster building without unit tests use this:exclamation:
-<pre>gradlew --max-workers=1 clean buildFixes</pre>
-
-#### On Linux (ICC):
-<pre>./gradlew --max-workers=1 clean buildRelease</pre>
-
-* For faster building without unit tests use this:exclamation:
-<pre>./gradlew --max-workers=1 clean buildFixes</pre>
-
-#### On Linux (Clang):
-<pre>./gradlew --max-workers=1 clean -PuseClang buildRelease</pre>
-
-* For faster building without unit tests use this:exclamation:
-<pre>./gradlew --max-workers=1 clean -PuseClang buildFixes</pre>
-
-#### On Linux (GCC):
-<pre>./gradlew --max-workers=1 clean -PuseGcc buildRelease</pre>
-
-* For faster building without unit tests use this:exclamation:
-<pre>./gradlew --max-workers=1 clean -PuseGcc buildFixes</pre>
-
-Compiled binaries will be placed in the build/binaries/ directory
-
-### Simplified building using CMake 3.1 and later
-#### On Windows:
-<pre>Open solution msvc\ReGameDLL.sln and build it</pre>
-
-#### On Linux:
-* Run script `regamedll/compile.sh`
-* Options using `regamedll/compile.sh -D[option]=[ON or OFF]` (without square brackets)
+#### Windows
 <pre>
-DEBUG              - Enables debugging mode
-USE_INTEL_COMPILER - Switch main compiler to ICC
-USE_CLANG_COMPILER - Switch main compiler to Clang
-USE_STATIC_LIBSTDC - Enables static linking library libstdc++
+Visual Studio 2015 (C++14 standard) and later
 </pre>
+
+#### Linux
+<pre>
+git >= 1.8.5
+cmake >= 3.10
+GCC >= 4.9.2 (Optional)
+ICC >= 15.0.1 20141023 (Optional)
+LLVM (Clang) >= 6.0 (Optional)
+</pre>
+
+### Building
+
+#### Windows
+Use `Visual Studio` to build, open `msvc/ReGameDLL.sln` and just select from the solution configurations list `Release` or `Debug`
+
+#### Linux
+
+* Optional options using `build.sh --compiler=[gcc] --jobs=[N] -D[option]=[ON or OFF]` (without square brackets)
+
+<pre>
+-c=|--compiler=[icc|gcc|clang]  - Select preferred C/C++ compiler to build
+-j=|--jobs=[N]                  - Specifies the number of jobs (commands) to run simultaneously (For faster building)
+
+<sub>Definitions (-D)</sub>
+DEBUG                           - Enables debugging mode
+USE_STATIC_LIBSTDC              - Enables static linking library libstdc++
+</pre>
+
+* ICC          <pre>./build.sh --compiler=intel</pre>
+* LLVM (Clang) <pre>./build.sh --compiler=clang</pre>
+* GCC          <pre>./build.sh --compiler=gcc</pre>
+
+##### Checking build environment (Debian / Ubuntu)
+
+<details>
+<summary>Click to expand</summary>
+
+<ul>
+<li>
+Installing required packages
+<pre>
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install -y gcc-multilib g++-multilib
+sudo apt-get install -y build-essential
+sudo apt-get install -y libc6-dev libc6-dev-i386
+</pre>
+</li>
+
+<li>
+Select the preferred C/C++ Compiler installation
+<pre>
+1) sudo apt-get install -y gcc g++
+2) sudo apt-get install -y clang
+</pre>
+</li>
+</ul>
+
+</details>
 
 ### Credits
 Thanks to the project [ReHLDS](https://github.com/dreamstalker/rehlds) ( ReGameDLL_CS was created on the basis of ReHLDS )
